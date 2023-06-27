@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:mealy/components/InputField.dart';
+import 'package:mealy/models/tag.dart';
+import 'package:multiple_search_selection/multiple_search_selection.dart';
+import 'package:multiselect_formfield/multiselect_formfield.dart';
 
 import '../../components/CustomAppbar.dart';
 
@@ -21,8 +24,29 @@ enum Tezina {
 }
 
 class _DodajScreenState extends State<DodajScreen> {
-  final _form = GlobalKey<FormState>();
+  final tagNode = FocusNode();
 
+  @override
+  void initState() {
+    super.initState();
+    tagNode.addListener(() {
+      setState(() {});
+    });
+  }
+
+  final _form = GlobalKey<FormState>();
+  List<Tag> tagovi = [
+    Tag(name: "Doručak"),
+    Tag(name: "Ručak"),
+    Tag(name: "Večera"),
+    Tag(name: "Zdravo"),
+    Tag(name: "Brza hrana"),
+    Tag(name: "A1"),
+    Tag(name: "A2"),
+    Tag(name: "A3"),
+    Tag(name: "A4"),
+    Tag(name: "A5"),
+  ];
   Tezina? tezina;
 
   List<TextEditingController> sastojakInputList = [TextEditingController()];
@@ -35,13 +59,11 @@ class _DodajScreenState extends State<DodajScreen> {
     return SingleChildScrollView(
       child: Column(
         children: [
-          Container(
-            child: CustomAppBar(
-              pageTitle: 'Dodaj',
-              isCenter: false,
-              drugaIkonica: Iconsax.tick_circle,
-              funkcija2: () {},
-            ),
+          CustomAppBar(
+            pageTitle: 'Dodaj',
+            isCenter: false,
+            drugaIkonica: Iconsax.tick_circle,
+            funkcija2: () {},
           ),
           const SizedBox(height: 25),
           SizedBox(
@@ -268,7 +290,7 @@ class _DodajScreenState extends State<DodajScreen> {
                         //
                         //
                         // KORACI
-
+                        const SizedBox(height: 15),
                         Text(
                           'Koraci',
                           style: Theme.of(context).textTheme.headline2,
@@ -343,6 +365,117 @@ class _DodajScreenState extends State<DodajScreen> {
                             ),
                           ),
                         ),
+                        //
+                        //
+                        // TAGOVI
+                        const SizedBox(height: 15),
+                        Text(
+                          'Tagovi',
+                          style: Theme.of(context).textTheme.headline2,
+                        ),
+                        SizedBox(height: 10),
+                        MultipleSearchSelection<Tag>(
+                          items: tagovi,
+                          fieldToCheck: (tag) {
+                            return tag.name;
+                          },
+                          maxSelectedItems: 5,
+                          textFieldFocus: tagNode,
+                          clearSearchFieldOnSelect: false,
+                          searchFieldTextStyle: Theme.of(context).textTheme.headline4,
+                          itemsVisibility: ShowedItemsVisibility.onType,
+                          showSelectAllButton: false,
+                          pickedItemsBoxDecoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          pickedItemsContainerMinHeight: 40,
+                          pickedItemBuilder: (tag) {
+                            return Container(
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.tertiary,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      "#${tag.name}",
+                                      style: Theme.of(context).textTheme.headline5!.copyWith(
+                                            color: Colors.white,
+                                          ),
+                                    ),
+                                    const Icon(
+                                      Icons.close,
+                                      color: Colors.white,
+                                      size: 16,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                          searchFieldBoxDecoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            // border: Border.all(
+                            //   color: Colors.black,
+                            // ),
+                          ),
+                          showedItemsScrollbarColor: Colors.transparent,
+                          searchFieldInputDecoration: InputDecoration(
+                            hintText: "Upišite tag",
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                            hintStyle: Theme.of(context).textTheme.headline4?.copyWith(
+                                  color: Colors.grey,
+                                ),
+                            filled: true,
+                            fillColor: Colors.white,
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.white),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            border: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.white),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          itemBuilder: (tag, index) => Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                            margin: const EdgeInsets.symmetric(vertical: 5),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              // border: Border.all(
+                              //     // color: Colors.black.withOpacity(.5),
+                              //     ),
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: null,
+                            ),
+                            child: Text(tag.name),
+                          ),
+                          showedItemsBoxDecoration: const BoxDecoration(
+                            color: Color(0xFFFFEEEE),
+                          ),
+                          noResultsWidget: Container(
+                            color: Colors.white,
+                            padding: const EdgeInsets.all(15),
+                            child: Text(
+                              'Ne možemo da nađemo taj tag',
+                              style: Theme.of(context).textTheme.headline4,
+                            ),
+                          ),
+                          clearAllButton: InkWell(
+                            onTap: () {},
+                            child: Text(
+                              'Obrišite sve',
+                              style: Theme.of(context).textTheme.headline4,
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 20),
                       ],
                     ),
                   ),
@@ -353,5 +486,12 @@ class _DodajScreenState extends State<DodajScreen> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    tagNode.dispose();
   }
 }

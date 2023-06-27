@@ -200,6 +200,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.7"
+  lint:
+    dependency: transitive
+    description:
+      name: lint
+      sha256: f4bd4dbaa39f4ae8836f2d1275f2f32bc68b3a8cce0a0735dd1f7a601f06682a
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.2"
   lints:
     dependency: transitive
     description:
@@ -232,6 +240,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.9.1"
+  multiple_search_selection:
+    dependency: "direct main"
+    description:
+      name: multiple_search_selection
+      sha256: ee3bfba33e449ea88d5e40bc133496583081479937e5db23ca63301afd0b0afa
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.5.3"
+  multiselect_formfield:
+    dependency: "direct main"
+    description:
+      name: multiselect_formfield
+      sha256: "3a28c41093a53b4dc30ee0e4f73f67169a8be883dd3b17a4561467185ce1adf8"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.7"
   nested:
     dependency: transitive
     description:
@@ -382,5 +406,5 @@ packages:
     source: hosted
     version: "6.2.2"
 sdks:
-  dart: ">=3.0.0-0 <4.0.0"
+  dart: ">=3.0.0 <4.0.0"
   flutter: ">=3.7.0-0"
