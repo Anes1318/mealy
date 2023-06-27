@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "668512615884",
+    "project_id": "mealy1318-fabad",
+    "storage_bucket": "mealy1318-fabad.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:668512615884:android:7d5b957ff1898980da3169",
+        "android_client_info": {
+          "package_name": "com.example.mealy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "668512615884-mmoakihmc3b6qh97nm2su66jr43vrbtm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOyNF9vsky3yv6ssbZ4hpEaThnLzFLMIo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "668512615884-mmoakihmc3b6qh97nm2su66jr43vrbtm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
