@@ -2,11 +2,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mealy/components/Button.dart';
+import 'package:mealy/components/metode.dart';
 import 'package:multiple_search_selection/multiple_search_selection.dart';
-import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart' as syspaths;
 // komponente
 import 'package:mealy/components/InputField.dart';
 import 'package:mealy/models/tag.dart';
@@ -41,25 +41,28 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
   List<TextEditingController> sastojakInputList = [TextEditingController()];
   List<TextEditingController> korakInputList = [TextEditingController()];
 
-  File? _pickedImage;
-  void _selectImage(File pickedImage) {
-    _pickedImage = pickedImage;
-  }
-
   File? _storedImage;
-  Future<void> _takeImage() async {
+  Future<void> _takeImage(isCamera) async {
     final ImagePicker picker = ImagePicker();
-    final imageFile = await picker.pickImage(
-      source: ImageSource.camera,
-      maxWidth: 600,
+    final XFile? imageFile;
+
+    imageFile = await picker.pickImage(
+      source: isCamera ? ImageSource.camera : ImageSource.gallery,
+      imageQuality: 50,
     );
+    if (imageFile == null) {
+      return;
+    }
+    var croppedImg = await ImageCropper().cropImage(
+      sourcePath: imageFile.path,
+      aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
+    );
+    if (croppedImg == null) {
+      return;
+    }
     setState(() {
-      _storedImage = File(imageFile!.path);
+      _storedImage = File(croppedImg.path);
     });
-    final appDir = await syspaths.getApplicationDocumentsDirectory();
-    final fileName = path.basename(_storedImage!.path);
-    final savedImage = await _storedImage!.copy('${appDir.path}/$fileName');
-    _pickedImage = savedImage;
   }
 
   @override
@@ -89,7 +92,24 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           InkWell(
-                            onTap: () => _takeImage(),
+                            onTap: () {
+                              Metode.showErrorDialog(
+                                context: context,
+                                naslov: 'Odakle želite da izaberete sliku?',
+                                button1Text: 'Kamera',
+                                button1Fun: () {
+                                  _takeImage(true);
+                                  Navigator.pop(context);
+                                },
+                                isButton2: true,
+                                button2Text: 'Galerija',
+                                button2Fun: () {
+                                  _takeImage(false);
+
+                                  Navigator.pop(context);
+                                },
+                              );
+                            },
                             child: Container(
                               width: medijakveri.size.width,
                               height: 195,

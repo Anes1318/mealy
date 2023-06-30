@@ -4,31 +4,42 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Metode {
-  static void showErrorDialog({required String message, required BuildContext context, required String naslov, required String button1Text, String? button2Text, required Function button1Fun, Function? button2Fun, required bool isButton2}) {
+  static void showErrorDialog({
+    String? message,
+    required BuildContext context,
+    required String naslov,
+    required String button1Text,
+    String? button2Text,
+    required Function button1Fun,
+    Function? button2Fun,
+    required bool isButton2,
+  }) {
     showDialog(
       context: context,
       builder: (context) {
         final medijakveri = MediaQuery.of(context);
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           title: Text(
             naslov,
             textAlign: TextAlign.center,
           ),
-          content: Padding(
-            padding: const EdgeInsets.only(top: 18.0, bottom: 24),
-            child: Text(
-              message,
-              style: TextStyle(fontSize: 20, color: Colors.grey[700]),
-              textAlign: TextAlign.center,
-            ),
-          ),
+          content: message != null
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 18.0, bottom: 24),
+                  child: Text(
+                    message,
+                    style: TextStyle(fontSize: 20, color: Colors.grey[700]),
+                    textAlign: TextAlign.center,
+                  ),
+                )
+              : null,
           actions: [
-            InkWell(
+            GestureDetector(
               onTap: () => button1Fun(),
               child: Container(
                 padding: EdgeInsets.symmetric(
-                  vertical: medijakveri.size.height * 0.01,
+                  vertical: 10,
                 ),
                 margin: EdgeInsets.symmetric(
                   horizontal: medijakveri.size.width * 0.2,
@@ -50,11 +61,11 @@ class Metode {
               ),
             ),
             if (isButton2)
-              InkWell(
+              GestureDetector(
                 onTap: () => button2Fun!(),
                 child: Container(
                   padding: EdgeInsets.symmetric(
-                    vertical: medijakveri.size.height * 0.01,
+                    vertical: 10,
                   ),
                   margin: EdgeInsets.symmetric(
                     horizontal: medijakveri.size.width * 0.2,
@@ -69,7 +80,7 @@ class Metode {
                       button2Text!,
                       style: TextStyle(
                         //fontWeight: FontWeight.bold,
-                        fontSize: 25,
+                        fontSize: 20,
                         color: Colors.white,
                       ),
                     ),
