@@ -17,7 +17,9 @@ class InputField extends StatelessWidget {
   final int? brLinija;
   final double borderRadijus;
   final double sirina;
+  final double visina;
   final FocusNode? focusNode;
+  final bool isPadding;
   final TextEditingController? controller;
   const InputField({
     required this.medijakveri,
@@ -36,13 +38,16 @@ class InputField extends StatelessWidget {
     this.brLinija = 1,
     this.borderRadijus = 20,
     this.sirina = 1,
+    this.visina = 10,
     this.controller,
+    required this.isPadding,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: medijakveri.size.width * sirina,
+      margin: isPadding ? EdgeInsets.only(bottom: (medijakveri.size.height - medijakveri.padding.top) * 0.025) : EdgeInsets.zero,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -70,7 +75,7 @@ class InputField extends StatelessWidget {
             initialValue: initalValue,
             textAlignVertical: TextAlignVertical.center,
             decoration: InputDecoration(
-              contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: visina),
               hintText: hintText,
               hintStyle: Theme.of(context).textTheme.headline4?.copyWith(
                     color: Colors.grey,
@@ -78,11 +83,11 @@ class InputField extends StatelessWidget {
               filled: true,
               fillColor: Colors.white,
               enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.white),
+                borderSide: const BorderSide(color: Colors.white),
                 borderRadius: BorderRadius.circular(borderRadijus),
               ),
               border: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.white),
+                borderSide: const BorderSide(color: Colors.white),
                 borderRadius: BorderRadius.circular(borderRadijus),
               ),
             ),

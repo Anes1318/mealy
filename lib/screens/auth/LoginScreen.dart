@@ -80,6 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
     // print(_authData);
   }
 
+  @override
   Widget build(BuildContext context) {
     final medijakveri = MediaQuery.of(context);
     return Scaffold(
@@ -100,6 +101,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     children: [
                       InputField(
+                        isLabel: true,
+                        isPadding: true,
+                        visina: 20,
                         medijakveri: medijakveri,
                         label: 'Email',
                         focusNode: emailNode,
@@ -176,10 +180,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       isLoading
                           ? const CircularProgressIndicator()
                           : Button(
+                              isFullWidth: true,
                               borderRadius: 20,
-                              visina: 18,
+                              visina: 15,
                               funkcija: () => _login(),
-                              horizontalMargin: 0,
                               buttonText: 'Prijavite se',
                               color: Theme.of(context).colorScheme.secondary,
                               textColor: Theme.of(context).primaryColor,

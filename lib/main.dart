@@ -46,6 +46,7 @@ class MyApp extends StatelessWidget {
               fontSize: 36,
               color: Color(0xFF331618),
               fontWeight: FontWeight.w600,
+              letterSpacing: 1.5,
             ),
             headline2: TextStyle(
               fontFamily: 'Cabin',
@@ -56,11 +57,13 @@ class MyApp extends StatelessWidget {
               fontFamily: 'Cabin',
               fontSize: 20,
               color: Color(0xFF331618),
+              letterSpacing: .7,
             ),
             headline4: TextStyle(
               fontFamily: 'Cabin',
               fontSize: 16,
               color: Color(0xFF331618),
+              // letterSpacing: 0.1,
             ),
             headline5: TextStyle(
               fontFamily: 'Cabin',

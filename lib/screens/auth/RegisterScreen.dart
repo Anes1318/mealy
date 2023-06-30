@@ -3,7 +3,6 @@ import 'package:iconsax/iconsax.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 // screens
-import 'package:mealy/screens/main/BottomNavigationBarScreen.dart';
 import 'package:mealy/screens/auth/LoginScreen.dart';
 // components
 import 'package:mealy/components/Button.dart';
@@ -107,11 +106,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     final medijakveri = MediaQuery.of(context);
     return Scaffold(
-      body: Container(
-        alignment: Alignment.bottomCenter,
-        margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.07),
-        child: SingleChildScrollView(
-          child: SafeArea(
+      body: SafeArea(
+        child: Container(
+          alignment: Alignment.bottomCenter,
+          margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.07),
+          child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -123,54 +122,65 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Form(
                   key: _form,
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       InputField(
-                          medijakveri: medijakveri,
-                          label: 'Ime',
-                          hintText: 'Ime',
-                          inputAction: TextInputAction.next,
-                          inputType: TextInputType.name,
-                          obscureText: false,
-                          focusNode: imeNode,
-                          onChanged: (_) => _form.currentState!.validate(),
-                          validator: (value) {
-                            if (emailNode.hasFocus || prezimeNode.hasFocus || pass1Node.hasFocus || pass2Node.hasFocus) {
-                              return null;
-                            } else if (value!.isEmpty) {
-                              return 'Molimo Vas da unesete ime';
-                            } else if (value.length < 2) {
-                              return 'Ime mora biti duže';
-                            } else if (value.contains(RegExp(r'[0-9]')) || value.contains(' ')) {
-                              return 'Ime smije sadržati samo velika i mala slova i simbole';
-                            }
-                          },
-                          onSaved: (value) {
-                            _authData['ime'] = value!.trim();
-                          }),
+                        isPadding: true,
+                        medijakveri: medijakveri,
+                        isLabel: true,
+                        label: 'Ime',
+                        hintText: 'Ime',
+                        inputAction: TextInputAction.next,
+                        inputType: TextInputType.name,
+                        obscureText: false,
+                        focusNode: imeNode,
+                        visina: 20,
+                        onChanged: (_) => _form.currentState!.validate(),
+                        validator: (value) {
+                          if (emailNode.hasFocus || prezimeNode.hasFocus || pass1Node.hasFocus || pass2Node.hasFocus) {
+                            return null;
+                          } else if (value!.isEmpty) {
+                            return 'Molimo Vas da unesete ime';
+                          } else if (value.length < 2) {
+                            return 'Ime mora biti duže';
+                          } else if (value.contains(RegExp(r'[0-9]')) || value.contains(' ')) {
+                            return 'Ime smije sadržati samo velika i mala slova i simbole';
+                          }
+                        },
+                        onSaved: (value) {
+                          _authData['ime'] = value!.trim();
+                        },
+                      ),
                       InputField(
-                          medijakveri: medijakveri,
-                          label: 'Prezime',
-                          hintText: 'Prezime',
-                          inputAction: TextInputAction.next,
-                          inputType: TextInputType.text,
-                          obscureText: false,
-                          focusNode: prezimeNode,
-                          onChanged: (_) => _form.currentState!.validate(),
-                          validator: (value) {
-                            if (imeNode.hasFocus || emailNode.hasFocus || pass1Node.hasFocus || pass2Node.hasFocus) {
-                              return null;
-                            } else if (value!.isEmpty) {
-                              return 'Molimo Vas da unesete prezime';
-                            } else if (value.length < 2) {
-                              return 'Prezime mora biti duže';
-                            } else if (value.contains(RegExp(r'[0-9]')) || value.contains(' ')) {
-                              return 'Prezime smije sadržati samo velika i mala slova i simbole';
-                            }
-                          },
-                          onSaved: (value) {
-                            _authData['prezime'] = value!.trim();
-                          }),
+                        isPadding: true,
+                        medijakveri: medijakveri,
+                        isLabel: true,
+                        label: 'Prezime',
+                        hintText: 'Prezime',
+                        inputAction: TextInputAction.next,
+                        inputType: TextInputType.text,
+                        obscureText: false,
+                        focusNode: prezimeNode,
+                        visina: 20,
+                        onChanged: (_) => _form.currentState!.validate(),
+                        validator: (value) {
+                          if (imeNode.hasFocus || emailNode.hasFocus || pass1Node.hasFocus || pass2Node.hasFocus) {
+                            return null;
+                          } else if (value!.isEmpty) {
+                            return 'Molimo Vas da unesete prezime';
+                          } else if (value.length < 2) {
+                            return 'Prezime mora biti duže';
+                          } else if (value.contains(RegExp(r'[0-9]')) || value.contains(' ')) {
+                            return 'Prezime smije sadržati samo velika i mala slova i simbole';
+                          }
+                        },
+                        onSaved: (value) {
+                          _authData['prezime'] = value!.trim();
+                        },
+                      ),
                       InputField(
+                        isPadding: true,
+                        isLabel: true,
                         medijakveri: medijakveri,
                         label: 'Email',
                         hintText: 'E-mail',
@@ -178,6 +188,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         inputType: TextInputType.emailAddress,
                         obscureText: false,
                         focusNode: emailNode,
+                        visina: 20,
                         onChanged: (_) => _form.currentState!.validate(),
                         validator: (value) {
                           if (imeNode.hasFocus || prezimeNode.hasFocus || pass1Node.hasFocus || pass2Node.hasFocus) {
@@ -202,7 +213,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 bottom: (medijakveri.size.height - medijakveri.padding.top) * 0.005,
                                 left: medijakveri.size.width * 0.02,
                               ),
-                              child: Text('Šifra'),
+                              child: Text(
+                                'Šifra',
+                                style: Theme.of(context).textTheme.headline4,
+                              ),
                             ),
                             TextFormField(
                               focusNode: pass1Node,
@@ -257,7 +271,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 bottom: (medijakveri.size.height - medijakveri.padding.top) * 0.005,
                                 left: medijakveri.size.width * 0.02,
                               ),
-                              child: Text('Potvrdite šifru'),
+                              child: Text(
+                                'Potvrdite šifru',
+                                style: Theme.of(context).textTheme.headline4,
+                              ),
                             ),
                             TextFormField(
                               focusNode: pass2Node,
@@ -310,12 +327,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       isLoading
                           ? CircularProgressIndicator()
                           : Button(
+                              isFullWidth: true,
                               borderRadius: 20,
-                              visina: 18,
+                              visina: 15,
                               funkcija: () => {
                                 _register(),
                               },
-                              horizontalMargin: 0,
                               buttonText: 'Registrujte se',
                               color: Theme.of(context).colorScheme.secondary,
                               textColor: Theme.of(context).primaryColor,

@@ -15,8 +15,7 @@ class BottomNavigationBarScreen extends StatefulWidget {
 }
 
 class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
-  @override
-  final List<Widget> _pages = [
+  final List<Widget> _pages = const [
     PocetnaScreen(),
     DodajScreen(),
     OmiljeniScreen(),
@@ -36,13 +35,12 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
     final medijakveri = MediaQuery.of(context);
 
     return Scaffold(
-      // resizeToAvoidBottomInset: false,
       body: Container(
         margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.07),
         child: _pages[_selectedIndex],
       ),
       bottomNavigationBar: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.white,
           border: Border(
             top: BorderSide(
@@ -62,7 +60,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
           selectedItemColor: Theme.of(context).colorScheme.tertiary,
           unselectedItemColor: Theme.of(context).primaryColor,
           showUnselectedLabels: true,
-          items: [
+          items: const [
             BottomNavigationBarItem(
               icon: Icon(Iconsax.home_2),
               label: 'Početna',

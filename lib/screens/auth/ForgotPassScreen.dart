@@ -26,8 +26,11 @@ class _ForgotPassScreenState extends State<ForgotPassScreen> {
                 'Zaboravili ste šifru?',
                 style: Theme.of(context).textTheme.headline1,
               ),
-              SizedBox(height: 110),
+              const SizedBox(height: 110),
               InputField(
+                isLabel: true,
+                isPadding: true,
+                visina: 20,
                 medijakveri: medijakveri,
                 label: 'Email',
                 hintText: 'E-mail',
@@ -37,16 +40,26 @@ class _ForgotPassScreenState extends State<ForgotPassScreen> {
                 validator: (value) {},
                 onSaved: (_) {},
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 40),
               Button(
+                isFullWidth: true,
                 borderRadius: 20,
                 visina: 18,
                 funkcija: () {},
-                horizontalMargin: 0,
                 buttonText: 'Pošalji zahtjev',
                 color: Theme.of(context).colorScheme.secondary,
                 textColor: Theme.of(context).primaryColor,
                 isBorder: true,
+              ),
+              const SizedBox(height: 10),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  'Nazad na login',
+                  style: Theme.of(context).textTheme.headline4,
+                ),
               ),
             ],
           ),

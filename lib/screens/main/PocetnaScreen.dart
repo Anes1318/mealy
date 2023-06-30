@@ -18,64 +18,70 @@ class _PocetnaScreenState extends State<PocetnaScreen> {
   Widget build(BuildContext context) {
     final medijakveri = MediaQuery.of(context);
     String tezina = 'Tesko';
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        CustomAppBar(pageTitle: 'Početna', isCenter: false),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: SingleChildScrollView(
+        child: Column(
           children: [
-            GestureDetector(
-              child: Container(
-                width: medijakveri.size.width * 0.7,
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                    hintText: 'Potražite tag ili namirnicu...',
-                    hintStyle: Theme.of(context).textTheme.headline4?.copyWith(
-                          color: Colors.grey,
+            const CustomAppBar(pageTitle: 'Početna', isCenter: false),
+            const SizedBox(height: 30),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  child: Container(
+                    width: medijakveri.size.width * 0.7,
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                        hintText: 'Potražite tag ili namirnicu...',
+                        hintStyle: Theme.of(context).textTheme.headline4?.copyWith(
+                              color: Colors.grey,
+                            ),
+                        filled: true,
+                        fillColor: Colors.white,
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(color: Colors.white),
+                          borderRadius: BorderRadius.circular(20),
                         ),
-                    filled: true,
-                    fillColor: Colors.white,
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                      borderRadius: BorderRadius.circular(20),
+                        border: OutlineInputBorder(
+                          borderSide: const BorderSide(color: Colors.white),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        suffixIcon: const Icon(Iconsax.search_normal),
+                      ),
                     ),
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    suffixIcon: Icon(Iconsax.search_normal),
                   ),
                 ),
-              ),
-            ),
-            InkWell(
-              child: Container(
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
+                InkWell(
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Icon(
+                      Iconsax.filter_square,
+                      color: Theme.of(context).primaryColor,
+                      size: 30,
+                    ),
+                  ),
                 ),
-                child: Icon(
-                  Iconsax.filter_square,
-                  color: Theme.of(context).primaryColor,
-                  size: 30,
-                ),
-              ),
+              ],
             ),
+            const SizedBox(height: 10),
+            Container(
+              height: (medijakveri.size.height - medijakveri.padding.top) * 0.7,
+              child: ListView.separated(
+                padding: const EdgeInsets.symmetric(vertical: 15),
+                itemCount: 6,
+                separatorBuilder: ((context, index) => const SizedBox(height: 15)),
+                itemBuilder: (context, index) => MealCard(medijakveri: medijakveri, tezina: tezina),
+              ),
+            )
           ],
         ),
-        Container(
-          height: (medijakveri.size.height - medijakveri.padding.top) * 0.7,
-          child: ListView.separated(
-            padding: EdgeInsets.symmetric(vertical: 15),
-            itemCount: 6,
-            separatorBuilder: ((context, index) => SizedBox(height: 15)),
-            itemBuilder: (context, index) => MealCard(medijakveri: medijakveri, tezina: tezina),
-          ),
-        )
-      ],
+      ),
     );
   }
 }

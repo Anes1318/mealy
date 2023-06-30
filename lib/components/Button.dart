@@ -7,21 +7,21 @@ class Button extends StatelessWidget {
   final double visina;
   final double? fontsize;
   final double? sirina;
-  double? horizontalMargin = 0;
   final double borderRadius;
   final Function funkcija;
+  final bool isFullWidth;
 
   Button({
-    required this.borderRadius,
-    this.fontsize,
-    required this.visina,
-    this.sirina,
-    required this.funkcija,
-    this.horizontalMargin,
     required this.buttonText,
+    required this.borderRadius,
+    required this.visina,
     required this.color,
-    this.textColor = Colors.white,
     required this.isBorder,
+    required this.funkcija,
+    this.fontsize,
+    this.sirina,
+    this.textColor = Colors.white,
+    required this.isFullWidth,
   });
 
   @override
@@ -33,7 +33,6 @@ class Button extends StatelessWidget {
           vertical: visina,
           horizontal: sirina == null ? 0 : sirina!,
         ),
-        margin: EdgeInsets.symmetric(horizontal: horizontalMargin!),
         decoration: BoxDecoration(
           color: color,
           border: Border.all(
@@ -41,16 +40,25 @@ class Button extends StatelessWidget {
           ),
           borderRadius: BorderRadius.circular(borderRadius),
         ),
-        child: Center(
-          child: Text(
-            buttonText,
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-              fontSize: fontsize == null ? 20 : fontsize,
-              color: textColor,
-            ),
-          ),
-        ),
+        child: isFullWidth
+            ? Center(
+                child: Text(
+                  buttonText,
+                  style: Theme.of(context).textTheme.headline3!.copyWith(
+                        // fontWeight: FontWeight.w600,
+                        fontSize: fontsize ?? 20,
+                        color: textColor,
+                      ),
+                ),
+              )
+            : Text(
+                buttonText,
+                style: Theme.of(context).textTheme.headline3!.copyWith(
+                      // fontWeight: FontWeight.w600,
+                      fontSize: fontsize ?? 20,
+                      color: textColor,
+                    ),
+              ),
       ),
     );
   }
