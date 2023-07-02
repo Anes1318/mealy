@@ -125,7 +125,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       InputField(
-                        isPadding: true,
+                        isMargin: true,
                         medijakveri: medijakveri,
                         isLabel: true,
                         label: 'Ime',
@@ -152,7 +152,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         },
                       ),
                       InputField(
-                        isPadding: true,
+                        isMargin: true,
                         medijakveri: medijakveri,
                         isLabel: true,
                         label: 'Prezime',
@@ -179,7 +179,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         },
                       ),
                       InputField(
-                        isPadding: true,
+                        isMargin: true,
                         isLabel: true,
                         medijakveri: medijakveri,
                         label: 'Email',

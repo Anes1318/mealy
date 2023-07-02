@@ -1,4 +1,7 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
@@ -24,6 +27,28 @@ class DodajScreen extends StatefulWidget {
 
 class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStateMixin {
   final _form = GlobalKey<FormState>();
+
+  final imeNode = FocusNode();
+  final opisNode = FocusNode();
+  final brOsobaNode = FocusNode();
+  final vrPripremeNode = FocusNode();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    imeNode.addListener(() {});
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    imeNode.dispose();
+    opisNode.dispose();
+    brOsobaNode.dispose();
+    vrPripremeNode.dispose();
+  }
+
   List<Tag> availableTagovi = [
     Tag(name: "Doručak"),
     Tag(name: "Ručak"),
@@ -36,10 +61,11 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
     Tag(name: "A4"),
     Tag(name: "A5"),
   ];
-  Tezina? tezina;
-  List<Tag> tagovi = [];
-  List<TextEditingController> sastojakInputList = [TextEditingController()];
-  List<TextEditingController> korakInputList = [TextEditingController()];
+
+  List<TextEditingController> sastojakInput = [TextEditingController()];
+  List<FocusNode> sastojakFokus = [FocusNode()];
+  List<TextEditingController> korakInput = [TextEditingController()];
+  List<FocusNode> korakFokus = [FocusNode()];
 
   File? _storedImage;
   Future<void> _takeImage(isCamera) async {
@@ -55,7 +81,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
     }
     var croppedImg = await ImageCropper().cropImage(
       sourcePath: imageFile.path,
-      aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
+      aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
     );
     if (croppedImg == null) {
       return;
@@ -63,6 +89,75 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
     setState(() {
       _storedImage = File(croppedImg.path);
     });
+    setState(() {
+      slikaValidator = false;
+    });
+  }
+
+  Map<String, dynamic> data = {
+    'ime': '',
+    'opis': '',
+    'brOsoba': 0,
+    'vrPripreme': 0,
+  };
+  List<String> sastojci = [];
+  List<String> koraci = [];
+  List<String> niz = [
+    'anes1',
+    'anes2',
+    'anes3',
+    'anes4',
+  ];
+  Tezina? tezina;
+  List<Tag> tagovi = [];
+  bool tezinaValidator = false;
+  bool tagValidator = false;
+  bool slikaValidator = false;
+  void submitForm() {
+    if (tezina == null) {
+      setState(() {
+        tezinaValidator = true;
+      });
+    }
+    if (tagovi.isEmpty) {
+      setState(() {
+        tagValidator = true;
+      });
+    }
+    if (_storedImage == null) {
+      setState(() {
+        slikaValidator = true;
+      });
+    }
+
+    if (!_form.currentState!.validate()) {
+      return;
+    }
+    _form.currentState!.save();
+
+    FirebaseStorage.instance.ref().child('receptImages').child(DateTime.now().toIso8601String()).putFile(_storedImage!);
+    // try {
+    //   FirebaseFirestore.instance.collection('recepti').add({
+    //     'userId' : FirebaseAuth.instance.currentUser!.uid,
+    //     'recept' : {
+    //       'ime'
+    //     }
+    //   });
+    // } catch (error) {}
+    // print('ime : ${data['ime']}');
+    // print('opis : ${data['opis']}');
+    // print('brOsoba : ${data['brOsoba']}');
+    // print('vrPripreme: ${data['vrPripreme']}');
+    // print('tezina: $tezina');
+    // sastojci.forEach((element) {
+    //   print(element);
+    // });
+    // koraci.forEach((element) {
+    //   print(element);
+    // });
+    // tagovi.forEach((element) {
+    //   print(element);
+    // });
   }
 
   @override
@@ -78,7 +173,10 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
               pageTitle: 'Dodaj',
               isCenter: false,
               drugaIkonica: Iconsax.tick_circle,
-              funkcija2: () {},
+              funkcija2: () {
+                FocusManager.instance.primaryFocus?.unfocus();
+                submitForm();
+              },
             ),
             const SizedBox(height: 25),
             SizedBox(
@@ -134,6 +232,15 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                               ),
                             ),
                           ),
+
+                          if (slikaValidator)
+                            Container(
+                              margin: const EdgeInsets.only(left: 15, top: 10),
+                              child: Text(
+                                'Molimo Vas izaberite sliku',
+                                style: Theme.of(context).textTheme.headline5!.copyWith(color: Colors.red),
+                              ),
+                            ),
                           const SizedBox(height: 10),
                           if (_storedImage != null)
                             Center(
@@ -156,28 +263,54 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
 
                           const SizedBox(height: 10),
                           InputField(
-                            isPadding: false,
+                            focusNode: imeNode,
+                            isMargin: false,
                             medijakveri: medijakveri,
                             isLabel: false,
                             hintText: 'Ime jela',
                             inputAction: TextInputAction.next,
                             inputType: TextInputType.text,
                             obscureText: false,
-                            validator: (value) {},
-                            onSaved: (_) {},
+                            onChanged: (_) => _form.currentState!.validate(),
+                            validator: (value) {
+                              if (opisNode.hasFocus || brOsobaNode.hasFocus || vrPripremeNode.hasFocus) {
+                                return null;
+                              } else if (value!.isEmpty || value.trim().isEmpty) {
+                                return 'Molimo Vas da unesete ime jela';
+                              } else if (value.length < 2) {
+                                return 'Ime jela mora biti duže';
+                              } else if (value.contains(RegExp(r'[0-9]'))) {
+                                return 'Ime jela smije sadržati samo velika i mala slova i simbole';
+                              }
+                            },
+                            onSaved: (value) {
+                              data['ime'] = value!.trim();
+                            },
                             borderRadijus: 10,
                           ),
                           const SizedBox(height: 20),
                           InputField(
-                            isPadding: false,
+                            focusNode: opisNode,
+                            isMargin: false,
                             medijakveri: medijakveri,
                             isLabel: false,
                             hintText: 'Podijelite nešto više o ovom jelu',
                             inputAction: TextInputAction.next,
                             inputType: TextInputType.text,
                             obscureText: false,
-                            validator: (value) {},
-                            onSaved: (_) {},
+                            onChanged: (_) => _form.currentState!.validate(),
+                            validator: (value) {
+                              if (imeNode.hasFocus || brOsobaNode.hasFocus || vrPripremeNode.hasFocus) {
+                                return null;
+                              } else if (value!.isEmpty || value.trim().isEmpty) {
+                                return 'Molimo Vas da unesete opis jela';
+                              } else if (value.length < 2) {
+                                return 'Opis jela mora biti duži';
+                              }
+                            },
+                            onSaved: (value) {
+                              data['opis'] = value!.trim();
+                            },
                             borderRadijus: 10,
                             brLinija: 4,
                           ),
@@ -186,28 +319,55 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               InputField(
-                                isPadding: false,
+                                focusNode: brOsobaNode,
+                                isMargin: false,
                                 medijakveri: medijakveri,
                                 isLabel: false,
-                                hintText: 'Za koliko osoba',
+                                hintText: 'Broj osoba',
                                 inputAction: TextInputAction.next,
-                                inputType: TextInputType.text,
+                                inputType: TextInputType.number,
                                 obscureText: false,
-                                validator: (value) {},
-                                onSaved: (_) {},
+                                errorStyle: Theme.of(context).textTheme.headline5!.copyWith(color: Colors.red),
+                                onChanged: (_) => _form.currentState!.validate(),
+                                validator: (value) {
+                                  if (imeNode.hasFocus || opisNode.hasFocus || vrPripremeNode.hasFocus) {
+                                    return null;
+                                  } else if (value!.isEmpty || value.trim().isEmpty) {
+                                    return 'Molimo Vas da unesete polje';
+                                  } else if (int.parse(value) > 20) {
+                                    return 'Polje ne može biti veće od 20';
+                                  }
+                                },
+                                onSaved: (value) {
+                                  data['brOsoba'] = value!.trim();
+                                },
                                 borderRadijus: 10,
                                 sirina: 0.4,
                               ),
                               InputField(
-                                isPadding: false,
+                                focusNode: vrPripremeNode,
+                                isMargin: false,
                                 medijakveri: medijakveri,
                                 isLabel: false,
-                                hintText: 'Vrijeme pripreme',
+                                hintText: 'Vrijeme pripreme (min)',
                                 inputAction: TextInputAction.next,
-                                inputType: TextInputType.text,
+                                inputType: TextInputType.number,
                                 obscureText: false,
-                                validator: (value) {},
-                                onSaved: (_) {},
+                                hintTextSize: 14,
+                                errorStyle: Theme.of(context).textTheme.headline5!.copyWith(color: Colors.red),
+                                onChanged: (_) => _form.currentState!.validate(),
+                                validator: (value) {
+                                  if (imeNode.hasFocus || opisNode.hasFocus || brOsobaNode.hasFocus) {
+                                    return null;
+                                  } else if (value!.isEmpty || value.trim().isEmpty) {
+                                    return 'Molimo Vas da unesete polje';
+                                  } else if (int.parse(value) > 999) {
+                                    return 'Polje ne može biti veće od 999';
+                                  }
+                                },
+                                onSaved: (value) {
+                                  data['vrPripreme'] = value!.trim();
+                                },
                                 borderRadijus: 10,
                                 sirina: 0.4,
                               ),
@@ -223,9 +383,13 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                             width: medijakveri.size.width,
                             height: 40,
                             decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                                border: tezinaValidator
+                                    ? Border.all(
+                                        color: Colors.red,
+                                      )
+                                    : null),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
@@ -233,6 +397,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                                   onTap: () {
                                     setState(() {
                                       tezina = Tezina.lako;
+                                      tezinaValidator = false;
                                     });
                                   },
                                   child: Row(
@@ -252,6 +417,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                                   onTap: () {
                                     setState(() {
                                       tezina = Tezina.umjereno;
+                                      tezinaValidator = false;
                                     });
                                   },
                                   child: Row(
@@ -271,6 +437,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                                   onTap: () {
                                     setState(() {
                                       tezina = Tezina.tesko;
+                                      tezinaValidator = false;
                                     });
                                   },
                                   child: Row(
@@ -289,6 +456,14 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                               ],
                             ),
                           ),
+                          if (tezinaValidator)
+                            Container(
+                              margin: const EdgeInsets.only(left: 15, top: 10),
+                              child: Text(
+                                'Molimo Vas izaberite težinu',
+                                style: Theme.of(context).textTheme.headline5!.copyWith(color: Colors.red),
+                              ),
+                            ),
                           const SizedBox(height: 20),
                           //
                           //
@@ -302,22 +477,33 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                             shrinkWrap: true,
                             primary: false,
                             separatorBuilder: (context, index) => const SizedBox(height: 20),
-                            itemCount: sastojakInputList.length,
+                            itemCount: sastojakInput.length,
                             itemBuilder: (context, index) => Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 InputField(
-                                  isPadding: false,
+                                  isMargin: false,
                                   medijakveri: medijakveri,
                                   hintText: "Sastojak",
                                   inputAction: TextInputAction.next,
                                   inputType: TextInputType.text,
                                   obscureText: false,
-                                  validator: (value) {},
-                                  onSaved: (_) {},
+                                  validator: (value) {
+                                    if (imeNode.hasFocus || opisNode.hasFocus || brOsobaNode.hasFocus || vrPripremeNode.hasFocus) {
+                                      return null;
+                                    }
+
+                                    if (value!.trim().isEmpty) {
+                                      return 'Molimo Vas da unesete polje';
+                                    }
+                                  },
+                                  onSaved: (value) {
+                                    sastojci.add(value!);
+                                  },
                                   sirina: 0.77,
                                   borderRadijus: 10,
-                                  controller: sastojakInputList[index],
+                                  controller: sastojakInput[index],
+                                  focusNode: sastojakFokus[index],
                                 ),
                                 InkWell(
                                   onTap: () {
@@ -325,9 +511,9 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                                       return;
                                     }
                                     setState(() {
-                                      sastojakInputList[index].clear();
-                                      sastojakInputList[index].dispose();
-                                      sastojakInputList.removeAt(index);
+                                      sastojakInput[index].clear();
+                                      sastojakInput[index].dispose();
+                                      sastojakInput.removeAt(index);
                                     });
                                   },
                                   child: Icon(
@@ -340,12 +526,11 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                             ),
                           ),
                           const SizedBox(height: 5),
-
                           Center(
                             child: InkWell(
                               onTap: () {
                                 setState(() {
-                                  sastojakInputList.add(TextEditingController());
+                                  sastojakInput.add(TextEditingController());
                                 });
                               },
                               child: Icon(
@@ -367,12 +552,11 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                             shrinkWrap: true,
                             primary: false,
                             separatorBuilder: (context, index) => const SizedBox(height: 20),
-                            itemCount: korakInputList.length,
+                            itemCount: korakInput.length,
                             itemBuilder: (context, index) => Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Container(
-                                  // padding: EdgeInsets.all(15),
                                   height: 35,
                                   width: 35,
                                   decoration: BoxDecoration(
@@ -389,17 +573,27 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                                   ),
                                 ),
                                 InputField(
-                                  isPadding: false,
+                                  isMargin: false,
                                   medijakveri: medijakveri,
                                   hintText: "Korak",
                                   inputAction: TextInputAction.next,
                                   inputType: TextInputType.text,
                                   obscureText: false,
-                                  validator: (value) {},
-                                  onSaved: (_) {},
+                                  validator: (value) {
+                                    if (imeNode.hasFocus || opisNode.hasFocus || brOsobaNode.hasFocus || vrPripremeNode.hasFocus) {
+                                      return null;
+                                    }
+                                    if (value!.trim().isEmpty) {
+                                      return 'Molimo Vas da unesete polje';
+                                    }
+                                  },
+                                  onSaved: (value) {
+                                    koraci.add(value!);
+                                  },
                                   sirina: 0.65,
                                   borderRadijus: 10,
-                                  controller: korakInputList[index],
+                                  controller: korakInput[index],
+                                  focusNode: korakFokus[index],
                                 ),
                                 InkWell(
                                   onTap: () {
@@ -407,9 +601,9 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                                       return;
                                     }
                                     setState(() {
-                                      korakInputList[index].clear();
-                                      korakInputList[index].dispose();
-                                      korakInputList.removeAt(index);
+                                      korakInput[index].clear();
+                                      korakInput[index].dispose();
+                                      korakInput.removeAt(index);
                                     });
                                   },
                                   child: Icon(
@@ -426,7 +620,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                             child: InkWell(
                               onTap: () {
                                 setState(() {
-                                  korakInputList.add(TextEditingController());
+                                  korakInput.add(TextEditingController());
                                 });
                               },
                               child: Icon(
@@ -468,7 +662,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                                 return tag.name;
                               },
                               maxSelectedItems: 5,
-                              clearSearchFieldOnSelect: false,
+                              clearSearchFieldOnSelect: true,
                               searchFieldTextStyle: Theme.of(context).textTheme.headline4,
                               itemsVisibility: ShowedItemsVisibility.onType,
                               showSelectAllButton: false,
@@ -504,12 +698,9 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                                   ),
                                 );
                               },
-                              clearAllButton: InkWell(
-                                onTap: () {},
-                                child: Text(
-                                  'Obrišite sve',
-                                  style: Theme.of(context).textTheme.headline4,
-                                ),
+                              clearAllButton: Text(
+                                'Obrišite sve',
+                                style: Theme.of(context).textTheme.headline4,
                               ),
                               searchFieldBoxDecoration: BoxDecoration(
                                 color: Colors.white,
@@ -541,12 +732,22 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                                   borderRadius: BorderRadius.circular(10),
                                   boxShadow: null,
                                 ),
-                                child: Text(tag.name),
+                                child: Text(
+                                  tag.name,
+                                  style: Theme.of(context).textTheme.headline4,
+                                ),
                               ),
                               onItemAdded: (item) {
-                                tagovi.add(
-                                  Tag(name: item.name),
-                                );
+                                tagovi.add(Tag(name: item.name));
+                                setState(() {
+                                  tagValidator = false;
+                                });
+                              },
+                              onItemRemoved: (item) {
+                                tagovi.removeWhere((element) => element.name == item.name);
+                              },
+                              onTapClearAll: () {
+                                tagovi.clear();
                               },
                               showedItemsBoxDecoration: const BoxDecoration(
                                 color: Color(0xFFFFEEEE),
@@ -561,6 +762,14 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                               ),
                             ),
                           ),
+                          if (tagValidator)
+                            Container(
+                              margin: const EdgeInsets.only(left: 15, top: 10),
+                              child: Text(
+                                'Molimo Vas izaberite bar jedan tag',
+                                style: Theme.of(context).textTheme.headline5!.copyWith(color: Colors.red),
+                              ),
+                            ),
 
                           const SizedBox(height: 20),
                         ],

@@ -19,8 +19,10 @@ class InputField extends StatelessWidget {
   final double sirina;
   final double visina;
   final FocusNode? focusNode;
-  final bool isPadding;
+  final bool isMargin;
   final TextEditingController? controller;
+  final double? hintTextSize;
+  final TextStyle? errorStyle;
   const InputField({
     required this.medijakveri,
     this.label,
@@ -40,14 +42,16 @@ class InputField extends StatelessWidget {
     this.sirina = 1,
     this.visina = 10,
     this.controller,
-    required this.isPadding,
+    required this.isMargin,
+    this.hintTextSize,
+    this.errorStyle,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: medijakveri.size.width * sirina,
-      margin: isPadding ? EdgeInsets.only(bottom: (medijakveri.size.height - medijakveri.padding.top) * 0.025) : EdgeInsets.zero,
+      margin: isMargin ? EdgeInsets.only(bottom: (medijakveri.size.height - medijakveri.padding.top) * 0.025) : EdgeInsets.zero,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -75,10 +79,13 @@ class InputField extends StatelessWidget {
             initialValue: initalValue,
             textAlignVertical: TextAlignVertical.center,
             decoration: InputDecoration(
-              contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: visina),
+              errorMaxLines: 2,
+              errorStyle: errorStyle,
+              contentPadding: EdgeInsets.only(left: 15, bottom: visina, top: visina),
               hintText: hintText,
               hintStyle: Theme.of(context).textTheme.headline4?.copyWith(
                     color: Colors.grey,
+                    fontSize: hintTextSize ?? 16,
                   ),
               filled: true,
               fillColor: Colors.white,

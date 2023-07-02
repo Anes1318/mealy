@@ -102,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       InputField(
                         isLabel: true,
-                        isPadding: true,
+                        isMargin: true,
                         visina: 20,
                         medijakveri: medijakveri,
                         label: 'Email',

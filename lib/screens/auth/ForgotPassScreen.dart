@@ -29,7 +29,7 @@ class _ForgotPassScreenState extends State<ForgotPassScreen> {
               const SizedBox(height: 110),
               InputField(
                 isLabel: true,
-                isPadding: true,
+                isMargin: true,
                 visina: 20,
                 medijakveri: medijakveri,
                 label: 'Email',

@@ -34,9 +34,10 @@ dependencies:
     iconsax: ^0.0.8
     firebase_core: ^2.13.1
     firebase_auth: ^4.6.2
+    firebase_storage: ^11.2.4
+    cloud_firestore: ^4.8.0
     flutter_svg: ^2.0.3
     provider: ^6.0.5
-    cloud_firestore: ^4.8.0
     multiple_search_selection: ^2.5.3
     image_picker: ^1.0.0
     path_provider: ^2.0.15

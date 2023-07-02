@@ -13,6 +13,7 @@ class Recept {
   final List<String> koraci;
   final List<Tag> tagovi;
   final File? slika;
+  final DateTime created_at;
 
   Recept({
     required this.ime,
@@ -24,5 +25,6 @@ class Recept {
     required this.koraci,
     required this.tagovi,
     this.slika,
+    required this.created_at,
   });
 }
