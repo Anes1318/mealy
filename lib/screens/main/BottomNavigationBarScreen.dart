@@ -35,6 +35,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
     final medijakveri = MediaQuery.of(context);
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       body: Container(
         margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.07),
         child: _pages[_selectedIndex],

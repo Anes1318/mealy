@@ -1,12 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+// screens
+import 'package:mealy/screens/auth/RegisterScreen.dart';
+import 'package:mealy/screens/auth/ForgotPassScreen.dart';
+// components
 import 'package:mealy/components/Button.dart';
 import 'package:mealy/components/InputField.dart';
 import 'package:mealy/components/metode.dart';
-import 'package:mealy/screens/auth/ForgotPassScreen.dart';
-import 'package:mealy/screens/auth/RegisterScreen.dart';
-import 'package:mealy/screens/main/BottomNavigationBarScreen.dart';
 
 class LoginScreen extends StatefulWidget {
   static const String routeName = '/LoginScreen';
@@ -63,6 +64,19 @@ class _LoginScreenState extends State<LoginScreen> {
 
       Metode.showErrorDialog(
         message: Metode.getMessageFromErrorCode(error),
+        context: context,
+        naslov: 'Greška',
+        button1Text: 'Zatvori',
+        button1Fun: () => {Navigator.pop(context)},
+        isButton2: false,
+      );
+    } catch (error) {
+      setState(() {
+        isLoading = false;
+      });
+
+      Metode.showErrorDialog(
+        message: 'Došlo je do greške',
         context: context,
         naslov: 'Greška',
         button1Text: 'Zatvori',

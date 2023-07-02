@@ -4,36 +4,51 @@ import 'package:iconsax/iconsax.dart';
 
 class MealCard extends StatelessWidget {
   final MediaQueryData medijakveri;
+  final String ime;
+  final String opis;
+  final String brOsoba;
+  final String vrPripreme;
   final String tezina;
-  const MealCard({required this.medijakveri, required this.tezina});
+  final String imageUrl;
+
+  const MealCard({
+    required this.medijakveri,
+    required this.ime,
+    required this.opis,
+    required this.brOsoba,
+    required this.vrPripreme,
+    required this.tezina,
+    required this.imageUrl,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: medijakveri.size.width,
+      width: 600,
       height: 130,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+        margin: const EdgeInsets.only(left: 15, top: 15, bottom: 15, right: 5),
         child: Row(
           children: [
-            Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.secondary,
-                borderRadius: BorderRadius.circular(20),
+            ClipRRect(
+              child: Image.network(
+                imageUrl,
+                height: 100,
+                width: 100,
               ),
+              borderRadius: BorderRadius.circular(20),
             ),
-            SizedBox(width: 15),
+            const SizedBox(width: 10),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
                       width: medijakveri.size.width * 0.5, // da bi row uzeo sto vise mesta i razdvojio naziv i srce
@@ -41,7 +56,7 @@ class MealCard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Naziv',
+                            ime,
                             style: Theme.of(context).textTheme.headline3,
                           ),
                           GestureDetector(
@@ -57,9 +72,9 @@ class MealCard extends StatelessWidget {
                       ),
                     ),
                     Container(
-                      width: medijakveri.size.width * 0.5,
+                      width: medijakveri.size.width * 0.4,
                       child: Text(
-                        'Go back to where it all began with the classic ccheese and tomato base......aldfkjalsdkfjsaldakfjladskfjldaskfjadlskfjasdlf...',
+                        opis.length > 60 ? opis.substring(1, 60) : opis,
                         style: Theme.of(context).textTheme.headline5,
                       ),
                     ),
@@ -67,6 +82,7 @@ class MealCard extends StatelessWidget {
                 ),
                 Container(
                   width: medijakveri.size.width * 0.5,
+                  // width: 150,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -77,9 +93,9 @@ class MealCard extends StatelessWidget {
                             size: 19,
                             color: Theme.of(context).primaryColor,
                           ),
-                          SizedBox(width: 3),
+                          const SizedBox(width: 3),
                           Text(
-                            '60 min',
+                            '$vrPripreme min',
                             style: Theme.of(context).textTheme.headline5,
                           ),
                         ],
@@ -98,22 +114,19 @@ class MealCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      Container(
-                        width: 75,
-                        child: Row(
-                          children: [
-                            SvgPicture.asset(
-                              'assets/icons/${tezina}Unselected.svg',
-                              width: 19,
-                              height: 19,
-                            ),
-                            SizedBox(width: 3),
-                            Text(
-                              tezina,
-                              style: Theme.of(context).textTheme.headline5,
-                            ),
-                          ],
-                        ),
+                      Row(
+                        children: [
+                          SvgPicture.asset(
+                            'assets/icons/${tezina}Unselected.svg',
+                            width: 19,
+                            height: 19,
+                          ),
+                          const SizedBox(width: 3),
+                          Text(
+                            tezina == 'Tesko' ? 'Teško' : tezina,
+                            style: Theme.of(context).textTheme.headline5,
+                          ),
+                        ],
                       ),
                     ],
                   ),

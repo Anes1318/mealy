@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
@@ -17,7 +18,7 @@ class _PocetnaScreenState extends State<PocetnaScreen> {
   @override
   Widget build(BuildContext context) {
     final medijakveri = MediaQuery.of(context);
-    String tezina = 'Tesko';
+    final recepti = FirebaseFirestore.instance.collection('recepti').get();
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: SingleChildScrollView(
@@ -70,15 +71,51 @@ class _PocetnaScreenState extends State<PocetnaScreen> {
               ],
             ),
             const SizedBox(height: 10),
-            Container(
-              height: (medijakveri.size.height - medijakveri.padding.top) * 0.7,
-              child: ListView.separated(
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                itemCount: 6,
-                separatorBuilder: ((context, index) => const SizedBox(height: 15)),
-                itemBuilder: (context, index) => MealCard(medijakveri: medijakveri, tezina: tezina),
-              ),
-            )
+            FutureBuilder(
+              future: recepti,
+              builder: ((context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Container(
+                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.7,
+                    child: const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                }
+
+                final receptDocs = snapshot.data!.docs;
+                if (receptDocs.isEmpty) {
+                  return Container(
+                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.7,
+                    child: Center(
+                      child: Text(
+                        'Nema recepata',
+                        style: Theme.of(context).textTheme.headline2,
+                      ),
+                    ),
+                  );
+                }
+
+                return Container(
+                  height: medijakveri.size.height * 0.7,
+                  child: ListView.separated(
+                    padding: EdgeInsets.symmetric(vertical: 30),
+                    separatorBuilder: ((context, index) => const SizedBox(height: 15)),
+                    itemCount: receptDocs.length,
+                    itemBuilder: (context, index) => MealCard(
+                      medijakveri: medijakveri,
+                      ime: receptDocs[index].data()['recept']['ime'],
+                      opis: receptDocs[index].data()['recept']['opis'],
+                      brOsoba: receptDocs[index].data()['recept']['brOsoba'],
+                      vrPripreme: receptDocs[index].data()['recept']['vrPripreme'],
+                      tezina: receptDocs[index].data()['recept']['tezina'],
+                      imageUrl: receptDocs[index].data()['imageUrl'],
+                    ),
+                  ),
+                );
+              }),
+            ),
+            // receptDocs[0].data()['recept']['ime']
           ],
         ),
       ),

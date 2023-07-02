@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:mealy/models/tag.dart';
 import 'package:mealy/models/tezina.dart';
 
 class Recept {
@@ -11,9 +10,8 @@ class Recept {
   final Tezina tezina;
   final List<String> sastojci;
   final List<String> koraci;
-  final List<Tag> tagovi;
+  final List<String> tagovi;
   final File? slika;
-  final DateTime created_at;
 
   Recept({
     required this.ime,
@@ -25,6 +23,5 @@ class Recept {
     required this.koraci,
     required this.tagovi,
     this.slika,
-    required this.created_at,
   });
 }

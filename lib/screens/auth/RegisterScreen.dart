@@ -99,6 +99,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
         button1Fun: () => {Navigator.pop(context)},
         isButton2: false,
       );
+    } catch (error) {
+      setState(() {
+        isLoading = false;
+      });
+
+      Metode.showErrorDialog(
+        message: 'Došlo je do greške',
+        context: context,
+        naslov: 'Greška',
+        button1Text: 'Zatvori',
+        button1Fun: () => {Navigator.pop(context)},
+        isButton2: false,
+      );
     }
   }
 
