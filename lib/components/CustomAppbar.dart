@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:iconsax/iconsax.dart';
 
 class CustomAppBar extends StatelessWidget {
   final String pageTitle;
   final IconData? prvaIkonica;
   final double? prvaIkonicaSize;
-  final Function? funkcija;
+  final Function? prvaIkonicaFunkcija;
   final IconData? drugaIkonica;
-  final Function? funkcija2;
+  final double? drugaIkonicaSize;
+  final Function? drugaIkonicaFunkcija;
   final bool isCenter;
 
-  const CustomAppBar({
+  CustomAppBar({
     required this.pageTitle,
     this.prvaIkonica,
     this.prvaIkonicaSize,
-    this.funkcija,
+    this.prvaIkonicaFunkcija,
     this.drugaIkonica,
-    this.funkcija2,
+    this.drugaIkonicaSize,
+    this.drugaIkonicaFunkcija,
     required this.isCenter,
   });
 
@@ -32,28 +33,31 @@ class CustomAppBar extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      IconButton(
-                        padding: EdgeInsets.zero,
-                        onPressed: () => funkcija!(),
-                        icon: Icon(
-                          prvaIkonica,
-                          size: prvaIkonicaSize,
-                        ),
+                  InkWell(
+                    onTap: () => prvaIkonicaFunkcija!(),
+                    child: Icon(
+                      prvaIkonica,
+                      size: prvaIkonicaSize ?? 34,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                  Container(
+                    constraints: BoxConstraints(
+                      maxWidth: medijakveri.size.width * 0.65,
+                    ),
+                    child: FittedBox(
+                      child: Text(
+                        pageTitle,
+                        style: Theme.of(context).textTheme.headline2,
                       ),
-                      SizedBox(width: 5),
-                    ],
+                    ),
                   ),
-                  Text(
-                    pageTitle,
-                    style: Theme.of(context).textTheme.headline2,
-                  ),
-                  IconButton(
-                    onPressed: () => funkcija2!(),
-                    icon: Icon(
+                  InkWell(
+                    onTap: () => drugaIkonicaFunkcija!(),
+                    child: Icon(
                       drugaIkonica,
-                      size: 34,
+                      size: drugaIkonicaSize ?? 34,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
                 ],
@@ -75,10 +79,11 @@ class CustomAppBar extends StatelessWidget {
                         width: 25,
                         child: IconButton(
                           padding: EdgeInsets.zero,
-                          onPressed: () => funkcija!(),
+                          onPressed: () => prvaIkonicaFunkcija!(),
                           icon: Icon(
                             prvaIkonica,
                             size: prvaIkonicaSize,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                         ),
                       ),
@@ -91,7 +96,7 @@ class CustomAppBar extends StatelessWidget {
                 ),
                 if (drugaIkonica != null)
                   InkWell(
-                    onTap: () => funkcija2!(),
+                    onTap: () => drugaIkonicaFunkcija!(),
                     child: Icon(
                       drugaIkonica,
                       size: 34,

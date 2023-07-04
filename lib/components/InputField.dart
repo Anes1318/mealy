@@ -14,7 +14,8 @@ class InputField extends StatelessWidget {
   final Function(String?)? onSaved;
   final Function(String?)? onChanged;
   final Function(String?)? onFieldSubmitted;
-  final int? brLinija;
+  final int? brMinLinija;
+  final int? brMaxLinija;
   final double borderRadijus;
   final double sirina;
   final double visina;
@@ -23,6 +24,7 @@ class InputField extends StatelessWidget {
   final TextEditingController? controller;
   final double? hintTextSize;
   final TextStyle? errorStyle;
+  final TextCapitalization? kapitulacija;
   const InputField({
     required this.medijakveri,
     this.label,
@@ -37,7 +39,8 @@ class InputField extends StatelessWidget {
     required this.onSaved,
     this.onFieldSubmitted,
     this.onChanged,
-    this.brLinija = 1,
+    this.brMinLinija = 1,
+    this.brMaxLinija = 1,
     this.borderRadijus = 20,
     this.sirina = 1,
     this.visina = 10,
@@ -45,6 +48,7 @@ class InputField extends StatelessWidget {
     required this.isMargin,
     this.hintTextSize,
     this.errorStyle,
+    this.kapitulacija,
   });
 
   @override
@@ -77,6 +81,7 @@ class InputField extends StatelessWidget {
             onSaved: onSaved,
             onFieldSubmitted: onFieldSubmitted,
             initialValue: initalValue,
+            textCapitalization: kapitulacija ?? TextCapitalization.none,
             textAlignVertical: TextAlignVertical.center,
             decoration: InputDecoration(
               errorMaxLines: 2,
@@ -98,8 +103,8 @@ class InputField extends StatelessWidget {
                 borderRadius: BorderRadius.circular(borderRadijus),
               ),
             ),
-            minLines: brLinija,
-            maxLines: brLinija,
+            minLines: brMinLinija,
+            maxLines: brMaxLinija,
           ),
         ],
       ),

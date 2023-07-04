@@ -9,6 +9,8 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mealy/components/Button.dart';
 import 'package:mealy/components/metode.dart';
+import 'package:mealy/screens/main/BottomNavigationBarScreen.dart';
+import 'package:mealy/screens/main/PocetnaScreen.dart';
 import 'package:multiple_search_selection/multiple_search_selection.dart';
 // komponente
 import 'package:mealy/components/InputField.dart';
@@ -16,8 +18,11 @@ import '../../models/tezina.dart';
 
 class DodajScreen extends StatefulWidget {
   static const String routeName = '/DodajScreen';
-
-  const DodajScreen({super.key});
+  double? tastaturaHeight;
+  DodajScreen({
+    super.key,
+    this.tastaturaHeight,
+  });
 
   @override
   State<DodajScreen> createState() => _DodajScreenState();
@@ -26,7 +31,7 @@ class DodajScreen extends StatefulWidget {
 class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStateMixin {
   final _form = GlobalKey<FormState>();
 
-  final imeNode = FocusNode();
+  final nazivNode = FocusNode();
   final opisNode = FocusNode();
   final brOsobaNode = FocusNode();
   final vrPripremeNode = FocusNode();
@@ -35,7 +40,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
   @override
   void dispose() {
     super.dispose();
-    imeNode.dispose();
+    nazivNode.dispose();
     opisNode.dispose();
     brOsobaNode.dispose();
     vrPripremeNode.dispose();
@@ -74,7 +79,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
     }
     CroppedFile? croppedImg = await ImageCropper().cropImage(
       sourcePath: imageFile.path,
-      aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+      aspectRatio: const CropAspectRatio(ratioX: 16, ratioY: 9),
     );
     if (croppedImg == null) {
       return;
@@ -90,7 +95,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
   bool isLoading = false;
 
   Map<String, dynamic> data = {
-    'ime': '',
+    'naziv': '',
     'opis': '',
     'brOsoba': 0,
     'vrPripreme': 0,
@@ -170,7 +175,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
       await FirebaseFirestore.instance.collection('recepti').add({
         'userId': FirebaseAuth.instance.currentUser!.uid,
         'recept': {
-          'ime': data['ime'],
+          'naziv': data['naziv'],
           'opis': data['opis'],
           'brOsoba': data['brOsoba'],
           'vrPripreme': data['vrPripreme'],
@@ -178,6 +183,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
           'sastojci': sastojci,
           'koraci': koraci,
           'tagovi': tagovi,
+          'ratings': [0],
         }
       }).then((value) async {
         final uploadedImage = await FirebaseStorage.instance.ref().child('receptImages').child('${value.id}.jpg').putFile(_storedImage!).then((value) async {
@@ -188,22 +194,24 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
               isLoading = false;
             });
             _storedImage = null;
-            data['ime'] = '';
+            data['naziv'] = '';
             data['opis'] = '';
             data['brOsoba'] = 0;
             data['vrPripreme'] = 0;
             tezina = null;
             strTezina = null;
             sastojci.clear();
-
             koraci.clear();
             tagovi.clear();
+
             _form.currentState!.reset();
 
             sastojakFokus = [FocusNode()];
             sastojakInput = [TextEditingController()];
             korakFokus = [FocusNode()];
             korakInput = [TextEditingController()];
+
+            Navigator.pushReplacementNamed(context, BottomNavigationBarScreen.routeName);
           });
         });
       });
@@ -211,10 +219,11 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
       setState(() {
         isLoading = false;
       });
+
       Metode.showErrorDialog(
         context: context,
         naslov: 'Došlo je do greške',
-        button1Text: 'Ok',
+        button1Text: 'Zatvori',
         button1Fun: () {
           Navigator.pop(context);
         },
@@ -297,7 +306,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                             },
                             child: Container(
                               width: medijakveri.size.width,
-                              height: 195,
+                              height: 200,
                               decoration: BoxDecoration(
                                 color: Theme.of(context).colorScheme.secondary,
                                 borderRadius: BorderRadius.circular(20),
@@ -308,8 +317,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                                   child: _storedImage != null
                                       ? Image.file(
                                           _storedImage!,
-                                          fit: BoxFit.cover,
-                                          width: double.infinity,
+                                          fit: BoxFit.fill,
                                         )
                                       : Text(
                                           'Dodajte sliku',
@@ -350,28 +358,31 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
 
                           const SizedBox(height: 10),
                           InputField(
-                            focusNode: imeNode,
+                            focusNode: nazivNode,
                             isMargin: false,
                             medijakveri: medijakveri,
                             isLabel: false,
-                            hintText: 'Ime jela',
+                            hintText: 'Naziv recepta',
                             inputAction: TextInputAction.next,
                             inputType: TextInputType.text,
+                            kapitulacija: TextCapitalization.sentences,
                             obscureText: false,
                             onChanged: (_) => _form.currentState!.validate(),
                             validator: (value) {
                               if (opisNode.hasFocus || brOsobaNode.hasFocus || vrPripremeNode.hasFocus) {
                                 return null;
                               } else if (value!.isEmpty || value.trim().isEmpty) {
-                                return 'Molimo Vas da unesete ime jela';
+                                return 'Molimo Vas da unesete naziv recepta';
                               } else if (value.length < 2) {
-                                return 'Ime jela mora biti duže';
+                                return 'Naziv recepta mora biti duže';
+                              } else if (value.length > 45) {
+                                return 'Naziv recepta mora biti kraće';
                               } else if (value.contains(RegExp(r'[0-9]'))) {
-                                return 'Ime jela smije sadržati samo velika i mala slova i simbole';
+                                return 'Naziv recepta smije sadržati samo velika i mala slova i simbole';
                               }
                             },
                             onSaved: (value) {
-                              data['ime'] = value!.trim();
+                              data['naziv'] = value!.trim();
                             },
                             borderRadijus: 10,
                           ),
@@ -385,9 +396,10 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                             inputAction: TextInputAction.next,
                             inputType: TextInputType.text,
                             obscureText: false,
+                            kapitulacija: TextCapitalization.sentences,
                             onChanged: (_) => _form.currentState!.validate(),
                             validator: (value) {
-                              if (imeNode.hasFocus || brOsobaNode.hasFocus || vrPripremeNode.hasFocus) {
+                              if (nazivNode.hasFocus || brOsobaNode.hasFocus || vrPripremeNode.hasFocus) {
                                 return null;
                               } else if (value!.isEmpty || value.trim().isEmpty) {
                                 return 'Molimo Vas da unesete opis jela';
@@ -399,7 +411,8 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                               data['opis'] = value!.trim();
                             },
                             borderRadijus: 10,
-                            brLinija: 4,
+                            brMaxLinija: 4,
+                            brMinLinija: 4,
                           ),
                           const SizedBox(height: 20),
                           Row(
@@ -414,10 +427,11 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                                 inputAction: TextInputAction.next,
                                 inputType: TextInputType.number,
                                 obscureText: false,
+                                kapitulacija: TextCapitalization.sentences,
                                 errorStyle: Theme.of(context).textTheme.headline5!.copyWith(color: Colors.red),
                                 onChanged: (_) => _form.currentState!.validate(),
                                 validator: (value) {
-                                  if (imeNode.hasFocus || opisNode.hasFocus || vrPripremeNode.hasFocus) {
+                                  if (nazivNode.hasFocus || opisNode.hasFocus || vrPripremeNode.hasFocus) {
                                     return null;
                                   } else if (value!.isEmpty || value.trim().isEmpty) {
                                     return 'Molimo Vas da unesete polje';
@@ -436,15 +450,16 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                                 isMargin: false,
                                 medijakveri: medijakveri,
                                 isLabel: false,
-                                hintText: 'Vrijeme pripreme (min)',
+                                hintText: 'Vrijeme pripreme (MIN)',
                                 inputAction: TextInputAction.next,
                                 inputType: TextInputType.number,
                                 obscureText: false,
+                                kapitulacija: TextCapitalization.sentences,
                                 hintTextSize: 14,
                                 errorStyle: Theme.of(context).textTheme.headline5!.copyWith(color: Colors.red),
                                 onChanged: (_) => _form.currentState!.validate(),
                                 validator: (value) {
-                                  if (imeNode.hasFocus || opisNode.hasFocus || brOsobaNode.hasFocus) {
+                                  if (nazivNode.hasFocus || opisNode.hasFocus || brOsobaNode.hasFocus) {
                                     return null;
                                   } else if (value!.isEmpty || value.trim().isEmpty) {
                                     return 'Molimo Vas da unesete polje';
@@ -579,6 +594,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                                   controller: sastojakInput[index],
                                   focusNode: sastojakFokus[index],
                                   obscureText: false,
+                                  kapitulacija: TextCapitalization.sentences,
                                   onFieldSubmitted: (_) {
                                     if (index + 1 < sastojakFokus.length) {
                                       FocusScope.of(context).requestFocus(sastojakFokus[index + 1]);
@@ -587,7 +603,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                                     }
                                   },
                                   validator: (value) {
-                                    if (imeNode.hasFocus || opisNode.hasFocus || brOsobaNode.hasFocus || vrPripremeNode.hasFocus) {
+                                    if (nazivNode.hasFocus || opisNode.hasFocus || brOsobaNode.hasFocus || vrPripremeNode.hasFocus) {
                                       return null;
                                     }
 
@@ -624,6 +640,23 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                             child: InkWell(
                               onTap: () {
                                 setState(() {
+                                  if (sastojakInput.length > 98) {
+                                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'Ne možete dodati više sastojaka.',
+                                          style: Theme.of(context).textTheme.headline4,
+                                        ),
+                                        duration: const Duration(milliseconds: 900),
+                                        behavior: SnackBarBehavior.floating,
+                                        backgroundColor: Theme.of(context).colorScheme.secondary,
+                                        elevation: 4,
+                                      ),
+                                    );
+                                    return;
+                                  }
+
                                   sastojakInput.add(TextEditingController());
                                   sastojakFokus.add(FocusNode());
                                 });
@@ -638,6 +671,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                           //
                           //
                           // KORACI
+
                           const SizedBox(height: 15),
                           Text(
                             'Koraci',
@@ -668,12 +702,16 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                                   ),
                                 ),
                                 InputField(
+                                  controller: korakInput[index],
+                                  focusNode: korakFokus[index],
+                                  brMaxLinija: 3,
                                   isMargin: false,
                                   medijakveri: medijakveri,
                                   hintText: "Korak",
                                   inputAction: TextInputAction.next,
                                   inputType: TextInputType.text,
                                   obscureText: false,
+                                  kapitulacija: TextCapitalization.sentences,
                                   onFieldSubmitted: (_) {
                                     if (index + 1 < korakFokus.length) {
                                       FocusScope.of(context).requestFocus(korakFokus[index + 1]);
@@ -682,7 +720,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                                     }
                                   },
                                   validator: (value) {
-                                    if (imeNode.hasFocus || opisNode.hasFocus || brOsobaNode.hasFocus || vrPripremeNode.hasFocus) {
+                                    if (nazivNode.hasFocus || opisNode.hasFocus || brOsobaNode.hasFocus || vrPripremeNode.hasFocus) {
                                       return null;
                                     }
                                     if (value!.trim().isEmpty) {
@@ -694,8 +732,6 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                                   },
                                   sirina: 0.65,
                                   borderRadijus: 10,
-                                  controller: korakInput[index],
-                                  focusNode: korakFokus[index],
                                 ),
                                 InkWell(
                                   onTap: () {
@@ -722,6 +758,22 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                             child: InkWell(
                               onTap: () {
                                 setState(() {
+                                  if (korakInput.length > 98) {
+                                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'Ne možete dodati više koraka.',
+                                          style: Theme.of(context).textTheme.headline4,
+                                        ),
+                                        duration: const Duration(milliseconds: 900),
+                                        behavior: SnackBarBehavior.floating,
+                                        backgroundColor: Theme.of(context).colorScheme.secondary,
+                                        elevation: 4,
+                                      ),
+                                    );
+                                    return;
+                                  }
                                   korakInput.add(TextEditingController());
                                   korakFokus.add(FocusNode());
                                 });
@@ -803,9 +855,11 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                                   ),
                                 );
                               },
-                              clearAllButton: Text(
-                                'Obrišite sve',
-                                style: Theme.of(context).textTheme.headline4,
+                              clearAllButton: GestureDetector(
+                                child: Text(
+                                  'Obrišite sve',
+                                  style: Theme.of(context).textTheme.headline4,
+                                ),
                               ),
                               searchFieldBoxDecoration: BoxDecoration(
                                 color: Colors.white,
@@ -825,7 +879,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 border: OutlineInputBorder(
-                                  borderSide: const BorderSide(color: Colors.white),
+                                  borderSide: const BorderSide(color: Colors.transparent),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                               ),
@@ -863,7 +917,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Container(
-                                  padding: EdgeInsets.all(10),
+                                  padding: const EdgeInsets.all(10),
                                   child: Text(
                                     'Ne možemo da nađemo taj tag',
                                     style: Theme.of(context).textTheme.headline4,
@@ -881,7 +935,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                                 style: Theme.of(context).textTheme.headline5!.copyWith(color: Colors.red),
                               ),
                             ),
-                          const SizedBox(height: 30),
+                          SizedBox(height: widget.tastaturaHeight!),
                         ],
                       ),
                     ),

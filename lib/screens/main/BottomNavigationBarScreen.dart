@@ -15,7 +15,7 @@ class BottomNavigationBarScreen extends StatefulWidget {
 }
 
 class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
-  final List<Widget> _pages = const [
+  final List<Widget> _screens = [
     PocetnaScreen(),
     DodajScreen(),
     OmiljeniScreen(),
@@ -33,12 +33,17 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
   @override
   Widget build(BuildContext context) {
     final medijakveri = MediaQuery.of(context);
+    double tastaturaHeight = medijakveri.viewInsets.bottom;
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: Container(
         margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.07),
-        child: _pages[_selectedIndex],
+        child: _selectedIndex == 1
+            ? DodajScreen(
+                tastaturaHeight: tastaturaHeight,
+              )
+            : _screens[_selectedIndex],
       ),
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(

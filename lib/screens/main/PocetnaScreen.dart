@@ -24,7 +24,7 @@ class _PocetnaScreenState extends State<PocetnaScreen> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            const CustomAppBar(pageTitle: 'Početna', isCenter: false),
+            CustomAppBar(pageTitle: 'Početna', isCenter: false),
             const SizedBox(height: 30),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -99,23 +99,25 @@ class _PocetnaScreenState extends State<PocetnaScreen> {
                 return Container(
                   height: medijakveri.size.height * 0.7,
                   child: ListView.separated(
-                    padding: EdgeInsets.symmetric(vertical: 30),
+                    padding: const EdgeInsets.symmetric(vertical: 15),
                     separatorBuilder: ((context, index) => const SizedBox(height: 15)),
                     itemCount: receptDocs.length,
                     itemBuilder: (context, index) => MealCard(
                       medijakveri: medijakveri,
-                      ime: receptDocs[index].data()['recept']['ime'],
+                      naziv: receptDocs[index].data()['recept']['naziv'],
                       opis: receptDocs[index].data()['recept']['opis'],
                       brOsoba: receptDocs[index].data()['recept']['brOsoba'],
                       vrPripreme: receptDocs[index].data()['recept']['vrPripreme'],
                       tezina: receptDocs[index].data()['recept']['tezina'],
                       imageUrl: receptDocs[index].data()['imageUrl'],
+                      ratings: receptDocs[index].data()['recept']['ratings'],
+                      sastojci: receptDocs[index].data()['recept']['sastojci'],
+                      koraci: receptDocs[index].data()['recept']['koraci'],
                     ),
                   ),
                 );
               }),
             ),
-            // receptDocs[0].data()['recept']['ime']
           ],
         ),
       ),

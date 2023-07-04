@@ -13,6 +13,7 @@ import 'package:mealy/screens/main/DodajScreen.dart';
 import 'package:mealy/screens/main/NalogScreen.dart';
 import 'package:mealy/screens/main/OmiljeniScreen.dart';
 import 'package:mealy/screens/main/PocetnaScreen.dart';
+import 'package:mealy/screens/main/ReceptViewScreen.dart';
 
 // components
 
@@ -21,18 +22,7 @@ Future main() async {
   await Firebase.initializeApp();
   await FirebaseAppCheck.instance.activate(
     webRecaptchaSiteKey: 'recaptcha-v3-site-key',
-    // Default provider for Android is the Play Integrity provider. You can use the "AndroidProvider" enum to choose
-    // your preferred provider. Choose from:
-    // 1. Debug provider
-    // 2. Safety Net provider
-    // 3. Play Integrity provider
     androidProvider: AndroidProvider.debug,
-    // Default provider for iOS/macOS is the Device Check provider. You can use the "AppleProvider" enum to choose
-    // your preferred provider. Choose from:
-    // 1. Debug provider
-    // 2. Device Check provider
-    // 3. App Attest provider
-    // 4. App Attest provider with fallback to Device Check provider (App Attest provider is only available on iOS 14.0+, macOS 14.0+)
     appleProvider: AppleProvider.appAttest,
   );
   runApp(const MyApp());
@@ -90,16 +80,17 @@ class MyApp extends StatelessWidget {
         ),
         title: 'Mealy',
         routes: {
-          LoginScreen.routeName: (context) => LoginScreen(),
-          RegisterScreen.routeName: (context) => RegisterScreen(),
-          ForgotPassScreen.routeName: (context) => ForgotPassScreen(),
-          BottomNavigationBarScreen.routeName: (context) => BottomNavigationBarScreen(),
-          PocetnaScreen.routeName: (context) => PocetnaScreen(),
+          LoginScreen.routeName: (context) => const LoginScreen(),
+          RegisterScreen.routeName: (context) => const RegisterScreen(),
+          ForgotPassScreen.routeName: (context) => const ForgotPassScreen(),
+          BottomNavigationBarScreen.routeName: (context) => const BottomNavigationBarScreen(),
+          PocetnaScreen.routeName: (context) => const PocetnaScreen(),
           DodajScreen.routeName: (context) => DodajScreen(),
-          OmiljeniScreen.routeName: (context) => OmiljeniScreen(),
-          NalogScreen.routeName: (context) => NalogScreen(),
+          OmiljeniScreen.routeName: (context) => const OmiljeniScreen(),
+          NalogScreen.routeName: (context) => const NalogScreen(),
+          ReceptViewScreen.routeName: (context) => const ReceptViewScreen(),
         },
-        home: snapshot.data == null ? DobrodosliScreen() : BottomNavigationBarScreen(),
+        home: snapshot.data == null ? const DobrodosliScreen() : const BottomNavigationBarScreen(),
       ),
     );
   }
