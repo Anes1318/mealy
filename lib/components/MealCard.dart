@@ -5,6 +5,7 @@ import 'package:mealy/screens/main/ReceptViewScreen.dart';
 
 class MealCard extends StatelessWidget {
   final MediaQueryData medijakveri;
+  final String userId;
   final String naziv;
   final String opis;
   final String brOsoba;
@@ -17,6 +18,7 @@ class MealCard extends StatelessWidget {
 
   const MealCard({
     required this.medijakveri,
+    required this.userId,
     required this.naziv,
     required this.opis,
     required this.brOsoba,
@@ -47,6 +49,7 @@ class MealCard extends StatelessWidget {
           'ratings': ratings,
           'sastojci': sastojci,
           'koraci': koraci,
+          'userId': userId,
         });
       },
       child: Container(

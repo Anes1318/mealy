@@ -117,7 +117,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       InputField(
                         isLabel: true,
                         isMargin: true,
-                        visina: 20,
+                        visina: 18,
+                        borderRadijus: 10,
                         medijakveri: medijakveri,
                         label: 'Email',
                         focusNode: emailNode,
@@ -168,17 +169,17 @@ class _LoginScreenState extends State<LoginScreen> {
                               _authData['sifra'] = value!;
                             },
                             decoration: InputDecoration(
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
                               hintText: 'Šifra',
                               filled: true,
                               fillColor: Colors.white,
                               enabledBorder: OutlineInputBorder(
                                 borderSide: const BorderSide(color: Colors.white),
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(10),
                               ),
                               border: OutlineInputBorder(
                                 borderSide: const BorderSide(color: Colors.white),
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(10),
                               ),
                               suffixIcon: sifraNode.hasFocus
                                   ? IconButton(

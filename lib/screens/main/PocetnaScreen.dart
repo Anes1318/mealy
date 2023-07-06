@@ -104,6 +104,7 @@ class _PocetnaScreenState extends State<PocetnaScreen> {
                     itemCount: receptDocs.length,
                     itemBuilder: (context, index) => MealCard(
                       medijakveri: medijakveri,
+                      userId: receptDocs[index].data()['userId'],
                       naziv: receptDocs[index].data()['recept']['naziv'],
                       opis: receptDocs[index].data()['recept']['opis'],
                       brOsoba: receptDocs[index].data()['recept']['brOsoba'],

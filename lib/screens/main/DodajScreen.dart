@@ -306,7 +306,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                             },
                             child: Container(
                               width: medijakveri.size.width,
-                              height: 200,
+                              height: medijakveri.size.width * 0.48,
                               decoration: BoxDecoration(
                                 color: Theme.of(context).colorScheme.secondary,
                                 borderRadius: BorderRadius.circular(20),
@@ -318,6 +318,8 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                                       ? Image.file(
                                           _storedImage!,
                                           fit: BoxFit.fill,
+                                          width: medijakveri.size.width,
+                                          height: medijakveri.size.width * 0.48,
                                         )
                                       : Text(
                                           'Dodajte sliku',
@@ -455,7 +457,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                                 inputType: TextInputType.number,
                                 obscureText: false,
                                 kapitulacija: TextCapitalization.sentences,
-                                hintTextSize: 14,
+                                hintTextSize: medijakveri.size.width * 0.035,
                                 errorStyle: Theme.of(context).textTheme.headline5!.copyWith(color: Colors.red),
                                 onChanged: (_) => _form.currentState!.validate(),
                                 validator: (value) {
@@ -936,6 +938,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                               ),
                             ),
                           SizedBox(height: widget.tastaturaHeight!),
+                          const SizedBox(height: 30),
                         ],
                       ),
                     ),

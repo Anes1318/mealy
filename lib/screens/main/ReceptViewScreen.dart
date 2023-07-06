@@ -1,3 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
@@ -15,6 +18,7 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+    final users = FirebaseFirestore.instance.collection('users').get();
 
     double rating = 0;
     for (var element in args['ratings']) {
@@ -155,7 +159,7 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                   //
                   //
                   // OCIJENITE RECEPT
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -209,7 +213,7 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                   //
                   //
                   // SASTOJCI
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 20),
                   Container(
                     width: medijakveri.size.width,
                     padding: const EdgeInsets.all(20),
@@ -234,8 +238,8 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                           itemBuilder: ((context, index) => Row(
                                 children: [
                                   Container(
-                                    height: 15,
-                                    width: 15,
+                                    height: 10,
+                                    width: 10,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       border: Border.all(
@@ -257,7 +261,7 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                   //
                   //
                   // KORACI
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 20),
                   Container(
                     width: medijakveri.size.width,
                     padding: const EdgeInsets.all(20),
@@ -309,7 +313,79 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 40),
+
+                  const SizedBox(height: 20),
+                  FutureBuilder(
+                    future: users,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Container(
+                          height: (medijakveri.size.height - medijakveri.padding.top) * 0.7,
+                          child: const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      }
+
+                      final usersDocs = snapshot.data!.docs;
+                      final user = usersDocs.where((element) => element.data()['userId'] == args['userId']).toList();
+
+                      if (user.isEmpty) {
+                        return Container(
+                          height: (medijakveri.size.height - medijakveri.padding.top) * 0.7,
+                          child: Center(
+                            child: Text(
+                              'Greška',
+                              style: Theme.of(context).textTheme.headline2,
+                            ),
+                          ),
+                        );
+                      }
+                      // TODO: DODATI INKWELL KOJI VODI DO PROFILVIEW PROFILA
+                      return Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Column(
+                          children: [
+                            Text(
+                              'Autor',
+                              style: Theme.of(context).textTheme.headline2,
+                            ),
+                            const SizedBox(height: 5),
+                            Row(
+                              children: [
+                                user[0].data()['imageUrl'] == ''
+                                    ? SvgPicture.asset(
+                                        'assets/icons/Torta.svg',
+                                        height: 70,
+                                        width: 70,
+                                      )
+                                    : ClipRRect(
+                                        borderRadius: BorderRadius.circular(20),
+                                        child: Image.network(
+                                          '${user[0].data()['imageUrl']}',
+                                          height: 70,
+                                          width: 70,
+                                          fit: BoxFit.fill,
+                                        ),
+                                      ),
+                                const SizedBox(width: 10),
+                                Text(
+                                  '${user[0].data()['userName']}',
+                                  style: Theme.of(context).textTheme.headline3,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+
+                  const SizedBox(height: 30),
                 ],
               ),
             ),
