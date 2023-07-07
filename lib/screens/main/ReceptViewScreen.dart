@@ -28,16 +28,61 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
     final medijakveri = MediaQuery.of(context);
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size(0, 100),
-        child: CustomAppBar(
-          pageTitle: '${args['naziv']}',
-          isCenter: true,
-          prvaIkonica: Iconsax.back_square,
-          prvaIkonicaSize: 34,
-          prvaIkonicaFunkcija: () => Navigator.pop(context),
-          drugaIkonica: Iconsax.heart,
-          drugaIkonicaSize: 34,
-        ),
+        preferredSize: Size(0, 600),
+        child: Container(
+            child: SafeArea(
+          child: Container(
+            padding: EdgeInsets.only(top: (medijakveri.size.height - medijakveri.padding.top) * 0.035, bottom: 10),
+            margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.07),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                InkWell(
+                  onTap: () => Navigator.pop(context),
+                  child: Icon(
+                    Iconsax.back_square,
+                    size: 34,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+                Container(
+                  constraints: BoxConstraints(
+                    maxWidth: medijakveri.size.width * 0.65,
+                  ),
+                  child: FittedBox(
+                    child: Text(
+                      args['naziv'],
+                      style: Theme.of(context).textTheme.headline2,
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () async {
+                    if (args['isFav']) {
+                      await FirebaseFirestore.instance.collection('recepti').doc(args['receptId']).update({
+                        'favorites': FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.uid]),
+                      }).then((value) {
+                        setState(() {
+                          args['isFav'] = false;
+                        });
+                      });
+                      return;
+                    }
+
+                    await FirebaseFirestore.instance.collection('recepti').doc(args['receptId']).update({
+                      'favorites': FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid]),
+                    }).then((value) {
+                      setState(() {
+                        args['isFav'] = true;
+                      });
+                    });
+                  },
+                  child: SvgPicture.asset('assets/icons/${args['isFav']}Heart.svg'),
+                ),
+              ],
+            ),
+          ),
+        )),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -46,7 +91,7 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
               margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.07),
               child: Column(
                 children: [
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 20),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(20),
                     child: Image.network(
@@ -158,7 +203,7 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                   ),
                   //
                   //
-                  // OCIJENITE RECEPT
+                  // REJTING
                   const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -212,8 +257,24 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                   ),
                   //
                   //
-                  // SASTOJCI
+                  // OPIS
                   const SizedBox(height: 20),
+                  Container(
+                    width: medijakveri.size.width,
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      '${args['opis']}',
+                      style: Theme.of(context).textTheme.headline4,
+                    ),
+                  ),
+                  //
+                  //
+                  // SASTOJCI
+                  const SizedBox(height: 15),
                   Container(
                     width: medijakveri.size.width,
                     padding: const EdgeInsets.all(20),
@@ -261,7 +322,7 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                   //
                   //
                   // KORACI
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 15),
                   Container(
                     width: medijakveri.size.width,
                     padding: const EdgeInsets.all(20),
@@ -299,7 +360,6 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                                     ),
                                     const SizedBox(width: 5),
                                     Container(
-                                      // color: Colors.black.withOpacity(.5),
                                       width: medijakveri.size.width * 0.65,
                                       child: Text(
                                         '${args['koraci'][index]}',

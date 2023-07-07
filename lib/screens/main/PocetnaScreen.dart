@@ -19,13 +19,14 @@ class _PocetnaScreenState extends State<PocetnaScreen> {
   Widget build(BuildContext context) {
     final medijakveri = MediaQuery.of(context);
     final recepti = FirebaseFirestore.instance.collection('recepti').get();
+
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: SingleChildScrollView(
         child: Column(
           children: [
             CustomAppBar(pageTitle: 'Početna', isCenter: false),
-            const SizedBox(height: 30),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -70,7 +71,7 @@ class _PocetnaScreenState extends State<PocetnaScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
             FutureBuilder(
               future: recepti,
               builder: ((context, snapshot) {
@@ -99,11 +100,12 @@ class _PocetnaScreenState extends State<PocetnaScreen> {
                 return Container(
                   height: medijakveri.size.height * 0.7,
                   child: ListView.separated(
-                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    padding: const EdgeInsets.symmetric(vertical: 0),
                     separatorBuilder: ((context, index) => const SizedBox(height: 15)),
                     itemCount: receptDocs.length,
                     itemBuilder: (context, index) => MealCard(
                       medijakveri: medijakveri,
+                      receptId: receptDocs[index].id,
                       userId: receptDocs[index].data()['userId'],
                       naziv: receptDocs[index].data()['recept']['naziv'],
                       opis: receptDocs[index].data()['recept']['opis'],
@@ -114,6 +116,7 @@ class _PocetnaScreenState extends State<PocetnaScreen> {
                       ratings: receptDocs[index].data()['recept']['ratings'],
                       sastojci: receptDocs[index].data()['recept']['sastojci'],
                       koraci: receptDocs[index].data()['recept']['koraci'],
+                      favorites: receptDocs[index].data()['favorites'],
                     ),
                   ),
                 );

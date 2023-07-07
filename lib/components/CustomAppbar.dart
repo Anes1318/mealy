@@ -27,9 +27,8 @@ class CustomAppBar extends StatelessWidget {
     return isCenter
         ? SafeArea(
             child: Container(
-              padding: EdgeInsets.only(top: (medijakveri.size.height - medijakveri.padding.top) * 0.035),
+              padding: EdgeInsets.only(top: (medijakveri.size.height - medijakveri.padding.top) * 0.035, bottom: 10),
               margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.07),
-              height: (medijakveri.size.height - medijakveri.padding.top) * 0.035 + 50,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -64,46 +63,46 @@ class CustomAppBar extends StatelessWidget {
               ),
             ),
           )
-        : Container(
-            padding: EdgeInsets.only(top: (medijakveri.size.height - medijakveri.padding.top) * 0.07),
-
-            // height: (medijakveri.size.height - medijakveri.padding.top) * 0.035 + 50,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    if (prvaIkonica != null)
-                      SizedBox(
-                        height: 30,
-                        width: 25,
-                        child: IconButton(
-                          padding: EdgeInsets.zero,
-                          onPressed: () => prvaIkonicaFunkcija!(),
-                          icon: Icon(
-                            prvaIkonica,
-                            size: prvaIkonicaSize,
-                            color: Theme.of(context).colorScheme.primary,
+        : SafeArea(
+            child: Container(
+              padding: EdgeInsets.only(top: (medijakveri.size.height - medijakveri.padding.top) * 0.035),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      if (prvaIkonica != null)
+                        SizedBox(
+                          height: 30,
+                          width: 25,
+                          child: IconButton(
+                            padding: EdgeInsets.zero,
+                            onPressed: () => prvaIkonicaFunkcija!(),
+                            icon: Icon(
+                              prvaIkonica,
+                              size: prvaIkonicaSize,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
                           ),
                         ),
+                      if (prvaIkonica != null) SizedBox(width: 5),
+                      Text(
+                        pageTitle,
+                        style: Theme.of(context).textTheme.headline2,
                       ),
-                    if (prvaIkonica != null) SizedBox(width: 5),
-                    Text(
-                      pageTitle,
-                      style: Theme.of(context).textTheme.headline2,
-                    ),
-                  ],
-                ),
-                if (drugaIkonica != null)
-                  InkWell(
-                    onTap: () => drugaIkonicaFunkcija!(),
-                    child: Icon(
-                      drugaIkonica,
-                      size: 34,
-                      color: Theme.of(context).primaryColor,
-                    ),
+                    ],
                   ),
-              ],
+                  if (drugaIkonica != null)
+                    InkWell(
+                      onTap: () => drugaIkonicaFunkcija!(),
+                      child: Icon(
+                        drugaIkonica,
+                        size: 34,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    ),
+                ],
+              ),
             ),
           );
   }

@@ -1,11 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:mealy/screens/main/ReceptViewScreen.dart';
 
-class MealCard extends StatelessWidget {
+class MealCard extends StatefulWidget {
   final MediaQueryData medijakveri;
   final String userId;
+  final String receptId;
   final String naziv;
   final String opis;
   final String brOsoba;
@@ -15,10 +19,12 @@ class MealCard extends StatelessWidget {
   final List<dynamic> ratings;
   final List<dynamic> sastojci;
   final List<dynamic> koraci;
+  final List<dynamic> favorites;
 
   const MealCard({
     required this.medijakveri,
     required this.userId,
+    required this.receptId,
     required this.naziv,
     required this.opis,
     required this.brOsoba,
@@ -28,28 +34,42 @@ class MealCard extends StatelessWidget {
     required this.ratings,
     required this.sastojci,
     required this.koraci,
+    required this.favorites,
   });
 
   @override
+  State<MealCard> createState() => _MealCardState();
+}
+
+class _MealCardState extends State<MealCard> {
+  @override
+  bool isFav = false;
+  double rating = 0;
   Widget build(BuildContext context) {
-    double rating = 0;
-    for (var element in ratings) {
+    for (var element in widget.ratings) {
       rating += element;
     }
-    rating /= ratings.length;
+    rating /= widget.ratings.length;
+
+    for (var element in widget.favorites) {
+      element == FirebaseAuth.instance.currentUser!.uid;
+      isFav = true;
+    }
     return InkWell(
       onTap: () {
         Navigator.pushNamed(context, ReceptViewScreen.routeName, arguments: {
-          'naziv': naziv,
-          'opis': opis,
-          'brOsoba': brOsoba,
-          'vrPripreme': vrPripreme,
-          'tezina': tezina,
-          'imageUrl': imageUrl,
-          'ratings': ratings,
-          'sastojci': sastojci,
-          'koraci': koraci,
-          'userId': userId,
+          'naziv': widget.naziv,
+          'opis': widget.opis,
+          'brOsoba': widget.brOsoba,
+          'vrPripreme': widget.vrPripreme,
+          'tezina': widget.tezina,
+          'imageUrl': widget.imageUrl,
+          'ratings': widget.ratings,
+          'sastojci': widget.sastojci,
+          'koraci': widget.koraci,
+          'userId': widget.userId,
+          'receptId': widget.receptId,
+          'isFav': isFav,
         });
       },
       child: Container(
@@ -65,7 +85,7 @@ class MealCard extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: Image.network(
-                  imageUrl,
+                  widget.imageUrl,
                   height: 100,
                   width: 100,
                   fit: BoxFit.fill,
@@ -80,42 +100,56 @@ class MealCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        width: medijakveri.size.width * 0.5, // da bi row uzeo sto vise mesta i razdvojio naziv i srce
+                        width: widget.medijakveri.size.width * 0.5, // da bi row uzeo sto vise mesta i razdvojio naziv i srce
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Container(
-                              constraints: BoxConstraints(maxWidth: medijakveri.size.width * 0.43),
+                              constraints: BoxConstraints(maxWidth: widget.medijakveri.size.width * 0.43),
                               child: FittedBox(
                                 child: Text(
-                                  naziv,
+                                  widget.naziv,
                                   style: Theme.of(context).textTheme.headline3,
                                 ),
                               ),
                             ),
                             GestureDetector(
-                              onTap: () {
-                                print('PITE');
+                              onTap: () async {
+                                if (isFav) {
+                                  await FirebaseFirestore.instance.collection('recepti').doc(widget.receptId).update({
+                                    'favorites': FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.uid]),
+                                  }).then((value) {
+                                    setState(() {
+                                      isFav = false;
+                                    });
+                                  });
+                                  return;
+                                }
+
+                                await FirebaseFirestore.instance.collection('recepti').doc(widget.receptId).update({
+                                  'favorites': FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid]),
+                                }).then((value) {
+                                  setState(() {
+                                    isFav = true;
+                                  });
+                                });
                               },
-                              child: Icon(
-                                Iconsax.heart,
-                                color: Theme.of(context).primaryColor,
-                              ),
+                              child: SvgPicture.asset('assets/icons/${isFav}Heart.svg'),
                             ),
                           ],
                         ),
                       ),
                       Container(
-                        width: medijakveri.size.width * 0.4,
+                        width: widget.medijakveri.size.width * 0.4,
                         child: Text(
-                          opis.length > 60 ? opis.substring(1, 60) : opis,
+                          widget.opis.length > 60 ? widget.opis.substring(1, 60) : widget.opis,
                           style: Theme.of(context).textTheme.headline5,
                         ),
                       ),
                     ],
                   ),
                   Container(
-                    width: medijakveri.size.width * 0.5,
+                    width: widget.medijakveri.size.width * 0.5,
                     // width: 150,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -129,7 +163,7 @@ class MealCard extends StatelessWidget {
                             ),
                             const SizedBox(width: 3),
                             Text(
-                              '$vrPripreme min',
+                              '${widget.vrPripreme} min',
                               style: Theme.of(context).textTheme.headline5,
                             ),
                           ],
@@ -151,13 +185,13 @@ class MealCard extends StatelessWidget {
                         Row(
                           children: [
                             SvgPicture.asset(
-                              'assets/icons/${tezina}Unselected.svg',
+                              'assets/icons/${widget.tezina}Unselected.svg',
                               width: 19,
                               height: 19,
                             ),
                             const SizedBox(width: 3),
                             Text(
-                              tezina == 'Tesko' ? 'Teško' : tezina,
+                              widget.tezina == 'Tesko' ? 'Teško' : widget.tezina,
                               style: Theme.of(context).textTheme.headline5,
                             ),
                           ],

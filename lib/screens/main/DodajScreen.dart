@@ -8,6 +8,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mealy/components/Button.dart';
+import 'package:mealy/components/CustomAppbar.dart';
 import 'package:mealy/components/metode.dart';
 import 'package:mealy/screens/main/BottomNavigationBarScreen.dart';
 import 'package:mealy/screens/main/PocetnaScreen.dart';
@@ -183,8 +184,9 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
           'sastojci': sastojci,
           'koraci': koraci,
           'tagovi': tagovi,
-          'ratings': [0],
-        }
+          'ratings': [],
+        },
+        "timestamp": FieldValue.serverTimestamp(),
       }).then((value) async {
         final uploadedImage = await FirebaseStorage.instance.ref().child('receptImages').child('${value.id}.jpg').putFile(_storedImage!).then((value) async {
           value.ref.name;
@@ -236,50 +238,52 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
   Widget build(BuildContext context) {
     final medijakveri = MediaQuery.of(context);
 
-    return GestureDetector(
-      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: SingleChildScrollView(
+    return SingleChildScrollView(
+      child: GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: Column(
           children: [
-            Container(
-              padding: EdgeInsets.only(top: (medijakveri.size.height - medijakveri.padding.top) * 0.07),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        'Dodaj',
-                        style: Theme.of(context).textTheme.headline2,
-                      ),
-                    ],
-                  ),
-                  isLoading
-                      ? const SizedBox(
-                          height: 34,
-                          width: 34,
-                          child: CircularProgressIndicator(),
-                        )
-                      : InkWell(
-                          onTap: () {
-                            FocusManager.instance.primaryFocus?.unfocus();
-                            submitForm();
-                          },
-                          child: Icon(
-                            Iconsax.tick_circle,
-                            size: 34,
-                            color: Theme.of(context).primaryColor,
-                          ),
+            SafeArea(
+              child: Container(
+                padding: EdgeInsets.only(top: (medijakveri.size.height - medijakveri.padding.top) * 0.035, bottom: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          'Dodaj',
+                          style: Theme.of(context).textTheme.headline2,
                         ),
-                ],
+                      ],
+                    ),
+                    isLoading
+                        ? const SizedBox(
+                            height: 34,
+                            width: 34,
+                            child: CircularProgressIndicator(),
+                          )
+                        : InkWell(
+                            onTap: () {
+                              FocusManager.instance.primaryFocus?.unfocus();
+                              submitForm();
+                            },
+                            child: Icon(
+                              Iconsax.tick_circle,
+                              size: 34,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          ),
+                  ],
+                ),
               ),
             ),
-            const SizedBox(height: 25),
             SizedBox(
-              height: (medijakveri.size.height - medijakveri.padding.top) * 0.779,
+              height: (medijakveri.size.height - medijakveri.padding.top) * 0.81,
               child: SingleChildScrollView(
                 child: Column(
                   children: [
+                    const SizedBox(height: 30),
                     Form(
                       key: _form,
                       child: Column(
@@ -376,11 +380,11 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                               } else if (value!.isEmpty || value.trim().isEmpty) {
                                 return 'Molimo Vas da unesete naziv recepta';
                               } else if (value.length < 2) {
-                                return 'Naziv recepta mora biti duže';
+                                return 'Naziv recepta mora biti duži';
                               } else if (value.length > 45) {
-                                return 'Naziv recepta mora biti kraće';
+                                return 'Naziv recepta mora biti kraći';
                               } else if (value.contains(RegExp(r'[0-9]'))) {
-                                return 'Naziv recepta smije sadržati samo velika i mala slova i simbole';
+                                return 'Naziv recepta smije sadržati samo velika i mala slova, i simbole';
                               }
                             },
                             onSaved: (value) {
@@ -388,7 +392,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                             },
                             borderRadijus: 10,
                           ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 15),
                           InputField(
                             focusNode: opisNode,
                             isMargin: false,
@@ -399,6 +403,9 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                             inputType: TextInputType.text,
                             obscureText: false,
                             kapitulacija: TextCapitalization.sentences,
+                            borderRadijus: 10,
+                            brMaxLinija: 4,
+                            brMinLinija: 4,
                             onChanged: (_) => _form.currentState!.validate(),
                             validator: (value) {
                               if (nazivNode.hasFocus || brOsobaNode.hasFocus || vrPripremeNode.hasFocus) {
@@ -407,16 +414,15 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                                 return 'Molimo Vas da unesete opis jela';
                               } else if (value.length < 2) {
                                 return 'Opis jela mora biti duži';
+                              } else if (value.length > 250) {
+                                return 'Opis jela mora biti kraći';
                               }
                             },
                             onSaved: (value) {
                               data['opis'] = value!.trim();
                             },
-                            borderRadijus: 10,
-                            brMaxLinija: 4,
-                            brMinLinija: 4,
                           ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 15),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -480,9 +486,9 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                           const SizedBox(height: 20),
                           Text(
                             'Težina',
-                            style: Theme.of(context).textTheme.headline4,
+                            style: Theme.of(context).textTheme.headline2,
                           ),
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 15),
                           Container(
                             width: medijakveri.size.width,
                             height: 40,
@@ -577,9 +583,11 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                             'Sastojci',
                             style: Theme.of(context).textTheme.headline2,
                           ),
+                          SizedBox(height: 15),
                           ListView.separated(
                             shrinkWrap: true,
                             primary: false,
+                            padding: EdgeInsets.zero,
                             separatorBuilder: (context, index) => const SizedBox(height: 20),
                             itemCount: sastojakInput.length,
                             itemBuilder: (context, index) => Row(
@@ -674,14 +682,16 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                           //
                           // KORACI
 
-                          const SizedBox(height: 15),
+                          const SizedBox(height: 20),
                           Text(
                             'Koraci',
                             style: Theme.of(context).textTheme.headline2,
                           ),
+                          SizedBox(height: 15),
                           ListView.separated(
                             shrinkWrap: true,
                             primary: false,
+                            padding: EdgeInsets.zero,
                             separatorBuilder: (context, index) => const SizedBox(height: 20),
                             itemCount: korakInput.length,
                             itemBuilder: (context, index) => Row(
@@ -789,13 +799,12 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                           //
                           //
                           // TAGOVI
-                          // TODO: napravi da se tagovi brisu (ui) nakon dodanog recepta
-                          const SizedBox(height: 15),
+
+                          const SizedBox(height: 20),
                           Text(
                             'Tagovi',
                             style: Theme.of(context).textTheme.headline2,
                           ),
-                          const SizedBox(height: 10),
                           GestureDetector(
                             onTap: () {
                               if (tagovi.length == 5) {
