@@ -36,7 +36,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
     double tastaturaHeight = medijakveri.viewInsets.bottom;
 
     return Scaffold(
-      resizeToAvoidBottomInset: true,
+      resizeToAvoidBottomInset: false,
       body: Container(
         margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.07),
         child: _selectedIndex == 1

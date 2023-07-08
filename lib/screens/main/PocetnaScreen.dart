@@ -1,13 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+
 import 'package:iconsax/iconsax.dart';
 import 'package:mealy/components/CustomAppbar.dart';
 import 'package:mealy/components/MealCard.dart';
 
 class PocetnaScreen extends StatefulWidget {
-  static const String routeName = '/PocetnaScreen';
-
   const PocetnaScreen({super.key});
 
   @override
@@ -16,9 +14,15 @@ class PocetnaScreen extends StatefulWidget {
 
 class _PocetnaScreenState extends State<PocetnaScreen> {
   @override
+  Future<QuerySnapshot<Map<String, dynamic>>>? recepti;
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    recepti = FirebaseFirestore.instance.collection('recepti').get();
+  }
+
   Widget build(BuildContext context) {
     final medijakveri = MediaQuery.of(context);
-    final recepti = FirebaseFirestore.instance.collection('recepti').get();
 
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),

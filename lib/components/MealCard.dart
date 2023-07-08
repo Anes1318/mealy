@@ -42,9 +42,9 @@ class MealCard extends StatefulWidget {
 }
 
 class _MealCardState extends State<MealCard> {
-  @override
   bool isFav = false;
   double rating = 0;
+  @override
   Widget build(BuildContext context) {
     for (var element in widget.ratings) {
       rating += element;
@@ -52,10 +52,35 @@ class _MealCardState extends State<MealCard> {
     rating /= widget.ratings.length;
 
     for (var element in widget.favorites) {
-      element == FirebaseAuth.instance.currentUser!.uid;
-      isFav = true;
+      if (element == FirebaseAuth.instance.currentUser!.uid) {
+        isFav = true;
+      }
     }
-    return InkWell(
+    void favMeal() async {
+      if (isFav) {
+        print('micemo fav');
+        await FirebaseFirestore.instance.collection('recepti').doc(widget.receptId).update({
+          'favorites': FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.uid]),
+        }).then((value) {
+          setState(() {
+            isFav = false;
+            widget.favorites.remove(FirebaseAuth.instance.currentUser!.uid);
+          });
+        });
+      } else {
+        print('dodajemoFav');
+        await FirebaseFirestore.instance.collection('recepti').doc(widget.receptId).update({
+          'favorites': FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid]),
+        }).then((value) {
+          setState(() {
+            isFav = true;
+            widget.favorites.add(FirebaseAuth.instance.currentUser!.uid);
+          });
+        });
+      }
+    }
+
+    return GestureDetector(
       onTap: () {
         Navigator.pushNamed(context, ReceptViewScreen.routeName, arguments: {
           'naziv': widget.naziv,
@@ -69,7 +94,7 @@ class _MealCardState extends State<MealCard> {
           'koraci': widget.koraci,
           'userId': widget.userId,
           'receptId': widget.receptId,
-          'isFav': isFav,
+          'favorites': widget.favorites,
         });
       },
       child: Container(
@@ -114,26 +139,7 @@ class _MealCardState extends State<MealCard> {
                               ),
                             ),
                             GestureDetector(
-                              onTap: () async {
-                                if (isFav) {
-                                  await FirebaseFirestore.instance.collection('recepti').doc(widget.receptId).update({
-                                    'favorites': FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.uid]),
-                                  }).then((value) {
-                                    setState(() {
-                                      isFav = false;
-                                    });
-                                  });
-                                  return;
-                                }
-
-                                await FirebaseFirestore.instance.collection('recepti').doc(widget.receptId).update({
-                                  'favorites': FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid]),
-                                }).then((value) {
-                                  setState(() {
-                                    isFav = true;
-                                  });
-                                });
-                              },
+                              onTap: () => favMeal(),
                               child: SvgPicture.asset('assets/icons/${isFav}Heart.svg'),
                             ),
                           ],
@@ -177,7 +183,7 @@ class _MealCardState extends State<MealCard> {
                             ),
                             SizedBox(width: 3),
                             Text(
-                              '$rating',
+                              rating.isNaN ? '0.0' : '$rating',
                               style: Theme.of(context).textTheme.headline5,
                             ),
                           ],

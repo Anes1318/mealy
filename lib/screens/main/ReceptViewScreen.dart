@@ -5,26 +5,53 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:mealy/components/CustomAppbar.dart';
+import 'package:mealy/screens/main/BottomNavigationBarScreen.dart';
+import 'package:mealy/screens/main/PocetnaScreen.dart';
 
 class ReceptViewScreen extends StatefulWidget {
   static const String routeName = '/ReceptViewScreen';
-  const ReceptViewScreen({super.key});
+
+  const ReceptViewScreen({
+    super.key,
+  });
 
   @override
   State<ReceptViewScreen> createState() => _ReceptViewScreenState();
 }
 
 class _ReceptViewScreenState extends State<ReceptViewScreen> {
+  bool isFav = false;
+  Map<String, dynamic>? args;
+  List<String>? favList = [];
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+    for (var element in args!['favorites']) {
+      favList!.add(element);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
     final users = FirebaseFirestore.instance.collection('users').get();
 
     double rating = 0;
-    for (var element in args['ratings']) {
+    for (var element in args!['ratings']) {
       rating += element;
     }
-    rating /= args['ratings'].length;
+    rating /= args!['ratings'].length;
+    if (favList != null) {
+      for (var element in favList!) {
+        if (element == FirebaseAuth.instance.currentUser!.uid) {
+          setState(() {
+            isFav = true;
+          });
+        }
+      }
+    }
+
     final medijakveri = MediaQuery.of(context);
     return Scaffold(
       appBar: PreferredSize(
@@ -38,7 +65,7 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 InkWell(
-                  onTap: () => Navigator.pop(context),
+                  onTap: () => Navigator.popAndPushNamed(context, BottomNavigationBarScreen.routeName),
                   child: Icon(
                     Iconsax.back_square,
                     size: 34,
@@ -51,33 +78,40 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                   ),
                   child: FittedBox(
                     child: Text(
-                      args['naziv'],
+                      args!['naziv'],
                       style: Theme.of(context).textTheme.headline2,
                     ),
                   ),
                 ),
                 GestureDetector(
                   onTap: () async {
-                    if (args['isFav']) {
-                      await FirebaseFirestore.instance.collection('recepti').doc(args['receptId']).update({
+                    if (isFav) {
+                      print('micemo fav');
+                      await FirebaseFirestore.instance.collection('recepti').doc(args!['receptId']).update({
                         'favorites': FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.uid]),
                       }).then((value) {
                         setState(() {
-                          args['isFav'] = false;
+                          isFav = false;
+                          favList!.remove(FirebaseAuth.instance.currentUser!.uid);
                         });
                       });
-                      return;
-                    }
-
-                    await FirebaseFirestore.instance.collection('recepti').doc(args['receptId']).update({
-                      'favorites': FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid]),
-                    }).then((value) {
-                      setState(() {
-                        args['isFav'] = true;
+                    } else {
+                      print('dodajemoFav');
+                      await FirebaseFirestore.instance.collection('recepti').doc(args!['receptId']).update({
+                        'favorites': FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid]),
+                      }).then((value) {
+                        setState(() {
+                          isFav = true;
+                          favList!.add(FirebaseAuth.instance.currentUser!.uid);
+                        });
                       });
-                    });
+                    }
                   },
-                  child: SvgPicture.asset('assets/icons/${args['isFav']}Heart.svg'),
+                  child: SvgPicture.asset(
+                    'assets/icons/${isFav}Heart.svg',
+                    height: 28,
+                    width: 30,
+                  ),
                 ),
               ],
             ),
@@ -95,7 +129,7 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(20),
                     child: Image.network(
-                      args['imageUrl'],
+                      args!['imageUrl'],
                       height: 200,
                       width: medijakveri.size.width,
                       fit: BoxFit.cover,
@@ -124,7 +158,7 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              '${args['vrPripreme']} min',
+                              '${args!['vrPripreme']} min',
                               style: Theme.of(context).textTheme.headline4!.copyWith(fontSize: 14),
                             ),
                           ],
@@ -146,7 +180,7 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              '$rating',
+                              rating.isNaN ? '0.0' : '$rating',
                               style: Theme.of(context).textTheme.headline4!.copyWith(fontSize: 14),
                             ),
                           ],
@@ -162,10 +196,10 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            SvgPicture.asset('assets/icons/${args['tezina']}Unselected.svg'),
+                            SvgPicture.asset('assets/icons/${args!['tezina']}Unselected.svg'),
                             const SizedBox(height: 2),
                             Text(
-                              args['tezina'] == 'Tesko' ? 'Teško' : args['tezina'],
+                              args!['tezina'] == 'Tesko' ? 'Teško' : args!['tezina'],
                               style: Theme.of(context).textTheme.headline4!.copyWith(fontSize: 14),
                             ),
                           ],
@@ -186,14 +220,14 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                               color: Theme.of(context).colorScheme.primary,
                             ),
                             const SizedBox(height: 2),
-                            if (int.parse(args['brOsoba']) % 10 == 2 || int.parse(args['brOsoba']) % 10 == 3 || int.parse(args['brOsoba']) % 10 == 4)
+                            if (int.parse(args!['brOsoba']) % 10 == 2 || int.parse(args!['brOsoba']) % 10 == 3 || int.parse(args!['brOsoba']) % 10 == 4)
                               Text(
-                                '${args['brOsoba']} osobe',
+                                '${args!['brOsoba']} osobe',
                                 style: Theme.of(context).textTheme.headline4!.copyWith(fontSize: 14),
                               ),
-                            if (int.parse(args['brOsoba']) % 10 > 4)
+                            if (int.parse(args!['brOsoba']) % 10 > 4 || int.parse(args!['brOsoba']) % 10 == 1)
                               Text(
-                                '${args['brOsoba']} osoba',
+                                '${args!['brOsoba']} osoba',
                                 style: Theme.of(context).textTheme.headline4!.copyWith(fontSize: 14),
                               ),
                           ],
@@ -266,9 +300,19 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Text(
-                      '${args['opis']}',
-                      style: Theme.of(context).textTheme.headline4,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Opis',
+                          style: Theme.of(context).textTheme.headline2,
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          '${args!['opis']}',
+                          style: Theme.of(context).textTheme.headline4,
+                        ),
+                      ],
                     ),
                   ),
                   //
@@ -295,7 +339,7 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                           padding: EdgeInsets.zero,
                           shrinkWrap: true, // zauzima min content prostor
                           primary: false, // ne skrola ovu listu nego sve generalno
-                          itemCount: args['sastojci'].length,
+                          itemCount: args!['sastojci'].length,
                           itemBuilder: ((context, index) => Row(
                                 children: [
                                   Container(
@@ -310,7 +354,7 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                                   ),
                                   const SizedBox(width: 5),
                                   Text(
-                                    '${args['sastojci'][index]}',
+                                    '${args!['sastojci'][index]}',
                                     style: Theme.of(context).textTheme.headline4,
                                   ),
                                 ],
@@ -344,7 +388,7 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                             padding: EdgeInsets.zero,
                             shrinkWrap: true, // zauzima min content prostor
                             primary: false, // ne skrola ovu listu nego sve generalno
-                            itemCount: args['koraci'].length,
+                            itemCount: args!['koraci'].length,
                             itemBuilder: ((context, index) => Row(
                                   children: [
                                     Container(
@@ -362,7 +406,7 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                                     Container(
                                       width: medijakveri.size.width * 0.65,
                                       child: Text(
-                                        '${args['koraci'][index]}',
+                                        '${args!['koraci'][index]}',
                                         style: Theme.of(context).textTheme.headline4,
                                       ),
                                     ),
@@ -388,7 +432,7 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                       }
 
                       final usersDocs = snapshot.data!.docs;
-                      final user = usersDocs.where((element) => element.data()['userId'] == args['userId']).toList();
+                      final user = usersDocs.where((element) => element.data()['userId'] == args!['userId']).toList();
 
                       if (user.isEmpty) {
                         return Container(

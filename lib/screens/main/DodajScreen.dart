@@ -7,18 +7,18 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:multiple_search_selection/multiple_search_selection.dart';
+// screens
+import 'package:mealy/screens/main/BottomNavigationBarScreen.dart';
+import 'package:mealy/screens/main/PocetnaScreen.dart';
+// components
+import 'package:mealy/components/InputField.dart';
+import '../../models/tezina.dart';
 import 'package:mealy/components/Button.dart';
 import 'package:mealy/components/CustomAppbar.dart';
 import 'package:mealy/components/metode.dart';
-import 'package:mealy/screens/main/BottomNavigationBarScreen.dart';
-import 'package:mealy/screens/main/PocetnaScreen.dart';
-import 'package:multiple_search_selection/multiple_search_selection.dart';
-// komponente
-import 'package:mealy/components/InputField.dart';
-import '../../models/tezina.dart';
 
 class DodajScreen extends StatefulWidget {
-  static const String routeName = '/DodajScreen';
   double? tastaturaHeight;
   DodajScreen({
     super.key,
@@ -175,6 +175,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
 
       await FirebaseFirestore.instance.collection('recepti').add({
         'userId': FirebaseAuth.instance.currentUser!.uid,
+        'favorites': [],
         'recept': {
           'naziv': data['naziv'],
           'opis': data['opis'],
@@ -258,10 +259,15 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                       ],
                     ),
                     isLoading
-                        ? const SizedBox(
-                            height: 34,
-                            width: 34,
-                            child: CircularProgressIndicator(),
+                        ? const Row(
+                            children: [
+                              SizedBox(
+                                height: 34,
+                                width: 34,
+                                child: CircularProgressIndicator(),
+                              ),
+                              SizedBox(width: 5),
+                            ],
                           )
                         : InkWell(
                             onTap: () {
