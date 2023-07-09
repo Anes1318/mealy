@@ -61,14 +61,13 @@ class _OmiljeniScreenState extends State<OmiljeniScreen> {
                   favRecepti.add(element);
                 }
               });
-              print(favRecepti);
 
-              if (receptDocs.isEmpty) {
+              if (favRecepti.isEmpty) {
                 return Container(
                   height: (medijakveri.size.height - medijakveri.padding.top) * 0.7,
                   child: Center(
                     child: Text(
-                      'Nema recepata',
+                      'Nema omiljenih recepata',
                       style: Theme.of(context).textTheme.headline2,
                     ),
                   ),
@@ -80,21 +79,21 @@ class _OmiljeniScreenState extends State<OmiljeniScreen> {
                 child: ListView.separated(
                   padding: const EdgeInsets.symmetric(vertical: 0),
                   separatorBuilder: ((context, index) => const SizedBox(height: 15)),
-                  itemCount: receptDocs.length,
+                  itemCount: favRecepti.length,
                   itemBuilder: (context, index) => MealCard(
                     medijakveri: medijakveri,
-                    receptId: receptDocs[index].id,
-                    userId: receptDocs[index].data()['userId'],
-                    naziv: receptDocs[index].data()['recept']['naziv'],
-                    opis: receptDocs[index].data()['recept']['opis'],
-                    brOsoba: receptDocs[index].data()['recept']['brOsoba'],
-                    vrPripreme: receptDocs[index].data()['recept']['vrPripreme'],
-                    tezina: receptDocs[index].data()['recept']['tezina'],
-                    imageUrl: receptDocs[index].data()['imageUrl'],
-                    ratings: receptDocs[index].data()['recept']['ratings'],
-                    sastojci: receptDocs[index].data()['recept']['sastojci'],
-                    koraci: receptDocs[index].data()['recept']['koraci'],
-                    favorites: receptDocs[index].data()['favorites'],
+                    receptId: favRecepti[index].id,
+                    userId: favRecepti[index].data()['userId'],
+                    naziv: favRecepti[index].data()['recept']['naziv'],
+                    opis: favRecepti[index].data()['recept']['opis'],
+                    brOsoba: favRecepti[index].data()['recept']['brOsoba'],
+                    vrPripreme: favRecepti[index].data()['recept']['vrPripreme'],
+                    tezina: favRecepti[index].data()['recept']['tezina'],
+                    imageUrl: favRecepti[index].data()['imageUrl'],
+                    ratings: favRecepti[index].data()['recept']['ratings'],
+                    sastojci: favRecepti[index].data()['recept']['sastojci'],
+                    koraci: favRecepti[index].data()['recept']['koraci'],
+                    favorites: favRecepti[index].data()['favorites'],
                   ),
                 ),
               );

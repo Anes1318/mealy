@@ -91,7 +91,6 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       isPassHidden = !isPassHidden;
     });
-    // print(_authData);
   }
 
   @override

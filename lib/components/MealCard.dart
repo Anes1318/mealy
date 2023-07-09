@@ -58,7 +58,6 @@ class _MealCardState extends State<MealCard> {
     }
     void favMeal() async {
       if (isFav) {
-        print('micemo fav');
         await FirebaseFirestore.instance.collection('recepti').doc(widget.receptId).update({
           'favorites': FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.uid]),
         }).then((value) {
@@ -68,7 +67,6 @@ class _MealCardState extends State<MealCard> {
           });
         });
       } else {
-        print('dodajemoFav');
         await FirebaseFirestore.instance.collection('recepti').doc(widget.receptId).update({
           'favorites': FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid]),
         }).then((value) {
@@ -107,13 +105,16 @@ class _MealCardState extends State<MealCard> {
           margin: const EdgeInsets.only(left: 15, top: 15, bottom: 15, right: 5),
           child: Row(
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: Image.network(
-                  widget.imageUrl,
-                  height: 100,
-                  width: 100,
-                  fit: BoxFit.fill,
+              Hero(
+                tag: widget.receptId,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image.network(
+                    widget.imageUrl,
+                    height: 100,
+                    width: 100,
+                    fit: BoxFit.fill,
+                  ),
                 ),
               ),
               const SizedBox(width: 10),

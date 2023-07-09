@@ -33,6 +33,7 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
     }
   }
 
+  bool favMijenjan = false;
   @override
   Widget build(BuildContext context) {
     final users = FirebaseFirestore.instance.collection('users').get();
@@ -65,7 +66,14 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 InkWell(
-                  onTap: () => Navigator.popAndPushNamed(context, BottomNavigationBarScreen.routeName),
+                  onTap: () {
+                    if (favMijenjan == false) {
+                      Navigator.pop(context);
+                    } else {
+                      Navigator.pop(context);
+                      Navigator.pushReplacementNamed(context, BottomNavigationBarScreen.routeName);
+                    }
+                  },
                   child: Icon(
                     Iconsax.back_square,
                     size: 34,
@@ -86,23 +94,23 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                 GestureDetector(
                   onTap: () async {
                     if (isFav) {
-                      print('micemo fav');
                       await FirebaseFirestore.instance.collection('recepti').doc(args!['receptId']).update({
                         'favorites': FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.uid]),
                       }).then((value) {
                         setState(() {
                           isFav = false;
                           favList!.remove(FirebaseAuth.instance.currentUser!.uid);
+                          favMijenjan = true;
                         });
                       });
                     } else {
-                      print('dodajemoFav');
                       await FirebaseFirestore.instance.collection('recepti').doc(args!['receptId']).update({
                         'favorites': FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid]),
                       }).then((value) {
                         setState(() {
                           isFav = true;
                           favList!.add(FirebaseAuth.instance.currentUser!.uid);
+                          favMijenjan = true;
                         });
                       });
                     }
@@ -126,13 +134,16 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
               child: Column(
                 children: [
                   const SizedBox(height: 20),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: Image.network(
-                      args!['imageUrl'],
-                      height: 200,
-                      width: medijakveri.size.width,
-                      fit: BoxFit.cover,
+                  Hero(
+                    tag: args!['receptId'],
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Image.network(
+                        args!['imageUrl'],
+                        height: 200,
+                        width: medijakveri.size.width,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                   //
@@ -432,7 +443,8 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                       }
 
                       final usersDocs = snapshot.data!.docs;
-                      final user = usersDocs.where((element) => element.data()['userId'] == args!['userId']).toList();
+
+                      final user = usersDocs.where((element) => element.id == args!['userId']).toList();
 
                       if (user.isEmpty) {
                         return Container(
