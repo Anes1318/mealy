@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -5,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:mealy/components/CustomAppbar.dart';
+import 'package:mealy/components/metode.dart';
 import 'package:mealy/screens/main/BottomNavigationBarScreen.dart';
 import 'package:mealy/screens/main/PocetnaScreen.dart';
 
@@ -38,11 +41,6 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
   Widget build(BuildContext context) {
     final users = FirebaseFirestore.instance.collection('users').get();
 
-    double rating = 0;
-    for (var element in args!['ratings']) {
-      rating += element;
-    }
-    rating /= args!['ratings'].length;
     if (favList != null) {
       for (var element in favList!) {
         if (element == FirebaseAuth.instance.currentUser!.uid) {
@@ -93,6 +91,19 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                 ),
                 GestureDetector(
                   onTap: () async {
+                    try {
+                      final internetTest = await InternetAddress.lookup('google.com');
+                    } catch (error) {
+                      Metode.showErrorDialog(
+                        message: "Došlo je do greške sa internetom. Provjerite svoju konekciju.",
+                        context: context,
+                        naslov: 'Greška',
+                        button1Text: 'Zatvori',
+                        button1Fun: () => {Navigator.pop(context)},
+                        isButton2: false,
+                      );
+                      return;
+                    }
                     if (isFav) {
                       await FirebaseFirestore.instance.collection('recepti').doc(args!['receptId']).update({
                         'favorites': FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.uid]),
@@ -191,7 +202,7 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              rating.isNaN ? '0.0' : '$rating',
+                              '0.0',
                               style: Theme.of(context).textTheme.headline4!.copyWith(fontSize: 14),
                             ),
                           ],
@@ -263,39 +274,380 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      InkWell(
-                        onTap: () {},
-                        child: Icon(
-                          Iconsax.star,
-                          size: 34,
+                      GestureDetector(
+                        onTap: () {
+                          Metode.showErrorDialog(
+                            context: context,
+                            naslov: 'Da li želite da ocijenite ovaj recept sa 1 zvjezdicom?',
+                            button1Text: 'Potvrdi',
+                            button1Fun: () async {
+                              try {
+                                final internetTest = await InternetAddress.lookup('google.com');
+                              } catch (error) {
+                                Navigator.pop(context);
+
+                                Metode.showErrorDialog(
+                                  message: "Došlo je do greške sa internetom. Provjerite svoju konekciju.",
+                                  context: context,
+                                  naslov: 'Greška',
+                                  button1Text: 'Zatvori',
+                                  button1Fun: () => {Navigator.pop(context)},
+                                  isButton2: false,
+                                );
+                                return;
+                              }
+                              try {
+                                FirebaseFirestore.instance.collection('recepti').doc(args!['receptId']).set(
+                                  {
+                                    'ratings': {
+                                      FirebaseAuth.instance.currentUser!.uid: 1,
+                                    },
+                                  },
+                                  SetOptions(merge: true),
+                                ).then((value) {
+                                  setState(() {
+                                    args!['userRating'] = 1;
+                                  });
+                                  Navigator.pop(context);
+                                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Vaša ocjena je zabilježena.',
+                                        style: Theme.of(context).textTheme.headline4,
+                                      ),
+                                      duration: const Duration(milliseconds: 1500),
+                                      behavior: SnackBarBehavior.floating,
+                                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                                      elevation: 4,
+                                    ),
+                                  );
+                                });
+                              } catch (e) {
+                                Navigator.pop(context);
+
+                                Metode.showErrorDialog(
+                                  context: context,
+                                  naslov: 'Došlo je do greške',
+                                  button1Text: 'Zatvori',
+                                  button1Fun: () {
+                                    Navigator.pop(context);
+                                  },
+                                  isButton2: false,
+                                );
+                              }
+                            },
+                            isButton2: true,
+                            button2Text: 'Otkaži',
+                            button2Fun: () {
+                              Navigator.pop(context);
+                            },
+                          );
+                        },
+                        child: SvgPicture.asset(
+                          args!['userRating'] >= 1 ? 'assets/icons/trueStar.svg' : 'assets/icons/falseStar.svg',
+                          height: 34,
+                          width: 34,
                         ),
                       ),
-                      InkWell(
-                        onTap: () {},
-                        child: Icon(
-                          Iconsax.star,
-                          size: 34,
+                      GestureDetector(
+                        onTap: () {
+                          Metode.showErrorDialog(
+                            context: context,
+                            naslov: 'Da li želite da ocijenite ovaj recept sa 2 zvjezdice?',
+                            button1Text: 'Potvrdi',
+                            button1Fun: () async {
+                              try {
+                                final internetTest = await InternetAddress.lookup('google.com');
+                              } catch (error) {
+                                Navigator.pop(context);
+
+                                Metode.showErrorDialog(
+                                  message: "Došlo je do greške sa internetom. Provjerite svoju konekciju.",
+                                  context: context,
+                                  naslov: 'Greška',
+                                  button1Text: 'Zatvori',
+                                  button1Fun: () => {Navigator.pop(context)},
+                                  isButton2: false,
+                                );
+                                return;
+                              }
+                              try {
+                                FirebaseFirestore.instance.collection('recepti').doc(args!['receptId']).update(
+                                  {
+                                    'ratings': {
+                                      FirebaseAuth.instance.currentUser!.uid: 2,
+                                    },
+                                  },
+                                ).then((value) {
+                                  setState(() {
+                                    args!['userRating'] = 2;
+                                  });
+                                  Navigator.pop(context);
+                                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Vaša ocjena je zabilježena.',
+                                        style: Theme.of(context).textTheme.headline4,
+                                      ),
+                                      duration: const Duration(milliseconds: 1500),
+                                      behavior: SnackBarBehavior.floating,
+                                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                                      elevation: 4,
+                                    ),
+                                  );
+                                });
+                              } catch (e) {
+                                Navigator.pop(context);
+
+                                Metode.showErrorDialog(
+                                  context: context,
+                                  naslov: 'Došlo je do greške',
+                                  button1Text: 'Zatvori',
+                                  button1Fun: () {
+                                    Navigator.pop(context);
+                                  },
+                                  isButton2: false,
+                                );
+                              }
+                            },
+                            isButton2: true,
+                            button2Text: 'Otkaži',
+                            button2Fun: () {
+                              Navigator.pop(context);
+                            },
+                          );
+                        },
+                        child: SvgPicture.asset(
+                          args!['userRating'] >= 2 ? 'assets/icons/trueStar.svg' : 'assets/icons/falseStar.svg',
+                          height: 34,
+                          width: 34,
                         ),
                       ),
-                      InkWell(
-                        onTap: () {},
-                        child: Icon(
-                          Iconsax.star,
-                          size: 34,
+                      GestureDetector(
+                        onTap: () {
+                          Metode.showErrorDialog(
+                            context: context,
+                            naslov: 'Da li želite da ocijenite ovaj recept sa 3 zvjezdice?',
+                            button1Text: 'Potvrdi',
+                            button1Fun: () async {
+                              try {
+                                final internetTest = await InternetAddress.lookup('google.com');
+                              } catch (error) {
+                                Navigator.pop(context);
+
+                                Metode.showErrorDialog(
+                                  message: "Došlo je do greške sa internetom. Provjerite svoju konekciju.",
+                                  context: context,
+                                  naslov: 'Greška',
+                                  button1Text: 'Zatvori',
+                                  button1Fun: () => {Navigator.pop(context)},
+                                  isButton2: false,
+                                );
+                                return;
+                              }
+                              try {
+                                FirebaseFirestore.instance.collection('recepti').doc(args!['receptId']).update(
+                                  {
+                                    'ratings': {
+                                      FirebaseAuth.instance.currentUser!.uid: 3,
+                                    },
+                                  },
+                                ).then((value) {
+                                  setState(() {
+                                    args!['userRating'] = 3;
+                                  });
+                                  Navigator.pop(context);
+                                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Vaša ocjena je zabilježena.',
+                                        style: Theme.of(context).textTheme.headline4,
+                                      ),
+                                      duration: const Duration(milliseconds: 1500),
+                                      behavior: SnackBarBehavior.floating,
+                                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                                      elevation: 4,
+                                    ),
+                                  );
+                                });
+                              } catch (e) {
+                                Navigator.pop(context);
+
+                                Metode.showErrorDialog(
+                                  context: context,
+                                  naslov: 'Došlo je do greške',
+                                  button1Text: 'Zatvori',
+                                  button1Fun: () {
+                                    Navigator.pop(context);
+                                  },
+                                  isButton2: false,
+                                );
+                              }
+                            },
+                            isButton2: true,
+                            button2Text: 'Otkaži',
+                            button2Fun: () {
+                              Navigator.pop(context);
+                            },
+                          );
+                        },
+                        child: SvgPicture.asset(
+                          args!['userRating'] >= 3 ? 'assets/icons/trueStar.svg' : 'assets/icons/falseStar.svg',
+                          height: 34,
+                          width: 34,
                         ),
                       ),
-                      InkWell(
-                        onTap: () {},
-                        child: Icon(
-                          Iconsax.star,
-                          size: 34,
+                      GestureDetector(
+                        onTap: () {
+                          Metode.showErrorDialog(
+                            context: context,
+                            naslov: 'Da li želite da ocijenite ovaj recept sa 4 zvjezdice?',
+                            button1Text: 'Potvrdi',
+                            button1Fun: () async {
+                              try {
+                                final internetTest = await InternetAddress.lookup('google.com');
+                              } catch (error) {
+                                Navigator.pop(context);
+
+                                Metode.showErrorDialog(
+                                  message: "Došlo je do greške sa internetom. Provjerite svoju konekciju.",
+                                  context: context,
+                                  naslov: 'Greška',
+                                  button1Text: 'Zatvori',
+                                  button1Fun: () => {Navigator.pop(context)},
+                                  isButton2: false,
+                                );
+                                return;
+                              }
+                              try {
+                                FirebaseFirestore.instance.collection('recepti').doc(args!['receptId']).update(
+                                  {
+                                    'ratings': {
+                                      FirebaseAuth.instance.currentUser!.uid: 4,
+                                    },
+                                  },
+                                ).then((value) {
+                                  setState(() {
+                                    args!['userRating'] = 4;
+                                  });
+                                  Navigator.pop(context);
+                                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Vaša ocjena je zabilježena.',
+                                        style: Theme.of(context).textTheme.headline4,
+                                      ),
+                                      duration: const Duration(milliseconds: 1500),
+                                      behavior: SnackBarBehavior.floating,
+                                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                                      elevation: 4,
+                                    ),
+                                  );
+                                });
+                              } catch (e) {
+                                Navigator.pop(context);
+
+                                Metode.showErrorDialog(
+                                  context: context,
+                                  naslov: 'Došlo je do greške',
+                                  button1Text: 'Zatvori',
+                                  button1Fun: () {
+                                    Navigator.pop(context);
+                                  },
+                                  isButton2: false,
+                                );
+                              }
+                            },
+                            isButton2: true,
+                            button2Text: 'Otkaži',
+                            button2Fun: () {
+                              Navigator.pop(context);
+                            },
+                          );
+                        },
+                        child: SvgPicture.asset(
+                          args!['userRating'] >= 4 ? 'assets/icons/trueStar.svg' : 'assets/icons/falseStar.svg',
+                          height: 34,
+                          width: 34,
                         ),
                       ),
-                      InkWell(
-                        onTap: () {},
-                        child: Icon(
-                          Iconsax.star,
-                          size: 34,
+                      GestureDetector(
+                        onTap: () {
+                          Metode.showErrorDialog(
+                            context: context,
+                            naslov: 'Da li želite da ocijenite ovaj recept sa 5 zvjezdica?',
+                            button1Text: 'Potvrdi',
+                            button1Fun: () async {
+                              try {
+                                final internetTest = await InternetAddress.lookup('google.com');
+                              } catch (error) {
+                                Navigator.pop(context);
+
+                                Metode.showErrorDialog(
+                                  message: "Došlo je do greške sa internetom. Provjerite svoju konekciju.",
+                                  context: context,
+                                  naslov: 'Greška',
+                                  button1Text: 'Zatvori',
+                                  button1Fun: () => {Navigator.pop(context)},
+                                  isButton2: false,
+                                );
+                                return;
+                              }
+                              try {
+                                FirebaseFirestore.instance.collection('recepti').doc(args!['receptId']).set(
+                                  {
+                                    'ratings': {
+                                      FirebaseAuth.instance.currentUser!.uid: 5,
+                                    },
+                                  },
+                                  SetOptions(merge: true),
+                                ).then((value) {
+                                  setState(() {
+                                    args!['userRating'] = 5;
+                                    Navigator.pop(context);
+                                  });
+                                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Vaša ocjena je zabilježena.',
+                                        style: Theme.of(context).textTheme.headline4,
+                                      ),
+                                      duration: const Duration(milliseconds: 1500),
+                                      behavior: SnackBarBehavior.floating,
+                                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                                      elevation: 4,
+                                    ),
+                                  );
+                                });
+                              } catch (e) {
+                                Navigator.pop(context);
+                                Metode.showErrorDialog(
+                                  context: context,
+                                  naslov: 'Došlo je do greške',
+                                  button1Text: 'Zatvori',
+                                  button1Fun: () {
+                                    Navigator.pop(context);
+                                  },
+                                  isButton2: false,
+                                );
+                              }
+                            },
+                            isButton2: true,
+                            button2Text: 'Otkaži',
+                            button2Fun: () {
+                              Navigator.pop(context);
+                            },
+                          );
+                        },
+                        child: SvgPicture.asset(
+                          args!['userRating'] == 5 ? 'assets/icons/trueStar.svg' : 'assets/icons/falseStar.svg',
+                          height: 34,
+                          width: 34,
                         ),
                       ),
                     ],

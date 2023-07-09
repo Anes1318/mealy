@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:iconsax/iconsax.dart';
@@ -104,25 +105,32 @@ class _PocetnaScreenState extends State<PocetnaScreen> {
                 return Container(
                   height: medijakveri.size.height * 0.7,
                   child: ListView.separated(
-                    padding: const EdgeInsets.symmetric(vertical: 0),
-                    separatorBuilder: ((context, index) => const SizedBox(height: 15)),
-                    itemCount: receptDocs.length,
-                    itemBuilder: (context, index) => MealCard(
-                      medijakveri: medijakveri,
-                      receptId: receptDocs[index].id,
-                      userId: receptDocs[index].data()['userId'],
-                      naziv: receptDocs[index].data()['recept']['naziv'],
-                      opis: receptDocs[index].data()['recept']['opis'],
-                      brOsoba: receptDocs[index].data()['recept']['brOsoba'],
-                      vrPripreme: receptDocs[index].data()['recept']['vrPripreme'],
-                      tezina: receptDocs[index].data()['recept']['tezina'],
-                      imageUrl: receptDocs[index].data()['imageUrl'],
-                      ratings: receptDocs[index].data()['recept']['ratings'],
-                      sastojci: receptDocs[index].data()['recept']['sastojci'],
-                      koraci: receptDocs[index].data()['recept']['koraci'],
-                      favorites: receptDocs[index].data()['favorites'],
-                    ),
-                  ),
+                      padding: const EdgeInsets.symmetric(vertical: 0),
+                      separatorBuilder: ((context, index) => const SizedBox(height: 15)),
+                      itemCount: receptDocs.length,
+                      itemBuilder: (context, index) {
+                        int userRating = 0;
+                        if (receptDocs[index].data()['ratings'][FirebaseAuth.instance.currentUser!.uid] != null) {
+                          userRating = receptDocs[index].data()['ratings'][FirebaseAuth.instance.currentUser!.uid];
+                        }
+
+                        return MealCard(
+                          medijakveri: medijakveri,
+                          receptId: receptDocs[index].id,
+                          autorId: receptDocs[index].data()['userId'],
+                          naziv: receptDocs[index].data()['naziv'],
+                          opis: receptDocs[index].data()['opis'],
+                          brOsoba: receptDocs[index].data()['brOsoba'],
+                          vrPripreme: receptDocs[index].data()['vrPripreme'],
+                          tezina: receptDocs[index].data()['tezina'],
+                          imageUrl: receptDocs[index].data()['imageUrl'],
+                          ratings: receptDocs[index].data()['ratings'],
+                          sastojci: receptDocs[index].data()['sastojci'],
+                          koraci: receptDocs[index].data()['koraci'],
+                          favorites: receptDocs[index].data()['favorites'],
+                          userRating: userRating,
+                        );
+                      }),
                 );
               }),
             ),

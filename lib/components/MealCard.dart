@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -6,9 +8,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:mealy/screens/main/ReceptViewScreen.dart';
 
+import 'metode.dart';
+
 class MealCard extends StatefulWidget {
   final MediaQueryData medijakveri;
-  final String userId;
+  final String autorId;
   final String receptId;
   final String naziv;
   final String opis;
@@ -16,14 +20,15 @@ class MealCard extends StatefulWidget {
   final String vrPripreme;
   final String tezina;
   final String imageUrl;
-  final List<dynamic> ratings;
+  final Map<String, dynamic> ratings;
   final List<dynamic> sastojci;
   final List<dynamic> koraci;
   final List<dynamic> favorites;
+  final int? userRating;
 
   const MealCard({
     required this.medijakveri,
-    required this.userId,
+    required this.autorId,
     required this.receptId,
     required this.naziv,
     required this.opis,
@@ -35,6 +40,7 @@ class MealCard extends StatefulWidget {
     required this.sastojci,
     required this.koraci,
     required this.favorites,
+    this.userRating,
   });
 
   @override
@@ -46,17 +52,25 @@ class _MealCardState extends State<MealCard> {
   double rating = 0;
   @override
   Widget build(BuildContext context) {
-    for (var element in widget.ratings) {
-      rating += element;
-    }
-    rating /= widget.ratings.length;
-
     for (var element in widget.favorites) {
       if (element == FirebaseAuth.instance.currentUser!.uid) {
         isFav = true;
       }
     }
     void favMeal() async {
+      try {
+        final internetTest = await InternetAddress.lookup('google.com');
+      } catch (error) {
+        Metode.showErrorDialog(
+          message: "Došlo je do greške sa internetom. Provjerite svoju konekciju.",
+          context: context,
+          naslov: 'Greška',
+          button1Text: 'Zatvori',
+          button1Fun: () => {Navigator.pop(context)},
+          isButton2: false,
+        );
+        return;
+      }
       if (isFav) {
         await FirebaseFirestore.instance.collection('recepti').doc(widget.receptId).update({
           'favorites': FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.uid]),
@@ -90,9 +104,10 @@ class _MealCardState extends State<MealCard> {
           'ratings': widget.ratings,
           'sastojci': widget.sastojci,
           'koraci': widget.koraci,
-          'userId': widget.userId,
+          'userId': widget.autorId,
           'receptId': widget.receptId,
           'favorites': widget.favorites,
+          'userRating': widget.userRating,
         });
       },
       child: Container(

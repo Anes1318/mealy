@@ -114,7 +114,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
       final internetTest = await InternetAddress.lookup('google.com');
     } catch (error) {
       Metode.showErrorDialog(
-        message: "Došlo je do greške sa internetom. Proverite svoju konekciju.",
+        message: "Došlo je do greške sa internetom. Provjerite svoju konekciju.",
         context: context,
         naslov: 'Greška',
         button1Text: 'Zatvori',
@@ -176,17 +176,15 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
       await FirebaseFirestore.instance.collection('recepti').add({
         'userId': FirebaseAuth.instance.currentUser!.uid,
         'favorites': [],
-        'recept': {
-          'naziv': data['naziv'],
-          'opis': data['opis'],
-          'brOsoba': data['brOsoba'],
-          'vrPripreme': data['vrPripreme'],
-          'tezina': strTezina,
-          'sastojci': sastojci,
-          'koraci': koraci,
-          'tagovi': tagovi,
-          'ratings': [],
-        },
+        'naziv': data['naziv'],
+        'opis': data['opis'],
+        'brOsoba': data['brOsoba'],
+        'vrPripreme': data['vrPripreme'],
+        'tezina': strTezina,
+        'sastojci': sastojci,
+        'koraci': koraci,
+        'tagovi': tagovi,
+        'ratings': {},
         "timestamp": FieldValue.serverTimestamp(),
       }).then((value) async {
         final uploadedImage = await FirebaseStorage.instance.ref().child('receptImages').child('${value.id}.jpg').putFile(_storedImage!).then((value) async {
@@ -289,7 +287,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 20),
                     Form(
                       key: _form,
                       child: Column(

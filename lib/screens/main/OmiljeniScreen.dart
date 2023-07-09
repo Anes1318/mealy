@@ -40,6 +40,7 @@ class _OmiljeniScreenState extends State<OmiljeniScreen> {
       child: Column(
         children: [
           CustomAppBar(pageTitle: 'Omiljeni', isCenter: false),
+          SizedBox(height: 20),
           FutureBuilder(
             future: recepti,
             builder: ((context, snapshot) {
@@ -77,22 +78,22 @@ class _OmiljeniScreenState extends State<OmiljeniScreen> {
               return Container(
                 height: medijakveri.size.height * 0.7,
                 child: ListView.separated(
-                  padding: const EdgeInsets.symmetric(vertical: 0),
+                  padding: EdgeInsets.zero,
                   separatorBuilder: ((context, index) => const SizedBox(height: 15)),
                   itemCount: favRecepti.length,
                   itemBuilder: (context, index) => MealCard(
                     medijakveri: medijakveri,
                     receptId: favRecepti[index].id,
-                    userId: favRecepti[index].data()['userId'],
-                    naziv: favRecepti[index].data()['recept']['naziv'],
-                    opis: favRecepti[index].data()['recept']['opis'],
-                    brOsoba: favRecepti[index].data()['recept']['brOsoba'],
-                    vrPripreme: favRecepti[index].data()['recept']['vrPripreme'],
-                    tezina: favRecepti[index].data()['recept']['tezina'],
+                    autorId: favRecepti[index].data()['userId'],
+                    naziv: favRecepti[index].data()['naziv'],
+                    opis: favRecepti[index].data()['opis'],
+                    brOsoba: favRecepti[index].data()['brOsoba'],
+                    vrPripreme: favRecepti[index].data()['vrPripreme'],
+                    tezina: favRecepti[index].data()['tezina'],
                     imageUrl: favRecepti[index].data()['imageUrl'],
-                    ratings: favRecepti[index].data()['recept']['ratings'],
-                    sastojci: favRecepti[index].data()['recept']['sastojci'],
-                    koraci: favRecepti[index].data()['recept']['koraci'],
+                    ratings: favRecepti[index].data()['ratings'],
+                    sastojci: favRecepti[index].data()['sastojci'],
+                    koraci: favRecepti[index].data()['koraci'],
                     favorites: favRecepti[index].data()['favorites'],
                   ),
                 ),

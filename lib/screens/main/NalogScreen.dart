@@ -34,6 +34,7 @@ class _NalogScreenState extends State<NalogScreen> {
                         setState(() {
                           isLoading = false;
                         });
+                        // Navigator.pushNamedAndRemoveUntil(context, '/', (Route<dynamic> route) => false);
                       });
                     } on FirebaseAuthException catch (error) {
                       setState(() {
