@@ -49,9 +49,17 @@ class MealCard extends StatefulWidget {
 
 class _MealCardState extends State<MealCard> {
   bool isFav = false;
-  double rating = 0;
+
   @override
   Widget build(BuildContext context) {
+    double rating = 0;
+    if (widget.ratings.values.isNotEmpty) {
+      for (var item in widget.ratings.values) {
+        rating += item;
+      }
+    }
+    rating /= widget.ratings.length;
+
     for (var element in widget.favorites) {
       if (element == FirebaseAuth.instance.currentUser!.uid) {
         isFav = true;
@@ -156,7 +164,10 @@ class _MealCardState extends State<MealCard> {
                             ),
                             GestureDetector(
                               onTap: () => favMeal(),
-                              child: SvgPicture.asset('assets/icons/${isFav}Heart.svg'),
+                              child: SvgPicture.asset(
+                                'assets/icons/${isFav}Heart.svg',
+                                height: 24,
+                              ),
                             ),
                           ],
                         ),

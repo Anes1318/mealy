@@ -2,14 +2,13 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:mealy/components/CustomAppbar.dart';
-import 'package:mealy/components/metode.dart';
+// screens
 import 'package:mealy/screens/main/BottomNavigationBarScreen.dart';
-import 'package:mealy/screens/main/PocetnaScreen.dart';
+// components
+import 'package:mealy/components/metode.dart';
 
 class ReceptViewScreen extends StatefulWidget {
   static const String routeName = '/ReceptViewScreen';
@@ -24,8 +23,10 @@ class ReceptViewScreen extends StatefulWidget {
 
 class _ReceptViewScreenState extends State<ReceptViewScreen> {
   bool isFav = false;
+
   Map<String, dynamic>? args;
   List<String>? favList = [];
+  double rating = 0;
 
   @override
   void didChangeDependencies() {
@@ -34,6 +35,12 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
     for (var element in args!['favorites']) {
       favList!.add(element);
     }
+    if (args!['ratings'].values.isNotEmpty) {
+      for (var item in args!['ratings'].values) {
+        rating += item;
+      }
+    }
+    rating /= args!['ratings'].length;
   }
 
   bool favMijenjan = false;
@@ -63,7 +70,7 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                InkWell(
+                GestureDetector(
                   onTap: () {
                     if (favMijenjan == false) {
                       Navigator.pop(context);
@@ -202,7 +209,7 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              '0.0',
+                              '$rating',
                               style: Theme.of(context).textTheme.headline4!.copyWith(fontSize: 14),
                             ),
                           ],
@@ -306,7 +313,9 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                                   SetOptions(merge: true),
                                 ).then((value) {
                                   setState(() {
+                                    favMijenjan = true;
                                     args!['userRating'] = 1;
+                                    args![FirebaseAuth.instance.currentUser!.uid] = 1;
                                   });
                                   Navigator.pop(context);
                                   ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -373,15 +382,19 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                                 return;
                               }
                               try {
-                                FirebaseFirestore.instance.collection('recepti').doc(args!['receptId']).update(
+                                FirebaseFirestore.instance.collection('recepti').doc(args!['receptId']).set(
                                   {
                                     'ratings': {
                                       FirebaseAuth.instance.currentUser!.uid: 2,
                                     },
                                   },
+                                  SetOptions(merge: true),
                                 ).then((value) {
                                   setState(() {
+                                    favMijenjan = true;
+
                                     args!['userRating'] = 2;
+                                    args![FirebaseAuth.instance.currentUser!.uid] = 2;
                                   });
                                   Navigator.pop(context);
                                   ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -448,15 +461,19 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                                 return;
                               }
                               try {
-                                FirebaseFirestore.instance.collection('recepti').doc(args!['receptId']).update(
+                                FirebaseFirestore.instance.collection('recepti').doc(args!['receptId']).set(
                                   {
                                     'ratings': {
                                       FirebaseAuth.instance.currentUser!.uid: 3,
                                     },
                                   },
+                                  SetOptions(merge: true),
                                 ).then((value) {
                                   setState(() {
+                                    favMijenjan = true;
+
                                     args!['userRating'] = 3;
+                                    args![FirebaseAuth.instance.currentUser!.uid] = 3;
                                   });
                                   Navigator.pop(context);
                                   ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -523,15 +540,19 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                                 return;
                               }
                               try {
-                                FirebaseFirestore.instance.collection('recepti').doc(args!['receptId']).update(
+                                FirebaseFirestore.instance.collection('recepti').doc(args!['receptId']).set(
                                   {
                                     'ratings': {
                                       FirebaseAuth.instance.currentUser!.uid: 4,
                                     },
                                   },
+                                  SetOptions(merge: true),
                                 ).then((value) {
                                   setState(() {
+                                    favMijenjan = true;
+
                                     args!['userRating'] = 4;
+                                    args!['ratings'][FirebaseAuth.instance.currentUser!.uid] = 4;
                                   });
                                   Navigator.pop(context);
                                   ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -607,9 +628,13 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                                   SetOptions(merge: true),
                                 ).then((value) {
                                   setState(() {
+                                    favMijenjan = true;
+
                                     args!['userRating'] = 5;
-                                    Navigator.pop(context);
+                                    args!['ratings'][FirebaseAuth.instance.currentUser!.uid] = 5;
                                   });
+
+                                  Navigator.pop(context);
                                   ScaffoldMessenger.of(context).hideCurrentSnackBar();
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
@@ -809,7 +834,7 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                           ),
                         );
                       }
-                      // TODO: DODATI INKWELL KOJI VODI DO PROFILVIEW PROFILA
+                      // TODO: DODATI GestureDetector KOJI VODI DO PROFILVIEW PROFILA
                       return Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(

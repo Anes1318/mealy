@@ -32,7 +32,7 @@ class CustomAppBar extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  InkWell(
+                  GestureDetector(
                     onTap: () => prvaIkonicaFunkcija!(),
                     child: Icon(
                       prvaIkonica,
@@ -51,7 +51,7 @@ class CustomAppBar extends StatelessWidget {
                       ),
                     ),
                   ),
-                  InkWell(
+                  GestureDetector(
                     onTap: () => drugaIkonicaFunkcija!(),
                     child: Icon(
                       drugaIkonica,
@@ -93,7 +93,7 @@ class CustomAppBar extends StatelessWidget {
                     ],
                   ),
                   if (drugaIkonica != null)
-                    InkWell(
+                    GestureDetector(
                       onTap: () => drugaIkonicaFunkcija!(),
                       child: Icon(
                         drugaIkonica,

@@ -180,7 +180,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        InkWell(
+                        GestureDetector(
                           onTap: () {
                             Metode.showErrorDialog(
                               context: context,

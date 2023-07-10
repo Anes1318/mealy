@@ -267,7 +267,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                               SizedBox(width: 5),
                             ],
                           )
-                        : InkWell(
+                        : GestureDetector(
                             onTap: () {
                               FocusManager.instance.primaryFocus?.unfocus();
                               submitForm();
@@ -293,7 +293,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          InkWell(
+                          GestureDetector(
                             onTap: () {
                               Metode.showErrorDialog(
                                 context: context,
@@ -507,7 +507,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
-                                InkWell(
+                                GestureDetector(
                                   onTap: () {
                                     setState(() {
                                       tezina = Tezina.lako;
@@ -527,7 +527,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                                     ],
                                   ),
                                 ),
-                                InkWell(
+                                GestureDetector(
                                   onTap: () {
                                     setState(() {
                                       tezina = Tezina.umjereno;
@@ -547,7 +547,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                                     ],
                                   ),
                                 ),
-                                InkWell(
+                                GestureDetector(
                                   onTap: () {
                                     setState(() {
                                       tezina = Tezina.tesko;
@@ -629,7 +629,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                                     sastojci.add(value!);
                                   },
                                 ),
-                                InkWell(
+                                GestureDetector(
                                   onTap: () {
                                     if (index == 0) {
                                       return;
@@ -651,7 +651,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                           ),
                           const SizedBox(height: 5),
                           Center(
-                            child: InkWell(
+                            child: GestureDetector(
                               onTap: () {
                                 setState(() {
                                   if (sastojakInput.length > 98) {
@@ -749,7 +749,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                                   sirina: 0.65,
                                   borderRadijus: 10,
                                 ),
-                                InkWell(
+                                GestureDetector(
                                   onTap: () {
                                     if (index == 0) {
                                       return;
@@ -771,7 +771,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                           ),
                           const SizedBox(height: 5),
                           Center(
-                            child: InkWell(
+                            child: GestureDetector(
                               onTap: () {
                                 setState(() {
                                   if (korakInput.length > 98) {

@@ -24,17 +24,16 @@ class _NalogScreenState extends State<NalogScreen> {
           CustomAppBar(pageTitle: 'Nalog', isCenter: false),
           isLoading == true
               ? CircularProgressIndicator()
-              : ElevatedButton(
-                  onPressed: () {
+              : GestureDetector(
+                  onTap: () async {
                     setState(() {
                       isLoading = true;
                     });
                     try {
-                      FirebaseAuth.instance.signOut().then((value) {
+                      await FirebaseAuth.instance.signOut().then((value) {
                         setState(() {
                           isLoading = false;
                         });
-                        // Navigator.pushNamedAndRemoveUntil(context, '/', (Route<dynamic> route) => false);
                       });
                     } on FirebaseAuthException catch (error) {
                       setState(() {
@@ -51,7 +50,7 @@ class _NalogScreenState extends State<NalogScreen> {
                       );
                     }
                   },
-                  child: Text('SING OUT'),
+                  child: Text('SIGN OUT'),
                 ),
         ],
       ),

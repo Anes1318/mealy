@@ -60,7 +60,7 @@ class _PocetnaScreenState extends State<PocetnaScreen> {
                     ),
                   ),
                 ),
-                InkWell(
+                GestureDetector(
                   child: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(

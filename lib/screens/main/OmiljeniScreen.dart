@@ -78,25 +78,31 @@ class _OmiljeniScreenState extends State<OmiljeniScreen> {
               return Container(
                 height: medijakveri.size.height * 0.7,
                 child: ListView.separated(
-                  padding: EdgeInsets.zero,
-                  separatorBuilder: ((context, index) => const SizedBox(height: 15)),
-                  itemCount: favRecepti.length,
-                  itemBuilder: (context, index) => MealCard(
-                    medijakveri: medijakveri,
-                    receptId: favRecepti[index].id,
-                    autorId: favRecepti[index].data()['userId'],
-                    naziv: favRecepti[index].data()['naziv'],
-                    opis: favRecepti[index].data()['opis'],
-                    brOsoba: favRecepti[index].data()['brOsoba'],
-                    vrPripreme: favRecepti[index].data()['vrPripreme'],
-                    tezina: favRecepti[index].data()['tezina'],
-                    imageUrl: favRecepti[index].data()['imageUrl'],
-                    ratings: favRecepti[index].data()['ratings'],
-                    sastojci: favRecepti[index].data()['sastojci'],
-                    koraci: favRecepti[index].data()['koraci'],
-                    favorites: favRecepti[index].data()['favorites'],
-                  ),
-                ),
+                    padding: EdgeInsets.zero,
+                    separatorBuilder: ((context, index) => const SizedBox(height: 15)),
+                    itemCount: favRecepti.length,
+                    itemBuilder: (context, index) {
+                      int userRating = 0;
+                      if (receptDocs[index].data()['ratings'][FirebaseAuth.instance.currentUser!.uid] != null) {
+                        userRating = receptDocs[index].data()['ratings'][FirebaseAuth.instance.currentUser!.uid];
+                      }
+                      return MealCard(
+                        medijakveri: medijakveri,
+                        receptId: favRecepti[index].id,
+                        autorId: favRecepti[index].data()['userId'],
+                        naziv: favRecepti[index].data()['naziv'],
+                        opis: favRecepti[index].data()['opis'],
+                        brOsoba: favRecepti[index].data()['brOsoba'],
+                        vrPripreme: favRecepti[index].data()['vrPripreme'],
+                        tezina: favRecepti[index].data()['tezina'],
+                        imageUrl: favRecepti[index].data()['imageUrl'],
+                        ratings: favRecepti[index].data()['ratings'],
+                        sastojci: favRecepti[index].data()['sastojci'],
+                        koraci: favRecepti[index].data()['koraci'],
+                        favorites: favRecepti[index].data()['favorites'],
+                        userRating: userRating,
+                      );
+                    }),
               );
             }),
           ),
