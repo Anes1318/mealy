@@ -16,22 +16,6 @@ class OmiljeniScreen extends StatefulWidget {
 
 class _OmiljeniScreenState extends State<OmiljeniScreen> {
   @override
-  List<TextEditingController> _textControllers = [];
-
-  @override
-  void dispose() {
-    for (var controller in _textControllers) {
-      controller.dispose();
-    }
-    super.dispose();
-  }
-
-  void _addTextField() {
-    setState(() {
-      _textControllers.add(TextEditingController());
-    });
-  }
-
   Widget build(BuildContext context) {
     final medijakveri = MediaQuery.of(context);
     final recepti = FirebaseFirestore.instance.collection('recepti').get();
@@ -40,13 +24,13 @@ class _OmiljeniScreenState extends State<OmiljeniScreen> {
       child: Column(
         children: [
           CustomAppBar(pageTitle: 'Omiljeni', isCenter: false),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           FutureBuilder(
             future: recepti,
             builder: ((context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Container(
-                  height: (medijakveri.size.height - medijakveri.padding.top) * 0.7,
+                  height: (medijakveri.size.height - medijakveri.padding.top) * 0.758,
                   child: const Center(
                     child: CircularProgressIndicator(),
                   ),
@@ -65,7 +49,7 @@ class _OmiljeniScreenState extends State<OmiljeniScreen> {
 
               if (favRecepti.isEmpty) {
                 return Container(
-                  height: (medijakveri.size.height - medijakveri.padding.top) * 0.7,
+                  height: (medijakveri.size.height - medijakveri.padding.top) * 0.758,
                   child: Center(
                     child: Text(
                       'Nema omiljenih recepata',
@@ -76,7 +60,7 @@ class _OmiljeniScreenState extends State<OmiljeniScreen> {
               }
 
               return Container(
-                height: medijakveri.size.height * 0.7,
+                height: medijakveri.size.height * 0.758,
                 child: ListView.separated(
                     padding: EdgeInsets.zero,
                     separatorBuilder: ((context, index) => const SizedBox(height: 15)),

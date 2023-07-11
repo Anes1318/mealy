@@ -581,6 +581,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.99"
+  slide_indexed_stack:
+    dependency: "direct main"
+    description:
+      name: slide_indexed_stack
+      sha256: ed0db7acafd01620fc9cc2f74433a7811c53ceb1ae7a22da0d9c0c742297514b
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.1"
   source_span:
     dependency: transitive
     description:

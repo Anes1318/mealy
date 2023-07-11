@@ -4,6 +4,7 @@ import 'package:mealy/screens/main/DodajScreen.dart';
 import 'package:mealy/screens/main/NalogScreen.dart';
 import 'package:mealy/screens/main/OmiljeniScreen.dart';
 import 'package:mealy/screens/main/PocetnaScreen.dart';
+import 'package:slide_indexed_stack/slide_indexed_stack.dart';
 
 class BottomNavigationBarScreen extends StatefulWidget {
   static const String routeName = '/BottomNavigationBarScreen';
@@ -33,17 +34,17 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
   @override
   Widget build(BuildContext context) {
     final medijakveri = MediaQuery.of(context);
-    double tastaturaHeight = medijakveri.viewInsets.bottom;
-
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       body: Container(
         margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.07),
-        child: _selectedIndex == 1
-            ? DodajScreen(
-                tastaturaHeight: tastaturaHeight,
-              )
-            : _screens[_selectedIndex],
+        child: SlideIndexedStack(
+          axis: Axis.horizontal,
+          slideOffset: 0.7,
+          duration: const Duration(milliseconds: 200),
+          index: _selectedIndex,
+          children: _screens,
+        ),
       ),
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(

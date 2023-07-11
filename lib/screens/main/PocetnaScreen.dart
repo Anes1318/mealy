@@ -82,7 +82,7 @@ class _PocetnaScreenState extends State<PocetnaScreen> {
               builder: ((context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.7,
+                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.66,
                     child: const Center(
                       child: CircularProgressIndicator(),
                     ),
@@ -92,7 +92,7 @@ class _PocetnaScreenState extends State<PocetnaScreen> {
                 final receptDocs = snapshot.data!.docs;
                 if (receptDocs.isEmpty) {
                   return Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.7,
+                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.66,
                     child: Center(
                       child: Text(
                         'Nema recepata',
@@ -103,7 +103,7 @@ class _PocetnaScreenState extends State<PocetnaScreen> {
                 }
 
                 return Container(
-                  height: medijakveri.size.height * 0.7,
+                  height: medijakveri.size.height * 0.66,
                   child: ListView.separated(
                       padding: const EdgeInsets.symmetric(vertical: 0),
                       separatorBuilder: ((context, index) => const SizedBox(height: 15)),

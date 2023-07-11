@@ -80,9 +80,9 @@ class MyApp extends StatelessWidget {
           RegisterScreen.routeName: (context) => const RegisterScreen(),
           ForgotPassScreen.routeName: (context) => const ForgotPassScreen(),
           BottomNavigationBarScreen.routeName: (context) => const BottomNavigationBarScreen(),
-          ReceptViewScreen.routeName: (context) => ReceptViewScreen(),
+          ReceptViewScreen.routeName: (context) => const ReceptViewScreen(),
         },
-        home: snapshot.data == null ? DobrodosliScreen() : BottomNavigationBarScreen(),
+        home: snapshot.data == null ? const DobrodosliScreen() : const BottomNavigationBarScreen(),
       ),
     );
   }

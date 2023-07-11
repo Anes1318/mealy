@@ -283,7 +283,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
               ),
             ),
             SizedBox(
-              height: (medijakveri.size.height - medijakveri.padding.top) * 0.81,
+              height: (medijakveri.size.height - medijakveri.padding.top) * 0.80,
               child: SingleChildScrollView(
                 child: Column(
                   children: [
@@ -950,8 +950,8 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                                 style: Theme.of(context).textTheme.headline5!.copyWith(color: Colors.red),
                               ),
                             ),
-                          SizedBox(height: widget.tastaturaHeight!),
-                          const SizedBox(height: 30),
+                          // SizedBox(height: widget.tastaturaHeight!),
+                          const SizedBox(height: 60),
                         ],
                       ),
                     ),
