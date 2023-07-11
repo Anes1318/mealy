@@ -102,21 +102,36 @@ class _MealCardState extends State<MealCard> {
 
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, ReceptViewScreen.routeName, arguments: {
-          'naziv': widget.naziv,
-          'opis': widget.opis,
-          'brOsoba': widget.brOsoba,
-          'vrPripreme': widget.vrPripreme,
-          'tezina': widget.tezina,
-          'imageUrl': widget.imageUrl,
-          'ratings': widget.ratings,
-          'sastojci': widget.sastojci,
-          'koraci': widget.koraci,
-          'userId': widget.autorId,
-          'receptId': widget.receptId,
-          'favorites': widget.favorites,
-          'userRating': widget.userRating,
-        });
+        Navigator.push(
+          context,
+          PageRouteBuilder(
+            transitionDuration: const Duration(milliseconds: 150),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(1, 0),
+                  end: Offset.zero,
+                ).animate(animation),
+                child: child,
+              );
+            },
+            pageBuilder: (context, animation, duration) => ReceptViewScreen(
+              naziv: widget.naziv,
+              opis: widget.opis,
+              brOsoba: widget.brOsoba,
+              vrPripreme: widget.vrPripreme,
+              tezina: widget.tezina,
+              imageUrl: widget.imageUrl,
+              ratings: widget.ratings,
+              sastojci: widget.sastojci,
+              koraci: widget.koraci,
+              autorId: widget.autorId,
+              receptId: widget.receptId,
+              favorites: widget.favorites,
+              userRating: widget.userRating,
+            ),
+          ),
+        );
       },
       child: Container(
         height: 130,
@@ -128,16 +143,13 @@ class _MealCardState extends State<MealCard> {
           margin: const EdgeInsets.only(left: 15, top: 15, bottom: 15, right: 5),
           child: Row(
             children: [
-              Hero(
-                tag: widget.receptId,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: Image.network(
-                    widget.imageUrl,
-                    height: 100,
-                    width: 100,
-                    fit: BoxFit.fill,
-                  ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Image.network(
+                  widget.imageUrl,
+                  height: 100,
+                  width: 100,
+                  fit: BoxFit.fill,
                 ),
               ),
               const SizedBox(width: 10),
