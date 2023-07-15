@@ -1,6 +1,3 @@
-import 'dart:async';
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Metode {
@@ -9,10 +6,14 @@ class Metode {
     required BuildContext context,
     required String naslov,
     required String button1Text,
-    String? button2Text,
     required Function button1Fun,
-    Function? button2Fun,
+    bool isButton1Icon = false,
+    Widget? button1Icon,
     required bool isButton2,
+    String? button2Text,
+    Function? button2Fun,
+    bool isButton2Icon = false,
+    Widget? button2Icon,
   }) {
     showDialog(
       context: context,
@@ -29,63 +30,80 @@ class Metode {
                   padding: const EdgeInsets.only(top: 18.0, bottom: 24),
                   child: Text(
                     message,
-                    style: TextStyle(fontSize: 20, color: Colors.grey[700]),
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.grey.shade700,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                 )
               : null,
           actions: [
-            GestureDetector(
-              onTap: () => button1Fun(),
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                  vertical: 10,
-                ),
-                margin: EdgeInsets.symmetric(
-                  horizontal: medijakveri.size.width * 0.2,
-                  vertical: medijakveri.size.height * 0.01,
-                ),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Center(
-                  child: Text(
-                    button1Text,
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  onTap: () => button1Fun(),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      children: [
+                        if (isButton1Icon) button1Icon!,
+                        const SizedBox(width: 5),
+                        Text(
+                          button1Text,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              ),
+              ],
             ),
+            if (isButton2) const SizedBox(height: 20),
             if (isButton2)
-              GestureDetector(
-                onTap: () => button2Fun!(),
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    vertical: 10,
-                  ),
-                  margin: EdgeInsets.symmetric(
-                    horizontal: medijakveri.size.width * 0.2,
-                    vertical: medijakveri.size.height * 0.01,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Center(
-                    child: Text(
-                      button2Text!,
-                      style: TextStyle(
-                        //fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                        color: Colors.white,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: () => button2Fun!(),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          if (isButton2Icon) button2Icon!,
+                          const SizedBox(width: 5),
+                          Text(
+                            button2Text!,
+                            style: const TextStyle(
+                              //fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                ),
+                ],
               ),
           ],
         );

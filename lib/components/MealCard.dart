@@ -2,12 +2,14 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:mealy/screens/main/ReceptViewScreen.dart';
+import 'package:mealy/screens/recept/ReceptEditScreen.dart';
+import 'package:mealy/screens/recept/ReceptViewScreen.dart';
 
+import '../screens/main/BottomNavigationBarScreen.dart';
 import 'metode.dart';
 
 class MealCard extends StatefulWidget {
@@ -24,9 +26,10 @@ class MealCard extends StatefulWidget {
   final List<dynamic> sastojci;
   final List<dynamic> koraci;
   final List<dynamic> favorites;
+  final List<dynamic> tagovi;
   final int? userRating;
 
-  const MealCard({
+  MealCard({
     required this.medijakveri,
     required this.autorId,
     required this.receptId,
@@ -40,6 +43,7 @@ class MealCard extends StatefulWidget {
     required this.sastojci,
     required this.koraci,
     required this.favorites,
+    required this.tagovi,
     this.userRating,
   });
 
@@ -128,6 +132,7 @@ class _MealCardState extends State<MealCard> {
               autorId: widget.autorId,
               receptId: widget.receptId,
               favorites: widget.favorites,
+              tagovi: widget.tagovi,
               userRating: widget.userRating,
             ),
           ),
@@ -174,13 +179,71 @@ class _MealCardState extends State<MealCard> {
                                 ),
                               ),
                             ),
-                            GestureDetector(
-                              onTap: () => favMeal(),
-                              child: SvgPicture.asset(
-                                'assets/icons/${isFav}Heart.svg',
-                                height: 24,
-                              ),
-                            ),
+                            widget.autorId != FirebaseAuth.instance.currentUser!.uid
+                                ? GestureDetector(
+                                    onTap: () => favMeal(),
+                                    child: SvgPicture.asset(
+                                      'assets/icons/${isFav}Heart.svg',
+                                      height: 24,
+                                    ),
+                                  )
+                                : GestureDetector(
+                                    onTap: () {
+                                      Metode.showErrorDialog(
+                                        context: context,
+                                        naslov: 'Koju akciju želite da izvršite',
+                                        button1Text: 'Izmijenite recept',
+                                        button1Fun: () {
+                                          Navigator.pop(context);
+                                          Navigator.push(
+                                            context,
+                                            PageRouteBuilder(
+                                              transitionDuration: const Duration(milliseconds: 150),
+                                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                                return SlideTransition(
+                                                  position: Tween<Offset>(
+                                                    begin: const Offset(1, 0),
+                                                    end: Offset.zero,
+                                                  ).animate(animation),
+                                                  child: child,
+                                                );
+                                              },
+                                              pageBuilder: (context, animation, duration) => ReceptEditScreen(
+                                                naziv: widget.naziv,
+                                                opis: widget.opis,
+                                                brOsoba: widget.brOsoba,
+                                                vrPripreme: widget.vrPripreme,
+                                                tezina: widget.tezina,
+                                                imageUrl: widget.imageUrl,
+                                                ratings: widget.ratings,
+                                                sastojci: widget.sastojci,
+                                                koraci: widget.koraci,
+                                                autorId: widget.autorId,
+                                                receptId: widget.receptId,
+                                                favorites: widget.favorites,
+                                                userRating: widget.userRating,
+                                                tagovi: widget.tagovi,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        isButton2: true,
+                                        button2Text: 'Izbrišite recept',
+                                        button2Fun: () async {
+                                          await FirebaseFirestore.instance.collection('recepti').doc(widget.receptId).delete();
+                                          await FirebaseStorage.instance.ref().child('receptImages').child('${widget.receptId}.jpg').delete();
+                                          Navigator.pop(context);
+                                          Navigator.pushReplacementNamed(context, BottomNavigationBarScreen.routeName);
+                                        },
+                                      );
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(3),
+                                      child: SvgPicture.asset(
+                                        'assets/icons/more.svg',
+                                      ),
+                                    ),
+                                  ),
                           ],
                         ),
                       ),

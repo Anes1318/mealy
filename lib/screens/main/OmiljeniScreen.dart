@@ -84,6 +84,7 @@ class _OmiljeniScreenState extends State<OmiljeniScreen> {
                         sastojci: favRecepti[index].data()['sastojci'],
                         koraci: favRecepti[index].data()['koraci'],
                         favorites: favRecepti[index].data()['favorites'],
+                        tagovi: favRecepti[index].data()['tagovi'],
                         userRating: userRating,
                       );
                     }),

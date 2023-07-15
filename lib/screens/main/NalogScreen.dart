@@ -23,7 +23,7 @@ class _NalogScreenState extends State<NalogScreen> {
         children: [
           CustomAppBar(pageTitle: 'Nalog', isCenter: false),
           isLoading == true
-              ? CircularProgressIndicator()
+              ? const CircularProgressIndicator()
               : GestureDetector(
                   onTap: () async {
                     setState(() {
@@ -34,6 +34,7 @@ class _NalogScreenState extends State<NalogScreen> {
                         setState(() {
                           isLoading = false;
                         });
+                        Navigator.pushNamedAndRemoveUntil(context, '/', (Route<dynamic> route) => false);
                       });
                     } on FirebaseAuthException catch (error) {
                       setState(() {

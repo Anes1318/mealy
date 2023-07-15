@@ -10,19 +10,15 @@ import 'package:image_picker/image_picker.dart';
 import 'package:multiple_search_selection/multiple_search_selection.dart';
 // screens
 import 'package:mealy/screens/main/BottomNavigationBarScreen.dart';
-import 'package:mealy/screens/main/PocetnaScreen.dart';
 // components
 import 'package:mealy/components/InputField.dart';
 import '../../models/tezina.dart';
 import 'package:mealy/components/Button.dart';
-import 'package:mealy/components/CustomAppbar.dart';
 import 'package:mealy/components/metode.dart';
 
 class DodajScreen extends StatefulWidget {
-  double? tastaturaHeight;
   DodajScreen({
     super.key,
-    this.tastaturaHeight,
   });
 
   @override
@@ -303,6 +299,11 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                                   _takeImage(true);
                                   Navigator.pop(context);
                                 },
+                                isButton1Icon: true,
+                                button1Icon: Icon(
+                                  Iconsax.camera,
+                                  color: Colors.white,
+                                ),
                                 isButton2: true,
                                 button2Text: 'Galerija',
                                 button2Fun: () {
@@ -310,6 +311,11 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
 
                                   Navigator.pop(context);
                                 },
+                                isButton2Icon: true,
+                                button2Icon: Icon(
+                                  Iconsax.picture_frame,
+                                  color: Colors.white,
+                                ),
                               );
                             },
                             child: Container(

@@ -16,14 +16,10 @@ class PocetnaScreen extends StatefulWidget {
 class _PocetnaScreenState extends State<PocetnaScreen> {
   @override
   Future<QuerySnapshot<Map<String, dynamic>>>? recepti;
-  void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
-    super.didChangeDependencies();
-    recepti = FirebaseFirestore.instance.collection('recepti').get();
-  }
 
   Widget build(BuildContext context) {
     final medijakveri = MediaQuery.of(context);
+    recepti = FirebaseFirestore.instance.collection('recepti').get();
 
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -128,6 +124,7 @@ class _PocetnaScreenState extends State<PocetnaScreen> {
                           sastojci: receptDocs[index].data()['sastojci'],
                           koraci: receptDocs[index].data()['koraci'],
                           favorites: receptDocs[index].data()['favorites'],
+                          tagovi: receptDocs[index].data()['tagovi'],
                           userRating: userRating,
                         );
                       }),

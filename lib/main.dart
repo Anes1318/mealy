@@ -9,7 +9,7 @@ import 'package:mealy/screens/auth/ForgotPassScreen.dart';
 import 'package:mealy/screens/auth/LoginScreen.dart';
 import 'package:mealy/screens/auth/RegisterScreen.dart';
 import 'package:mealy/screens/main/BottomNavigationBarScreen.dart';
-import 'package:mealy/screens/main/ReceptViewScreen.dart';
+import 'package:mealy/screens/recept/ReceptEditScreen.dart';
 
 // components
 
@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.userChanges(),
+      stream: FirebaseAuth.instance.authStateChanges(),
       initialData: FirebaseAuth.instance.currentUser,
       builder: (context, snapshot) => MaterialApp(
         debugShowCheckedModeBanner: false,
