@@ -12,6 +12,7 @@ import 'package:multiple_search_selection/multiple_search_selection.dart';
 import 'package:mealy/screens/main/BottomNavigationBarScreen.dart';
 // components
 import 'package:mealy/components/InputField.dart';
+import '../../models/availableTagovi.dart';
 import '../../models/tezina.dart';
 import 'package:mealy/components/Button.dart';
 import 'package:mealy/components/metode.dart';
@@ -44,18 +45,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
     tagNode.dispose();
   }
 
-  List<String> availableTagovi = [
-    "Doručak",
-    "Ručak",
-    "Večera",
-    "Zdravo",
-    "Brza hrana",
-    "Pite",
-    "Salate",
-    "A3",
-    "A4",
-    "A5",
-  ];
+  List<String> localAvailableTagovi = availableTagovi;
 
   List<TextEditingController> sastojakInput = [TextEditingController()];
   List<FocusNode> sastojakFokus = [FocusNode()];
@@ -301,7 +291,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                                 },
                                 isButton1Icon: true,
                                 button1Icon: Icon(
-                                  Iconsax.camera,
+                                  Icons.camera_alt,
                                   color: Colors.white,
                                 ),
                                 isButton2: true,
@@ -313,7 +303,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                                 },
                                 isButton2Icon: true,
                                 button2Icon: Icon(
-                                  Iconsax.picture_frame,
+                                  Icons.photo,
                                   color: Colors.white,
                                 ),
                               );
@@ -834,7 +824,7 @@ class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStat
                               }
                             },
                             child: MultipleSearchSelection<String>(
-                              items: availableTagovi,
+                              items: localAvailableTagovi,
                               fieldToCheck: (tag) {
                                 return tag;
                               },

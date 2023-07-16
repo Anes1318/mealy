@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../components/CustomAppbar.dart';
 import '../../components/MealCard.dart';
+import '../../db/ReceptProvider.dart';
 
 class OmiljeniScreen extends StatefulWidget {
   static const String routeName = '/OmiljeniScreen';
@@ -15,10 +17,18 @@ class OmiljeniScreen extends StatefulWidget {
 }
 
 class _OmiljeniScreenState extends State<OmiljeniScreen> {
+  Future<QuerySnapshot<Map<String, dynamic>>>? recepti;
   @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    Provider.of<ReceptProvider>(context).readRecepti();
+
+    recepti = Provider.of<ReceptProvider>(context).recepti;
+  }
+
   Widget build(BuildContext context) {
     final medijakveri = MediaQuery.of(context);
-    final recepti = FirebaseFirestore.instance.collection('recepti').get();
 
     return SingleChildScrollView(
       child: Column(

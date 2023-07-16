@@ -56,7 +56,7 @@ class Metode {
                     child: Row(
                       children: [
                         if (isButton1Icon) button1Icon!,
-                        const SizedBox(width: 5),
+                        if (isButton1Icon) const SizedBox(width: 5),
                         Text(
                           button1Text,
                           style: const TextStyle(
@@ -90,7 +90,7 @@ class Metode {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           if (isButton2Icon) button2Icon!,
-                          const SizedBox(width: 5),
+                          if (isButton2Icon) const SizedBox(width: 5),
                           Text(
                             button2Text!,
                             style: const TextStyle(

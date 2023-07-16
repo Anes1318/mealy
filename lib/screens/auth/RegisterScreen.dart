@@ -122,7 +122,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           'userName': '${_authData['ime']} ${_authData['prezime']}',
           'imageUrl': imageUrl,
         }).then((value) {
-          Navigator.pushNamedAndRemoveUntil(context, '/', (Route<dynamic> route) => false);
+          Navigator.pop(context);
 
           setState(() {
             isLoading = false;
@@ -190,6 +190,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 _takeImage(true);
                                 Navigator.pop(context);
                               },
+                              isButton1Icon: true,
+                              button1Icon: Icon(
+                                Icons.camera_alt,
+                                color: Colors.white,
+                              ),
                               isButton2: true,
                               button2Text: 'Galerija',
                               button2Fun: () {
@@ -197,6 +202,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                                 Navigator.pop(context);
                               },
+                              isButton2Icon: true,
+                              button2Icon: Icon(
+                                Icons.photo,
+                                color: Colors.white,
+                              ),
                             );
                           },
                           child: Container(
@@ -230,6 +240,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           medijakveri: medijakveri,
                           isLabel: true,
                           label: 'Ime',
+                          kapitulacija: TextCapitalization.sentences,
                           hintText: 'Ime',
                           inputAction: TextInputAction.next,
                           inputType: TextInputType.name,
@@ -259,6 +270,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           isLabel: true,
                           label: 'Prezime',
                           hintText: 'Prezime',
+                          kapitulacija: TextCapitalization.sentences,
                           borderRadijus: 10,
                           inputAction: TextInputAction.next,
                           inputType: TextInputType.text,

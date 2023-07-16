@@ -51,12 +51,11 @@ class _LoginScreenState extends State<LoginScreen> {
         isLoading = true;
       });
       await FirebaseAuth.instance.signInWithEmailAndPassword(email: _authData['email']!, password: _authData['sifra']!).then((value) {
-        Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
+        Navigator.pop(context);
         setState(() {
           isLoading = false;
         });
       });
-      ;
     } on FirebaseAuthException catch (error) {
       setState(() {
         isLoading = false;
@@ -204,7 +203,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               isBorder: true,
                             ),
                       TextButton(
-                        onPressed: () => {Navigator.pushNamed(context, ForgotPassScreen.routeName)},
+                        onPressed: () {
+                          Navigator.pushNamed(context, ForgotPassScreen.routeName);
+                        },
                         child: Text(
                           'Zaboravili ste šifru?',
                           style: Theme.of(context).textTheme.headline4,

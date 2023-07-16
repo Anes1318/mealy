@@ -6,8 +6,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:mealy/db/ReceptProvider.dart';
 import 'package:mealy/screens/recept/ReceptEditScreen.dart';
 import 'package:mealy/screens/recept/ReceptViewScreen.dart';
+import 'package:provider/provider.dart';
 
 import '../screens/main/BottomNavigationBarScreen.dart';
 import 'metode.dart';
@@ -78,30 +80,14 @@ class _MealCardState extends State<MealCard> {
           context: context,
           naslov: 'Greška',
           button1Text: 'Zatvori',
-          button1Fun: () => {Navigator.pop(context)},
+          button1Fun: () => {
+            Navigator.pop(context),
+          },
           isButton2: false,
         );
         return;
       }
-      if (isFav) {
-        await FirebaseFirestore.instance.collection('recepti').doc(widget.receptId).update({
-          'favorites': FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.uid]),
-        }).then((value) {
-          setState(() {
-            isFav = false;
-            widget.favorites.remove(FirebaseAuth.instance.currentUser!.uid);
-          });
-        });
-      } else {
-        await FirebaseFirestore.instance.collection('recepti').doc(widget.receptId).update({
-          'favorites': FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid]),
-        }).then((value) {
-          setState(() {
-            isFav = true;
-            widget.favorites.add(FirebaseAuth.instance.currentUser!.uid);
-          });
-        });
-      }
+      Provider.of<ReceptProvider>(context, listen: false).favRecept(widget.favorites, widget.receptId);
     }
 
     return GestureDetector(
@@ -154,7 +140,8 @@ class _MealCardState extends State<MealCard> {
                   widget.imageUrl,
                   height: 100,
                   width: 100,
-                  fit: BoxFit.fill,
+                  fit: BoxFit.cover,
+                  // scale: 0.3,
                 ),
               ),
               const SizedBox(width: 10),
@@ -250,7 +237,7 @@ class _MealCardState extends State<MealCard> {
                       Container(
                         width: widget.medijakveri.size.width * 0.4,
                         child: Text(
-                          widget.opis.length > 60 ? widget.opis.substring(1, 60) : widget.opis,
+                          widget.opis.length > 85 ? '${widget.opis.substring(1, 85)}...' : widget.opis,
                           style: Theme.of(context).textTheme.headline5,
                         ),
                       ),
@@ -258,7 +245,6 @@ class _MealCardState extends State<MealCard> {
                   ),
                   Container(
                     width: widget.medijakveri.size.width * 0.5,
-                    // width: 150,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [

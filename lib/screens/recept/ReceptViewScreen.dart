@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
 // screens
@@ -105,7 +106,8 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                       Navigator.pop(context);
                     } else {
                       Navigator.pop(context);
-                      Navigator.pushReplacementNamed(context, BottomNavigationBarScreen.routeName);
+                      // Navigator.pop(context);
+                      Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
                     }
                   },
                   child: Icon(
@@ -621,7 +623,9 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                                         context: context,
                                         naslov: 'Greška',
                                         button1Text: 'Zatvori',
-                                        button1Fun: () => {Navigator.pop(context)},
+                                        button1Fun: () => {
+                                          Navigator.pop(context),
+                                        },
                                         isButton2: false,
                                       );
                                       return;
@@ -700,7 +704,9 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                                         context: context,
                                         naslov: 'Greška',
                                         button1Text: 'Zatvori',
-                                        button1Fun: () => {Navigator.pop(context)},
+                                        button1Fun: () => {
+                                          Navigator.pop(context),
+                                        },
                                         isButton2: false,
                                       );
                                       return;
@@ -768,6 +774,54 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                     ),
                   //
                   //
+                  // TAGOVI
+                  const SizedBox(height: 20),
+                  Container(
+                    width: medijakveri.size.width,
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Tagovi',
+                          style: Theme.of(context).textTheme.headline2,
+                        ),
+                        const SizedBox(height: 10),
+                        Container(
+                          height: 30,
+                          child: ListView.separated(
+                            separatorBuilder: (context, index) => const SizedBox(width: 10),
+                            padding: EdgeInsets.zero,
+                            scrollDirection: Axis.horizontal,
+                            shrinkWrap: true, // zauzima min content prostor
+                            primary: false, // ne skrola ovu listu nego sve generalno
+                            itemCount: widget.tagovi.length,
+                            itemBuilder: ((context, index) => Container(
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context).colorScheme.tertiary,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                    child: Text(
+                                      "#${widget.tagovi[index]}",
+                                      style: Theme.of(context).textTheme.headline4!.copyWith(
+                                            color: Colors.white,
+                                          ),
+                                    ),
+                                  ),
+                                )),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  //
+                  //
                   // OPIS
                   const SizedBox(height: 20),
                   Container(
@@ -830,9 +884,12 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                                     ),
                                   ),
                                   const SizedBox(width: 5),
-                                  Text(
-                                    '${widget.sastojci[index]}',
-                                    style: Theme.of(context).textTheme.headline4,
+                                  Container(
+                                    width: medijakveri.size.width * 0.7,
+                                    child: Text(
+                                      '${widget.sastojci[index]}',
+                                      style: Theme.of(context).textTheme.headline4,
+                                    ),
                                   ),
                                 ],
                               )),
@@ -910,7 +967,7 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
 
                       final usersDocs = snapshot.data!.docs;
 
-                      final user = usersDocs.where((element) => element.id == widget.autorId).toList();
+                      final user = usersDocs.where((element) => element['userId'] == widget.autorId).toList();
 
                       if (user.isEmpty) {
                         return Container(

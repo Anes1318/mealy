@@ -12,6 +12,7 @@ import 'package:multiple_search_selection/multiple_search_selection.dart';
 
 import '../../components/InputField.dart';
 import '../../components/metode.dart';
+import '../../models/availableTagovi.dart';
 import '../../models/tezina.dart';
 import '../main/BottomNavigationBarScreen.dart';
 
@@ -73,18 +74,7 @@ class _ReceptEditScreenState extends State<ReceptEditScreen> {
     tagNode.dispose();
   }
 
-  List<String> availableTagovi = [
-    "Doručak",
-    "Ručak",
-    "Večera",
-    "Zdravo",
-    "Brza hrana",
-    "Pite",
-    "Salate",
-    "A3",
-    "A4",
-    "A5",
-  ];
+  List<String> localAvailableTagovi = availableTagovi;
 
   List<TextEditingController> sastojakInput = [];
   List<FocusNode> sastojakFokus = [];
@@ -259,7 +249,9 @@ class _ReceptEditScreenState extends State<ReceptEditScreen> {
     widget.tagovi.forEach((element) {
       tagovi.add(element);
     });
-
+    tagovi.forEach((element) {
+      localAvailableTagovi.remove(element);
+    });
     for (var i = 0; i < widget.sastojci.length; i++) {
       sastojakInput.add(TextEditingController(text: widget.sastojci[i]));
       sastojakFokus.add(FocusNode());
@@ -880,7 +872,7 @@ class _ReceptEditScreenState extends State<ReceptEditScreen> {
                                   }
                                 },
                                 child: MultipleSearchSelection<String>(
-                                  items: availableTagovi,
+                                  items: localAvailableTagovi,
                                   fieldToCheck: (tag) {
                                     return tag;
                                   },

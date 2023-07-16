@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:mealy/screens/main/DodajScreen.dart';
@@ -27,6 +28,9 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
 
   void _selectPage(int index) {
     setState(() {
+      FocusManager.instance.primaryFocus?.unfocus();
+
+      final recepti = FirebaseFirestore.instance.collection('recepti').get();
       _selectedIndex = index;
     });
   }

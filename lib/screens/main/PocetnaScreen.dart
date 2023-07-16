@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:mealy/components/CustomAppbar.dart';
 import 'package:mealy/components/MealCard.dart';
+import 'package:provider/provider.dart';
+
+import '../../db/ReceptProvider.dart';
 
 class PocetnaScreen extends StatefulWidget {
   const PocetnaScreen({super.key});
@@ -14,12 +17,18 @@ class PocetnaScreen extends StatefulWidget {
 }
 
 class _PocetnaScreenState extends State<PocetnaScreen> {
-  @override
   Future<QuerySnapshot<Map<String, dynamic>>>? recepti;
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    Provider.of<ReceptProvider>(context).readRecepti();
+    recepti = Provider.of<ReceptProvider>(context).recepti;
+  }
 
+  @override
   Widget build(BuildContext context) {
     final medijakveri = MediaQuery.of(context);
-    recepti = FirebaseFirestore.instance.collection('recepti').get();
 
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
