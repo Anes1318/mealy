@@ -17,16 +17,16 @@ import '../../models/tezina.dart';
 import 'package:mealy/components/Button.dart';
 import 'package:mealy/components/metode.dart';
 
-class DodajScreen extends StatefulWidget {
-  DodajScreen({
+class AddScreen extends StatefulWidget {
+  AddScreen({
     super.key,
   });
 
   @override
-  State<DodajScreen> createState() => _DodajScreenState();
+  State<AddScreen> createState() => _AddScreenState();
 }
 
-class _DodajScreenState extends State<DodajScreen> with SingleTickerProviderStateMixin {
+class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMixin {
   final _form = GlobalKey<FormState>();
 
   final nazivNode = FocusNode();

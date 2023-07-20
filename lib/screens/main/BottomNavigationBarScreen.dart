@@ -1,11 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:mealy/screens/main/DodajScreen.dart';
-import 'package:mealy/screens/main/NalogScreen.dart';
-import 'package:mealy/screens/main/OmiljeniScreen.dart';
-import 'package:mealy/screens/main/PocetnaScreen.dart';
+import 'package:mealy/screens/main/AddScreen.dart';
+import 'package:mealy/screens/main/AccountScreen.dart';
+import 'package:mealy/screens/main/FavoriteScreen.dart';
+import 'package:mealy/screens/main/HomeScreen.dart';
+import 'package:provider/provider.dart';
 import 'package:slide_indexed_stack/slide_indexed_stack.dart';
+
+import '../../providers/MealProvider.dart';
 
 class BottomNavigationBarScreen extends StatefulWidget {
   static const String routeName = '/BottomNavigationBarScreen';
@@ -18,10 +21,10 @@ class BottomNavigationBarScreen extends StatefulWidget {
 
 class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
   final List<Widget> _screens = [
-    PocetnaScreen(),
-    DodajScreen(),
-    OmiljeniScreen(),
-    NalogScreen(),
+    HomeScreen(),
+    AddScreen(),
+    FavoriteScreen(),
+    AccountScreen(),
   ];
 
   int _selectedIndex = 0;
@@ -30,7 +33,8 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
     setState(() {
       FocusManager.instance.primaryFocus?.unfocus();
 
-      final recepti = FirebaseFirestore.instance.collection('recepti').get();
+      Provider.of<MealProvider>(context, listen: false).readMeals();
+
       _selectedIndex = index;
     });
   }

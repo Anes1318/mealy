@@ -9,11 +9,14 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
 // screens
 import 'package:mealy/screens/main/BottomNavigationBarScreen.dart';
-import 'package:mealy/screens/recept/ReceptEditScreen.dart';
+import 'package:mealy/screens/meal/MealEditScreen.dart';
 // components
 import 'package:mealy/components/metode.dart';
+import 'package:provider/provider.dart';
 
-class ReceptViewScreen extends StatefulWidget {
+import '../../providers/MealProvider.dart';
+
+class MealViewScreen extends StatefulWidget {
   static const String routeName = '/ReceptViewScreen';
 
   final String autorId;
@@ -29,9 +32,8 @@ class ReceptViewScreen extends StatefulWidget {
   final List<dynamic> koraci;
   final List<dynamic> favorites;
   final List<dynamic> tagovi;
-  int? userRating;
 
-  ReceptViewScreen({
+  MealViewScreen({
     required this.autorId,
     required this.receptId,
     required this.naziv,
@@ -45,35 +47,47 @@ class ReceptViewScreen extends StatefulWidget {
     required this.koraci,
     required this.favorites,
     required this.tagovi,
-    this.userRating,
   });
 
   @override
-  State<ReceptViewScreen> createState() => _ReceptViewScreenState();
+  State<MealViewScreen> createState() => _MealViewScreenState();
 }
 
-class _ReceptViewScreenState extends State<ReceptViewScreen> {
+class _MealViewScreenState extends State<MealViewScreen> {
   bool isFav = false;
 
   List<String>? favList = [];
   double rating = 0;
+  int userRating = 0;
+
+  MealProvider? ref;
 
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
     super.didChangeDependencies();
 
+    ref = Provider.of<MealProvider>(context);
+    await ref!.readSingleMeal(widget.receptId);
+
+    final singleMeal = ref!.singleMeal;
     for (var element in widget.favorites) {
       favList!.add(element);
     }
-    if (widget.ratings.values.isNotEmpty) {
-      for (var item in widget.ratings.values) {
+    rating = 0;
+    userRating = 0;
+    if (singleMeal.data()!['ratings'][FirebaseAuth.instance.currentUser!.uid] != null) {
+      userRating = singleMeal.data()!['ratings'][FirebaseAuth.instance.currentUser!.uid];
+    }
+    if (singleMeal.data()!['ratings'].values.isNotEmpty) {
+      for (var item in singleMeal.data()!['ratings'].values) {
         rating += item;
       }
     }
-    rating /= widget.ratings.length;
+    setState(() {
+      rating /= singleMeal.data()!['ratings'].values.length;
+    });
   }
 
-  bool favMijenjan = false;
   @override
   Widget build(BuildContext context) {
     final users = FirebaseFirestore.instance.collection('users').get();
@@ -102,13 +116,7 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
               children: [
                 GestureDetector(
                   onTap: () {
-                    if (favMijenjan == false) {
-                      Navigator.pop(context);
-                    } else {
-                      Navigator.pop(context);
-                      // Navigator.pop(context);
-                      Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
-                    }
+                    Navigator.pop(context);
                   },
                   child: Icon(
                     Iconsax.back_square,
@@ -149,7 +157,6 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                         setState(() {
                           isFav = false;
                           favList!.remove(FirebaseAuth.instance.currentUser!.uid);
-                          favMijenjan = true;
                         });
                       });
                     } else {
@@ -159,7 +166,6 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                         setState(() {
                           isFav = true;
                           favList!.add(FirebaseAuth.instance.currentUser!.uid);
-                          favMijenjan = true;
                         });
                       });
                     }
@@ -191,7 +197,7 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                                         child: child,
                                       );
                                     },
-                                    pageBuilder: (context, animation, duration) => ReceptEditScreen(
+                                    pageBuilder: (context, animation, duration) => MealEditScreen(
                                       naziv: widget.naziv,
                                       opis: widget.opis,
                                       brOsoba: widget.brOsoba,
@@ -204,7 +210,6 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                                       autorId: widget.autorId,
                                       receptId: widget.receptId,
                                       favorites: widget.favorites,
-                                      userRating: widget.userRating,
                                       tagovi: widget.tagovi,
                                     ),
                                   ),
@@ -295,7 +300,7 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              rating.isNaN ? '0.0' : '$rating',
+                              '$rating',
                               style: Theme.of(context).textTheme.headline4!.copyWith(fontSize: 14),
                             ),
                           ],
@@ -372,398 +377,50 @@ class _ReceptViewScreenState extends State<ReceptViewScreen> {
                           children: [
                             GestureDetector(
                               onTap: () {
-                                Metode.showErrorDialog(
-                                  context: context,
-                                  naslov: 'Da li želite da ocijenite ovaj recept sa 1 zvjezdicom?',
-                                  button1Text: 'Potvrdi',
-                                  button1Fun: () async {
-                                    try {
-                                      final internetTest = await InternetAddress.lookup('google.com');
-                                    } catch (error) {
-                                      Navigator.pop(context);
-
-                                      Metode.showErrorDialog(
-                                        message: "Došlo je do greške sa internetom. Provjerite svoju konekciju.",
-                                        context: context,
-                                        naslov: 'Greška',
-                                        button1Text: 'Zatvori',
-                                        button1Fun: () => {Navigator.pop(context)},
-                                        isButton2: false,
-                                      );
-                                      return;
-                                    }
-                                    try {
-                                      FirebaseFirestore.instance.collection('recepti').doc(widget.receptId).set(
-                                        {
-                                          'ratings': {
-                                            FirebaseAuth.instance.currentUser!.uid: 1,
-                                          },
-                                        },
-                                        SetOptions(merge: true),
-                                      ).then((value) {
-                                        setState(() {
-                                          favMijenjan = true;
-                                          widget.userRating = 1;
-                                          widget.ratings[FirebaseAuth.instance.currentUser!.uid] = 1;
-                                        });
-                                        Navigator.pop(context);
-                                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                              'Vaša ocjena je zabilježena.',
-                                              style: Theme.of(context).textTheme.headline4,
-                                            ),
-                                            duration: const Duration(milliseconds: 1500),
-                                            behavior: SnackBarBehavior.floating,
-                                            backgroundColor: Theme.of(context).colorScheme.secondary,
-                                            elevation: 4,
-                                          ),
-                                        );
-                                      });
-                                    } catch (e) {
-                                      Navigator.pop(context);
-
-                                      Metode.showErrorDialog(
-                                        context: context,
-                                        naslov: 'Došlo je do greške',
-                                        button1Text: 'Zatvori',
-                                        button1Fun: () {
-                                          Navigator.pop(context);
-                                        },
-                                        isButton2: false,
-                                      );
-                                    }
-                                  },
-                                  isButton2: true,
-                                  button2Text: 'Otkaži',
-                                  button2Fun: () {
-                                    Navigator.pop(context);
-                                  },
-                                );
+                                ref!.rateMeal(context, widget.receptId, 1);
                               },
                               child: SvgPicture.asset(
-                                widget.userRating! >= 1 ? 'assets/icons/trueStar.svg' : 'assets/icons/falseStar.svg',
+                                userRating >= 1 ? 'assets/icons/trueStar.svg' : 'assets/icons/falseStar.svg',
                                 height: 34,
                                 width: 34,
                               ),
                             ),
                             GestureDetector(
                               onTap: () {
-                                Metode.showErrorDialog(
-                                  context: context,
-                                  naslov: 'Da li želite da ocijenite ovaj recept sa 2 zvjezdice?',
-                                  button1Text: 'Potvrdi',
-                                  button1Fun: () async {
-                                    try {
-                                      final internetTest = await InternetAddress.lookup('google.com');
-                                    } catch (error) {
-                                      Navigator.pop(context);
-
-                                      Metode.showErrorDialog(
-                                        message: "Došlo je do greške sa internetom. Provjerite svoju konekciju.",
-                                        context: context,
-                                        naslov: 'Greška',
-                                        button1Text: 'Zatvori',
-                                        button1Fun: () => {Navigator.pop(context)},
-                                        isButton2: false,
-                                      );
-                                      return;
-                                    }
-                                    try {
-                                      FirebaseFirestore.instance.collection('recepti').doc(widget.receptId).set(
-                                        {
-                                          'ratings': {
-                                            FirebaseAuth.instance.currentUser!.uid: 2,
-                                          },
-                                        },
-                                        SetOptions(merge: true),
-                                      ).then((value) {
-                                        setState(() {
-                                          favMijenjan = true;
-
-                                          widget.userRating = 2;
-                                          widget.ratings[FirebaseAuth.instance.currentUser!.uid] = 2;
-                                        });
-                                        Navigator.pop(context);
-                                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                              'Vaša ocjena je zabilježena.',
-                                              style: Theme.of(context).textTheme.headline4,
-                                            ),
-                                            duration: const Duration(milliseconds: 1500),
-                                            behavior: SnackBarBehavior.floating,
-                                            backgroundColor: Theme.of(context).colorScheme.secondary,
-                                            elevation: 4,
-                                          ),
-                                        );
-                                      });
-                                    } catch (e) {
-                                      Navigator.pop(context);
-
-                                      Metode.showErrorDialog(
-                                        context: context,
-                                        naslov: 'Došlo je do greške',
-                                        button1Text: 'Zatvori',
-                                        button1Fun: () {
-                                          Navigator.pop(context);
-                                        },
-                                        isButton2: false,
-                                      );
-                                    }
-                                  },
-                                  isButton2: true,
-                                  button2Text: 'Otkaži',
-                                  button2Fun: () {
-                                    Navigator.pop(context);
-                                  },
-                                );
+                                ref!.rateMeal(context, widget.receptId, 2);
                               },
                               child: SvgPicture.asset(
-                                widget.userRating! >= 2 ? 'assets/icons/trueStar.svg' : 'assets/icons/falseStar.svg',
+                                userRating >= 2 ? 'assets/icons/trueStar.svg' : 'assets/icons/falseStar.svg',
                                 height: 34,
                                 width: 34,
                               ),
                             ),
                             GestureDetector(
                               onTap: () {
-                                Metode.showErrorDialog(
-                                  context: context,
-                                  naslov: 'Da li želite da ocijenite ovaj recept sa 3 zvjezdice?',
-                                  button1Text: 'Potvrdi',
-                                  button1Fun: () async {
-                                    try {
-                                      final internetTest = await InternetAddress.lookup('google.com');
-                                    } catch (error) {
-                                      Navigator.pop(context);
-
-                                      Metode.showErrorDialog(
-                                        message: "Došlo je do greške sa internetom. Provjerite svoju konekciju.",
-                                        context: context,
-                                        naslov: 'Greška',
-                                        button1Text: 'Zatvori',
-                                        button1Fun: () => {Navigator.pop(context)},
-                                        isButton2: false,
-                                      );
-                                      return;
-                                    }
-                                    try {
-                                      FirebaseFirestore.instance.collection('recepti').doc(widget.receptId).set(
-                                        {
-                                          'ratings': {
-                                            FirebaseAuth.instance.currentUser!.uid: 3,
-                                          },
-                                        },
-                                        SetOptions(merge: true),
-                                      ).then((value) {
-                                        setState(() {
-                                          favMijenjan = true;
-
-                                          widget.userRating = 3;
-                                          widget.ratings[FirebaseAuth.instance.currentUser!.uid] = 3;
-                                        });
-                                        Navigator.pop(context);
-                                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                              'Vaša ocjena je zabilježena.',
-                                              style: Theme.of(context).textTheme.headline4,
-                                            ),
-                                            duration: const Duration(milliseconds: 1500),
-                                            behavior: SnackBarBehavior.floating,
-                                            backgroundColor: Theme.of(context).colorScheme.secondary,
-                                            elevation: 4,
-                                          ),
-                                        );
-                                      });
-                                    } catch (e) {
-                                      Navigator.pop(context);
-
-                                      Metode.showErrorDialog(
-                                        context: context,
-                                        naslov: 'Došlo je do greške',
-                                        button1Text: 'Zatvori',
-                                        button1Fun: () {
-                                          Navigator.pop(context);
-                                        },
-                                        isButton2: false,
-                                      );
-                                    }
-                                  },
-                                  isButton2: true,
-                                  button2Text: 'Otkaži',
-                                  button2Fun: () {
-                                    Navigator.pop(context);
-                                  },
-                                );
+                                ref!.rateMeal(context, widget.receptId, 3);
                               },
                               child: SvgPicture.asset(
-                                widget.userRating! >= 3 ? 'assets/icons/trueStar.svg' : 'assets/icons/falseStar.svg',
+                                userRating >= 3 ? 'assets/icons/trueStar.svg' : 'assets/icons/falseStar.svg',
                                 height: 34,
                                 width: 34,
                               ),
                             ),
                             GestureDetector(
                               onTap: () {
-                                Metode.showErrorDialog(
-                                  context: context,
-                                  naslov: 'Da li želite da ocijenite ovaj recept sa 4 zvjezdice?',
-                                  button1Text: 'Potvrdi',
-                                  button1Fun: () async {
-                                    try {
-                                      final internetTest = await InternetAddress.lookup('google.com');
-                                    } catch (error) {
-                                      Navigator.pop(context);
-
-                                      Metode.showErrorDialog(
-                                        message: "Došlo je do greške sa internetom. Provjerite svoju konekciju.",
-                                        context: context,
-                                        naslov: 'Greška',
-                                        button1Text: 'Zatvori',
-                                        button1Fun: () => {
-                                          Navigator.pop(context),
-                                        },
-                                        isButton2: false,
-                                      );
-                                      return;
-                                    }
-                                    try {
-                                      FirebaseFirestore.instance.collection('recepti').doc(widget.receptId).set(
-                                        {
-                                          'ratings': {
-                                            FirebaseAuth.instance.currentUser!.uid: 4,
-                                          },
-                                        },
-                                        SetOptions(merge: true),
-                                      ).then((value) {
-                                        setState(() {
-                                          favMijenjan = true;
-
-                                          widget.userRating = 4;
-                                          widget.ratings[FirebaseAuth.instance.currentUser!.uid] = 4;
-                                        });
-                                        Navigator.pop(context);
-                                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                              'Vaša ocjena je zabilježena.',
-                                              style: Theme.of(context).textTheme.headline4,
-                                            ),
-                                            duration: const Duration(milliseconds: 1500),
-                                            behavior: SnackBarBehavior.floating,
-                                            backgroundColor: Theme.of(context).colorScheme.secondary,
-                                            elevation: 4,
-                                          ),
-                                        );
-                                      });
-                                    } catch (e) {
-                                      Navigator.pop(context);
-
-                                      Metode.showErrorDialog(
-                                        context: context,
-                                        naslov: 'Došlo je do greške',
-                                        button1Text: 'Zatvori',
-                                        button1Fun: () {
-                                          Navigator.pop(context);
-                                        },
-                                        isButton2: false,
-                                      );
-                                    }
-                                  },
-                                  isButton2: true,
-                                  button2Text: 'Otkaži',
-                                  button2Fun: () {
-                                    Navigator.pop(context);
-                                  },
-                                );
+                                ref!.rateMeal(context, widget.receptId, 4);
                               },
                               child: SvgPicture.asset(
-                                widget.userRating! >= 4 ? 'assets/icons/trueStar.svg' : 'assets/icons/falseStar.svg',
+                                userRating >= 4 ? 'assets/icons/trueStar.svg' : 'assets/icons/falseStar.svg',
                                 height: 34,
                                 width: 34,
                               ),
                             ),
                             GestureDetector(
                               onTap: () {
-                                Metode.showErrorDialog(
-                                  context: context,
-                                  naslov: 'Da li želite da ocijenite ovaj recept sa 5 zvjezdica?',
-                                  button1Text: 'Potvrdi',
-                                  button1Fun: () async {
-                                    try {
-                                      final internetTest = await InternetAddress.lookup('google.com');
-                                    } catch (error) {
-                                      Navigator.pop(context);
-
-                                      Metode.showErrorDialog(
-                                        message: "Došlo je do greške sa internetom. Provjerite svoju konekciju.",
-                                        context: context,
-                                        naslov: 'Greška',
-                                        button1Text: 'Zatvori',
-                                        button1Fun: () => {
-                                          Navigator.pop(context),
-                                        },
-                                        isButton2: false,
-                                      );
-                                      return;
-                                    }
-                                    try {
-                                      FirebaseFirestore.instance.collection('recepti').doc(widget.receptId).set(
-                                        {
-                                          'ratings': {
-                                            FirebaseAuth.instance.currentUser!.uid: 5,
-                                          },
-                                        },
-                                        SetOptions(merge: true),
-                                      ).then((value) {
-                                        setState(() {
-                                          favMijenjan = true;
-
-                                          widget.userRating = 5;
-                                          widget.ratings[FirebaseAuth.instance.currentUser!.uid] = 5;
-                                        });
-
-                                        Navigator.pop(context);
-                                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                              'Vaša ocjena je zabilježena.',
-                                              style: Theme.of(context).textTheme.headline4,
-                                            ),
-                                            duration: const Duration(milliseconds: 1500),
-                                            behavior: SnackBarBehavior.floating,
-                                            backgroundColor: Theme.of(context).colorScheme.secondary,
-                                            elevation: 4,
-                                          ),
-                                        );
-                                      });
-                                    } catch (e) {
-                                      Navigator.pop(context);
-                                      Metode.showErrorDialog(
-                                        context: context,
-                                        naslov: 'Došlo je do greške',
-                                        button1Text: 'Zatvori',
-                                        button1Fun: () {
-                                          Navigator.pop(context);
-                                        },
-                                        isButton2: false,
-                                      );
-                                    }
-                                  },
-                                  isButton2: true,
-                                  button2Text: 'Otkaži',
-                                  button2Fun: () {
-                                    Navigator.pop(context);
-                                  },
-                                );
+                                ref!.rateMeal(context, widget.receptId, 5);
                               },
                               child: SvgPicture.asset(
-                                widget.userRating == 5 ? 'assets/icons/trueStar.svg' : 'assets/icons/falseStar.svg',
+                                userRating == 5 ? 'assets/icons/trueStar.svg' : 'assets/icons/falseStar.svg',
                                 height: 34,
                                 width: 34,
                               ),

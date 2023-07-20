@@ -4,16 +4,16 @@ import 'package:mealy/components/metode.dart';
 
 import '../../components/CustomAppbar.dart';
 
-class NalogScreen extends StatefulWidget {
+class AccountScreen extends StatefulWidget {
   static const String routeName = '/NalogScreen';
 
-  const NalogScreen({super.key});
+  const AccountScreen({super.key});
 
   @override
-  State<NalogScreen> createState() => _NalogScreenState();
+  State<AccountScreen> createState() => _AccountScreenState();
 }
 
-class _NalogScreenState extends State<NalogScreen> {
+class _AccountScreenState extends State<AccountScreen> {
   bool isLoading = false;
   @override
   Widget build(BuildContext context) {

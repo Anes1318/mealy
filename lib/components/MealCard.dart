@@ -6,9 +6,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:mealy/db/ReceptProvider.dart';
-import 'package:mealy/screens/recept/ReceptEditScreen.dart';
-import 'package:mealy/screens/recept/ReceptViewScreen.dart';
+import 'package:mealy/providers/MealProvider.dart';
+import 'package:mealy/screens/meal/MealEditScreen.dart';
+import 'package:mealy/screens/meal/MealViewScreen.dart';
 import 'package:provider/provider.dart';
 
 import '../screens/main/BottomNavigationBarScreen.dart';
@@ -29,7 +29,6 @@ class MealCard extends StatefulWidget {
   final List<dynamic> koraci;
   final List<dynamic> favorites;
   final List<dynamic> tagovi;
-  final int? userRating;
 
   MealCard({
     required this.medijakveri,
@@ -46,7 +45,6 @@ class MealCard extends StatefulWidget {
     required this.koraci,
     required this.favorites,
     required this.tagovi,
-    this.userRating,
   });
 
   @override
@@ -87,7 +85,7 @@ class _MealCardState extends State<MealCard> {
         );
         return;
       }
-      Provider.of<ReceptProvider>(context, listen: false).favRecept(widget.favorites, widget.receptId);
+      Provider.of<MealProvider>(context, listen: false).favMeal(widget.favorites, widget.receptId);
     }
 
     return GestureDetector(
@@ -105,7 +103,7 @@ class _MealCardState extends State<MealCard> {
                 child: child,
               );
             },
-            pageBuilder: (context, animation, duration) => ReceptViewScreen(
+            pageBuilder: (context, animation, duration) => MealViewScreen(
               naziv: widget.naziv,
               opis: widget.opis,
               brOsoba: widget.brOsoba,
@@ -119,7 +117,6 @@ class _MealCardState extends State<MealCard> {
               receptId: widget.receptId,
               favorites: widget.favorites,
               tagovi: widget.tagovi,
-              userRating: widget.userRating,
             ),
           ),
         );
@@ -195,7 +192,7 @@ class _MealCardState extends State<MealCard> {
                                                   child: child,
                                                 );
                                               },
-                                              pageBuilder: (context, animation, duration) => ReceptEditScreen(
+                                              pageBuilder: (context, animation, duration) => MealEditScreen(
                                                 naziv: widget.naziv,
                                                 opis: widget.opis,
                                                 brOsoba: widget.brOsoba,
@@ -208,7 +205,6 @@ class _MealCardState extends State<MealCard> {
                                                 autorId: widget.autorId,
                                                 receptId: widget.receptId,
                                                 favorites: widget.favorites,
-                                                userRating: widget.userRating,
                                                 tagovi: widget.tagovi,
                                               ),
                                             ),

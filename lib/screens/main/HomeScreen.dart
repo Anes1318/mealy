@@ -7,23 +7,23 @@ import 'package:mealy/components/CustomAppbar.dart';
 import 'package:mealy/components/MealCard.dart';
 import 'package:provider/provider.dart';
 
-import '../../db/ReceptProvider.dart';
+import '../../providers/MealProvider.dart';
 
-class PocetnaScreen extends StatefulWidget {
-  const PocetnaScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<PocetnaScreen> createState() => _PocetnaScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _PocetnaScreenState extends State<PocetnaScreen> {
+class _HomeScreenState extends State<HomeScreen> {
   Future<QuerySnapshot<Map<String, dynamic>>>? recepti;
   @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
-    Provider.of<ReceptProvider>(context).readRecepti();
-    recepti = Provider.of<ReceptProvider>(context).recepti;
+    Provider.of<MealProvider>(context).readMeals();
+    recepti = Provider.of<MealProvider>(context).meals;
   }
 
   @override
@@ -114,11 +114,6 @@ class _PocetnaScreenState extends State<PocetnaScreen> {
                       separatorBuilder: ((context, index) => const SizedBox(height: 15)),
                       itemCount: receptDocs.length,
                       itemBuilder: (context, index) {
-                        int userRating = 0;
-                        if (receptDocs[index].data()['ratings'][FirebaseAuth.instance.currentUser!.uid] != null) {
-                          userRating = receptDocs[index].data()['ratings'][FirebaseAuth.instance.currentUser!.uid];
-                        }
-
                         return MealCard(
                           medijakveri: medijakveri,
                           receptId: receptDocs[index].id,
@@ -134,7 +129,6 @@ class _PocetnaScreenState extends State<PocetnaScreen> {
                           koraci: receptDocs[index].data()['koraci'],
                           favorites: receptDocs[index].data()['favorites'],
                           tagovi: receptDocs[index].data()['tagovi'],
-                          userRating: userRating,
                         );
                       }),
                 );

@@ -5,26 +5,26 @@ import 'package:provider/provider.dart';
 
 import '../../components/CustomAppbar.dart';
 import '../../components/MealCard.dart';
-import '../../db/ReceptProvider.dart';
+import '../../providers/MealProvider.dart';
 
-class OmiljeniScreen extends StatefulWidget {
+class FavoriteScreen extends StatefulWidget {
   static const String routeName = '/OmiljeniScreen';
 
-  const OmiljeniScreen({super.key});
+  const FavoriteScreen({super.key});
 
   @override
-  State<OmiljeniScreen> createState() => _OmiljeniScreenState();
+  State<FavoriteScreen> createState() => _FavoriteScreenState();
 }
 
-class _OmiljeniScreenState extends State<OmiljeniScreen> {
+class _FavoriteScreenState extends State<FavoriteScreen> {
   Future<QuerySnapshot<Map<String, dynamic>>>? recepti;
   @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
-    Provider.of<ReceptProvider>(context).readRecepti();
+    Provider.of<MealProvider>(context).readMeals();
 
-    recepti = Provider.of<ReceptProvider>(context).recepti;
+    recepti = Provider.of<MealProvider>(context).meals;
   }
 
   Widget build(BuildContext context) {
@@ -95,7 +95,6 @@ class _OmiljeniScreenState extends State<OmiljeniScreen> {
                         koraci: favRecepti[index].data()['koraci'],
                         favorites: favRecepti[index].data()['favorites'],
                         tagovi: favRecepti[index].data()['tagovi'],
-                        userRating: userRating,
                       );
                     }),
               );

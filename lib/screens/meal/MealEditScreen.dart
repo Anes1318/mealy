@@ -16,7 +16,7 @@ import '../../models/availableTagovi.dart';
 import '../../models/tezina.dart';
 import '../main/BottomNavigationBarScreen.dart';
 
-class ReceptEditScreen extends StatefulWidget {
+class MealEditScreen extends StatefulWidget {
   static const String routeName = '/ReceptEditScreen';
 
   final String autorId;
@@ -32,9 +32,8 @@ class ReceptEditScreen extends StatefulWidget {
   final List<dynamic> koraci;
   final List<dynamic> favorites;
   final List<dynamic> tagovi;
-  int? userRating;
 
-  ReceptEditScreen({
+  MealEditScreen({
     required this.autorId,
     required this.receptId,
     required this.naziv,
@@ -48,14 +47,13 @@ class ReceptEditScreen extends StatefulWidget {
     required this.koraci,
     required this.favorites,
     required this.tagovi,
-    this.userRating,
   });
 
   @override
-  State<ReceptEditScreen> createState() => _ReceptEditScreenState();
+  State<MealEditScreen> createState() => _MealEditScreenState();
 }
 
-class _ReceptEditScreenState extends State<ReceptEditScreen> {
+class _MealEditScreenState extends State<MealEditScreen> {
   final _form = GlobalKey<FormState>();
 
   final nazivNode = FocusNode();

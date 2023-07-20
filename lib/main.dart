@@ -11,7 +11,7 @@ import 'package:mealy/screens/auth/RegisterScreen.dart';
 import 'package:mealy/screens/main/BottomNavigationBarScreen.dart';
 import 'package:provider/provider.dart';
 
-import 'db/ReceptProvider.dart';
+import 'providers/MealProvider.dart';
 
 // components
 
@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (ctx) => ReceptProvider(),
+      create: (ctx) => MealProvider(),
       child: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         initialData: FirebaseAuth.instance.currentUser,
