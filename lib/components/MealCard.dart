@@ -177,6 +177,11 @@ class _MealCardState extends State<MealCard> {
                                         context: context,
                                         naslov: 'Koju akciju želite da izvršite',
                                         button1Text: 'Izmijenite recept',
+                                        isButton1Icon: true,
+                                        button1Icon: const Icon(
+                                          Iconsax.edit,
+                                          color: Colors.white,
+                                        ),
                                         button1Fun: () {
                                           Navigator.pop(context);
                                           Navigator.push(
@@ -212,6 +217,11 @@ class _MealCardState extends State<MealCard> {
                                         },
                                         isButton2: true,
                                         button2Text: 'Izbrišite recept',
+                                        isButton2Icon: true,
+                                        button2Icon: const Icon(
+                                          Iconsax.trash,
+                                          color: Colors.white,
+                                        ),
                                         button2Fun: () async {
                                           await FirebaseFirestore.instance.collection('recepti').doc(widget.receptId).delete();
                                           await FirebaseStorage.instance.ref().child('receptImages').child('${widget.receptId}.jpg').delete();

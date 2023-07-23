@@ -66,6 +66,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 GestureDetector(
+                  onTap: () {
+                    FirebaseAuth.instance.signOut();
+                  },
                   child: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(

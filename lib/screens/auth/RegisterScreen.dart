@@ -117,8 +117,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
           });
         }
 
-        FirebaseFirestore.instance.collection('users').add({
+        FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).set({
           'userId': FirebaseAuth.instance.currentUser!.uid,
+          'email': FirebaseAuth.instance.currentUser!.email,
           'userName': '${_authData['ime']} ${_authData['prezime']}',
           'imageUrl': imageUrl,
         }).then((value) {

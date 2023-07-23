@@ -182,6 +182,11 @@ class _MealViewScreenState extends State<MealViewScreen> {
                               context: context,
                               naslov: 'Koju akciju želite da izvršite',
                               button1Text: 'Izmijenite recept',
+                              isButton1Icon: true,
+                              button1Icon: const Icon(
+                                Iconsax.edit,
+                                color: Colors.white,
+                              ),
                               button1Fun: () {
                                 Navigator.pop(context);
                                 Navigator.push(
@@ -217,6 +222,11 @@ class _MealViewScreenState extends State<MealViewScreen> {
                               },
                               isButton2: true,
                               button2Text: 'Izbrišite recept',
+                              isButton2Icon: true,
+                              button2Icon: const Icon(
+                                Iconsax.trash,
+                                color: Colors.white,
+                              ),
                               button2Fun: () async {
                                 await FirebaseFirestore.instance.collection('recepti').doc(widget.receptId).delete();
                                 await FirebaseStorage.instance.ref().child('receptImages').child('${widget.receptId}.jpg').delete();
@@ -609,6 +619,9 @@ class _MealViewScreenState extends State<MealViewScreen> {
                     ),
                   ),
 
+                  //
+                  //
+                  // AUTOR
                   const SizedBox(height: 20),
                   FutureBuilder(
                     future: users,
@@ -639,18 +652,19 @@ class _MealViewScreenState extends State<MealViewScreen> {
                       }
                       // TODO: DODATI GestureDetector KOJI VODI DO PROFILVIEW PROFILA
                       return Container(
-                        padding: const EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               'Autor',
                               style: Theme.of(context).textTheme.headline2,
                             ),
-                            const SizedBox(height: 5),
+                            const SizedBox(height: 10),
                             Row(
                               children: [
                                 user[0].data()['imageUrl'] == ''

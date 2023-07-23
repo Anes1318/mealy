@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:mealy/screens/main/AddScreen.dart';
@@ -30,10 +31,11 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
   int _selectedIndex = 0;
 
   void _selectPage(int index) {
+    Provider.of<MealProvider>(context, listen: false).readMeals();
+    Provider.of<MealProvider>(context, listen: false).readUser(FirebaseAuth.instance.currentUser!.uid);
+
     setState(() {
       FocusManager.instance.primaryFocus?.unfocus();
-
-      Provider.of<MealProvider>(context, listen: false).readMeals();
 
       _selectedIndex = index;
     });

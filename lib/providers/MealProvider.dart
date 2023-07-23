@@ -9,6 +9,8 @@ import '../components/metode.dart';
 class MealProvider with ChangeNotifier {
   Future<QuerySnapshot<Map<String, dynamic>>>? _meals;
   DocumentSnapshot<Map<String, dynamic>>? _singleMeal;
+  DocumentSnapshot<Map<String, dynamic>>? _user;
+
   void readMeals() {
     _meals = FirebaseFirestore.instance.collection('recepti').get();
   }
@@ -23,6 +25,19 @@ class MealProvider with ChangeNotifier {
 
   DocumentSnapshot<Map<String, dynamic>> get singleMeal {
     return _singleMeal!;
+  }
+
+  Future<void> readUser(userId) async {
+    _user = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+  }
+
+  DocumentSnapshot<Map<String, dynamic>> get user {
+    return _user!;
+  }
+
+  int get brFav {
+    print(_meals);
+    return 2;
   }
 
   void favMeal(List<dynamic> mealFavorites, String mealId) async {
