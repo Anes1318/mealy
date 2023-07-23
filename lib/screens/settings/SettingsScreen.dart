@@ -17,7 +17,7 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   bool value = false;
-
+  bool isLoading = false;
   @override
   Widget build(BuildContext context) {
     final medijakveri = MediaQuery.of(context);
@@ -63,35 +63,54 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           GestureDetector(
-            onTap: () async {
-              try {
-                final internetTest = await InternetAddress.lookup('google.com');
-              } catch (error) {
-                Metode.showErrorDialog(
-                  message: "Došlo je do greške sa internetom. Provjerite svoju konekciju.",
-                  context: context,
-                  naslov: 'Greška',
-                  button1Text: 'Zatvori',
-                  button1Fun: () => {Navigator.pop(context)},
-                  isButton2: false,
-                );
-                return;
-              }
-              try {
-                await FirebaseAuth.instance.signOut().then((value) {
+            onTap: () => Metode.showErrorDialog(
+              context: context,
+              naslov: 'Da li ste sigurni da želite da se odjavite?',
+              button1Text: 'Da',
+              isButton1Icon: true,
+              button1Icon: Icon(
+                Iconsax.tick_circle,
+                color: Colors.white,
+              ),
+              button1Fun: () async {
+                try {
+                  final internetTest = await InternetAddress.lookup('google.com');
+                } catch (error) {
+                  Metode.showErrorDialog(
+                    message: "Došlo je do greške sa internetom. Provjerite svoju konekciju.",
+                    context: context,
+                    naslov: 'Greška',
+                    button1Text: 'Zatvori',
+                    button1Fun: () => {Navigator.pop(context)},
+                    isButton2: false,
+                  );
+                  return;
+                }
+                try {
+                  FirebaseAuth.instance.signOut();
                   Navigator.pushNamedAndRemoveUntil(context, '/', (Route<dynamic> route) => false);
-                });
-              } catch (e) {
-                Metode.showErrorDialog(
-                  message: "Došlo je do greške sa internetom. Provjerite svoju konekciju.",
-                  context: context,
-                  naslov: 'Greška',
-                  button1Text: 'Zatvori',
-                  button1Fun: () => {Navigator.pop(context)},
-                  isButton2: false,
-                );
-              }
-            },
+                } catch (e) {
+                  Metode.showErrorDialog(
+                    message: "Došlo je do greške sa internetom. Provjerite svoju konekciju.",
+                    context: context,
+                    naslov: 'Greška',
+                    button1Text: 'Zatvori',
+                    button1Fun: () => {Navigator.pop(context)},
+                    isButton2: false,
+                  );
+                }
+              },
+              isButton2: true,
+              button2Text: 'Ne',
+              isButton2Icon: true,
+              button2Icon: Icon(
+                Iconsax.close_circle,
+                color: Colors.white,
+              ),
+              button2Fun: () {
+                Navigator.pop(context);
+              },
+            ),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.07, vertical: (medijakveri.size.height - medijakveri.padding.top) * 0.02),
