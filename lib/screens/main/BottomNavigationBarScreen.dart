@@ -30,9 +30,8 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
 
   int _selectedIndex = 0;
 
-  void _selectPage(int index) {
+  void _selectPage(int index) async {
     Provider.of<MealProvider>(context, listen: false).readMeals();
-    Provider.of<MealProvider>(context, listen: false).readUser(FirebaseAuth.instance.currentUser!.uid);
 
     setState(() {
       FocusManager.instance.primaryFocus?.unfocus();

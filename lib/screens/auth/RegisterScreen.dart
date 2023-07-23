@@ -116,7 +116,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
             imageUrl = await value.ref.getDownloadURL();
           });
         }
-
+        await FirebaseAuth.instance.currentUser!.updateDisplayName('${_authData['ime']} ${_authData['prezime']}');
+        await FirebaseAuth.instance.currentUser!.updatePhotoURL(imageUrl);
         FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).set({
           'userId': FirebaseAuth.instance.currentUser!.uid,
           'email': FirebaseAuth.instance.currentUser!.email,

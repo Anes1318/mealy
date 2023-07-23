@@ -9,6 +9,7 @@ import 'package:mealy/screens/auth/ForgotPassScreen.dart';
 import 'package:mealy/screens/auth/LoginScreen.dart';
 import 'package:mealy/screens/auth/RegisterScreen.dart';
 import 'package:mealy/screens/main/BottomNavigationBarScreen.dart';
+import 'package:mealy/screens/settings/SettingsScreen.dart';
 import 'package:provider/provider.dart';
 
 import 'providers/MealProvider.dart';
@@ -83,6 +84,7 @@ class MyApp extends StatelessWidget {
             RegisterScreen.routeName: (context) => const RegisterScreen(),
             ForgotPassScreen.routeName: (context) => const ForgotPassScreen(),
             BottomNavigationBarScreen.routeName: (context) => const BottomNavigationBarScreen(),
+            SettingsScreen.routeName: (context) => const SettingsScreen(),
           },
           home: snapshot.data == null ? const DobrodosliScreen() : const BottomNavigationBarScreen(),
         ),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:mealy/components/metode.dart';
+import 'package:mealy/screens/settings/SettingsScreen.dart';
 import 'package:provider/provider.dart';
 
 import '../../components/CustomAppbar.dart';
@@ -29,11 +30,9 @@ class _AccountScreenState extends State<AccountScreen> {
   void didChangeDependencies() async {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
-    await Provider.of<MealProvider>(context).readUser(FirebaseAuth.instance.currentUser!.uid);
-    user = Provider.of<MealProvider>(context, listen: false).user;
+
     Provider.of<MealProvider>(context, listen: false).readMeals();
     meals = Provider.of<MealProvider>(context, listen: false).meals;
-    // print(user!.data()!['userName']);
   }
 
   @override
@@ -48,7 +47,22 @@ class _AccountScreenState extends State<AccountScreen> {
             isCenter: false,
             drugaIkonica: Iconsax.setting_2,
             drugaIkonicaFunkcija: () {
-              Provider.of<MealProvider>(context, listen: false).brFav;
+              Navigator.push(
+                context,
+                PageRouteBuilder(
+                  transitionDuration: const Duration(milliseconds: 150),
+                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                    return SlideTransition(
+                      position: Tween<Offset>(
+                        begin: const Offset(1, 0),
+                        end: Offset.zero,
+                      ).animate(animation),
+                      child: child,
+                    );
+                  },
+                  pageBuilder: (context, animation, duration) => SettingsScreen(),
+                ),
+              );
             },
           ),
           const SizedBox(height: 10),
@@ -65,7 +79,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 children: [
                   Row(
                     children: [
-                      user!.data()!['imageUrl'] == ''
+                      FirebaseAuth.instance.currentUser!.photoURL == null
                           ? SvgPicture.asset(
                               'assets/icons/Torta.svg',
                               height: 75,
@@ -74,7 +88,7 @@ class _AccountScreenState extends State<AccountScreen> {
                           : ClipRRect(
                               borderRadius: BorderRadius.circular(20),
                               child: Image.network(
-                                '${user!.data()!['imageUrl']}',
+                                '${FirebaseAuth.instance.currentUser!.photoURL}',
                                 height: 75,
                                 width: 75,
                                 fit: BoxFit.fill,
@@ -85,12 +99,12 @@ class _AccountScreenState extends State<AccountScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '${user!.data()!['userName']}',
+                            '${FirebaseAuth.instance.currentUser!.displayName}',
                             style: Theme.of(context).textTheme.headline3,
                           ),
                           const SizedBox(height: 10),
                           Text(
-                            '${user!.data()!['email']}',
+                            '${FirebaseAuth.instance.currentUser!.email}',
                             style: Theme.of(context).textTheme.headline3,
                           ),
                         ],
@@ -135,7 +149,7 @@ class _AccountScreenState extends State<AccountScreen> {
                     }
                   });
 
-                  if (ownRecepti.isEmpty) {
+                  if (ownRecepti.isEmpty || meals == null) {
                     return Container(
                       height: (medijakveri.size.height - medijakveri.padding.top) * 0.54,
                       child: Center(
