@@ -138,7 +138,6 @@ class _MealCardState extends State<MealCard> {
                   height: 100,
                   width: 100,
                   fit: BoxFit.cover,
-                  // scale: 0.3,
                 ),
               ),
               const SizedBox(width: 10),
@@ -241,7 +240,7 @@ class _MealCardState extends State<MealCard> {
                         ),
                       ),
                       Container(
-                        width: widget.medijakveri.size.width * 0.4,
+                        width: widget.medijakveri.size.width * 0.45,
                         child: Text(
                           widget.opis.length > 85 ? '${widget.opis.substring(0, 85)}...' : widget.opis,
                           style: Theme.of(context).textTheme.headline5,
@@ -277,7 +276,7 @@ class _MealCardState extends State<MealCard> {
                             ),
                             SizedBox(width: 3),
                             Text(
-                              rating.isNaN ? '0.0' : '$rating',
+                              rating.isNaN ? '0.0' : rating.toStringAsFixed(1),
                               style: Theme.of(context).textTheme.headline5,
                             ),
                           ],

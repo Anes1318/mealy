@@ -17,7 +17,7 @@ class FavoriteScreen extends StatefulWidget {
 }
 
 class _FavoriteScreenState extends State<FavoriteScreen> {
-  Future<QuerySnapshot<Map<String, dynamic>>>? recepti;
+  Stream<QuerySnapshot<Map<String, dynamic>>>? recepti;
   @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
@@ -35,8 +35,8 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
         children: [
           CustomAppBar(pageTitle: 'Omiljeni', isCenter: false),
           const SizedBox(height: 20),
-          FutureBuilder(
-            future: recepti,
+          StreamBuilder(
+            stream: recepti,
             builder: ((context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Container(

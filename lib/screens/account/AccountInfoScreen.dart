@@ -13,6 +13,7 @@ class AccountInfoScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(FirebaseAuth.instance.currentUser!.phoneNumber);
     final medijakveri = MediaQuery.of(context);
     return Scaffold(
       body: SafeArea(
@@ -65,8 +66,13 @@ class AccountInfoScreen extends StatelessWidget {
               InputFieldDisabled(
                 medijakveri: medijakveri,
                 label: 'Telefon',
-                text: FirebaseAuth.instance.currentUser!.phoneNumber! == '' ? 'Niste dodali broj telefona' : FirebaseAuth.instance.currentUser!.phoneNumber!,
+                text: FirebaseAuth.instance.currentUser!.phoneNumber == null
+                    ? 'Niste dodali broj telefona'
+                    : FirebaseAuth.instance.currentUser!.phoneNumber == ''
+                        ? 'Niste dodali broj telefona'
+                        : FirebaseAuth.instance.currentUser!.phoneNumber!,
               ),
+              const SizedBox(height: 10),
               Button(
                 buttonText: 'Promijenite šifru',
                 borderRadius: 20,
@@ -77,7 +83,7 @@ class AccountInfoScreen extends StatelessWidget {
                 funkcija: () {},
                 isFullWidth: true,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 15),
               Button(
                 buttonText: 'Obrišite nalog',
                 borderRadius: 20,

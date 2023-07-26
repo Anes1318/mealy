@@ -8,15 +8,15 @@ import 'package:iconsax/iconsax.dart';
 import '../components/metode.dart';
 
 class MealProvider with ChangeNotifier {
-  Future<QuerySnapshot<Map<String, dynamic>>>? _meals;
+  Stream<QuerySnapshot<Map<String, dynamic>>>? _meals;
   DocumentSnapshot<Map<String, dynamic>>? _singleMeal;
   DocumentSnapshot<Map<String, dynamic>>? _user;
 
   void readMeals() {
-    _meals = FirebaseFirestore.instance.collection('recepti').get();
+    _meals = FirebaseFirestore.instance.collection('recepti').snapshots();
   }
 
-  Future<QuerySnapshot<Map<String, dynamic>>> get meals {
+  Stream<QuerySnapshot<Map<String, dynamic>>> get meals {
     return _meals!;
   }
 

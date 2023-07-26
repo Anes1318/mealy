@@ -31,8 +31,6 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
   int _selectedIndex = 0;
 
   void _selectPage(int index) async {
-    Provider.of<MealProvider>(context, listen: false).readMeals();
-
     setState(() {
       FocusManager.instance.primaryFocus?.unfocus();
 
@@ -40,9 +38,11 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
     });
   }
 
+  var recepti;
   @override
   Widget build(BuildContext context) {
     final medijakveri = MediaQuery.of(context);
+
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: Container(

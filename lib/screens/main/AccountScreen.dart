@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:mealy/components/metode.dart';
+
 import 'package:mealy/screens/account/AccountInfoScreen.dart';
 import 'package:mealy/screens/settings/SettingsScreen.dart';
 import 'package:provider/provider.dart';
@@ -25,7 +25,7 @@ class _AccountScreenState extends State<AccountScreen> {
   bool isLoading = false;
 
   DocumentSnapshot<Map<String, dynamic>>? user;
-  Future<QuerySnapshot<Map<String, dynamic>>>? meals;
+  Stream<QuerySnapshot<Map<String, dynamic>>>? meals;
 
   @override
   void didChangeDependencies() async {
@@ -146,8 +146,8 @@ class _AccountScreenState extends State<AccountScreen> {
                 style: Theme.of(context).textTheme.headline2,
               ),
               const SizedBox(height: 10),
-              FutureBuilder(
-                future: meals,
+              StreamBuilder(
+                stream: meals,
                 builder: ((context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Container(

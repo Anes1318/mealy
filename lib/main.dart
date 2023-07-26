@@ -4,7 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 // screens
-import 'package:mealy/screens/auth/DobrodosliScreen.dart';
+import 'package:mealy/screens/auth/WelcomeScreen.dart';
 import 'package:mealy/screens/auth/ForgotPassScreen.dart';
 import 'package:mealy/screens/auth/LoginScreen.dart';
 import 'package:mealy/screens/auth/RegisterScreen.dart';
@@ -88,7 +88,7 @@ class MyApp extends StatelessWidget {
             SettingsScreen.routeName: (context) => const SettingsScreen(),
             AccountScreen.routeName: (context) => const AccountScreen(),
           },
-          home: snapshot.data == null ? const DobrodosliScreen() : const BottomNavigationBarScreen(),
+          home: snapshot.data == null ? const WelcomeScreen() : const BottomNavigationBarScreen(),
         ),
       ),
     );

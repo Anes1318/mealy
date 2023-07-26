@@ -195,7 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           : Button(
                               isFullWidth: true,
                               borderRadius: 20,
-                              visina: 15,
+                              visina: 18,
                               funkcija: () => _login(),
                               buttonText: 'Prijavite se',
                               backgroundColor: Theme.of(context).colorScheme.secondary,

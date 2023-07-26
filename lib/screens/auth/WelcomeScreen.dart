@@ -7,8 +7,8 @@ import 'package:mealy/screens/auth/RegisterScreen.dart';
 //components
 import 'package:mealy/components/Button.dart';
 
-class DobrodosliScreen extends StatelessWidget {
-  const DobrodosliScreen({super.key});
+class WelcomeScreen extends StatelessWidget {
+  const WelcomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +48,7 @@ class DobrodosliScreen extends StatelessWidget {
                   Button(
                     isFullWidth: true,
                     borderRadius: 20,
-                    visina: 15,
+                    visina: 18,
                     funkcija: () => {
                       Navigator.pushNamed(context, RegisterScreen.routeName),
                     },
@@ -61,7 +61,7 @@ class DobrodosliScreen extends StatelessWidget {
                   Button(
                     isFullWidth: true,
                     borderRadius: 20,
-                    visina: 15,
+                    visina: 18,
                     funkcija: () => {
                       Navigator.pushNamed(context, LoginScreen.routeName),
                     },

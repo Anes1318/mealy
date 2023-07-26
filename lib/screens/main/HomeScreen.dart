@@ -17,7 +17,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  Future<QuerySnapshot<Map<String, dynamic>>>? recepti;
+  Stream<QuerySnapshot<Map<String, dynamic>>>? recepti;
   @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
@@ -85,8 +85,8 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             const SizedBox(height: 20),
-            FutureBuilder(
-              future: recepti,
+            StreamBuilder(
+              stream: recepti,
               builder: ((context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Container(

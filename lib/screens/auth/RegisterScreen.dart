@@ -445,7 +445,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             : Button(
                                 isFullWidth: true,
                                 borderRadius: 20,
-                                visina: 15,
+                                visina: 18,
                                 funkcija: () => {
                                   _register(),
                                 },

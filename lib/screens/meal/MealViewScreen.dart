@@ -307,7 +307,7 @@ class _MealViewScreenState extends State<MealViewScreen> {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              '$rating',
+                              rating.toStringAsFixed(1),
                               style: Theme.of(context).textTheme.headline4!.copyWith(fontSize: 14),
                             ),
                           ],
