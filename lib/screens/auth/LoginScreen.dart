@@ -198,7 +198,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               visina: 15,
                               funkcija: () => _login(),
                               buttonText: 'Prijavite se',
-                              color: Theme.of(context).colorScheme.secondary,
+                              backgroundColor: Theme.of(context).colorScheme.secondary,
                               textColor: Theme.of(context).primaryColor,
                               isBorder: true,
                             ),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class Button extends StatelessWidget {
   final String buttonText;
-  final Color? color, textColor;
+  final Color? backgroundColor, textColor;
   final bool isBorder;
   final double visina;
   final double? fontsize;
@@ -15,7 +15,7 @@ class Button extends StatelessWidget {
     required this.buttonText,
     required this.borderRadius,
     required this.visina,
-    required this.color,
+    required this.backgroundColor,
     required this.isBorder,
     required this.funkcija,
     this.fontsize,
@@ -34,7 +34,7 @@ class Button extends StatelessWidget {
           horizontal: sirina == null ? 0 : sirina!,
         ),
         decoration: BoxDecoration(
-          color: color,
+          color: backgroundColor,
           border: Border.all(
             color: isBorder ? Theme.of(context).primaryColor : Colors.transparent,
           ),

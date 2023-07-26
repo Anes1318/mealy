@@ -47,7 +47,7 @@ class _ForgotPassScreenState extends State<ForgotPassScreen> {
                 visina: 18,
                 funkcija: () {},
                 buttonText: 'Pošalji zahtjev',
-                color: Theme.of(context).colorScheme.secondary,
+                backgroundColor: Theme.of(context).colorScheme.secondary,
                 textColor: Theme.of(context).primaryColor,
                 isBorder: true,
               ),

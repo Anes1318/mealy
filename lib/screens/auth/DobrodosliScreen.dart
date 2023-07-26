@@ -55,7 +55,7 @@ class DobrodosliScreen extends StatelessWidget {
                     buttonText: 'Registrujte se',
                     textColor: Colors.white,
                     isBorder: false,
-                    color: Theme.of(context).primaryColor,
+                    backgroundColor: Theme.of(context).primaryColor,
                   ),
                   const SizedBox(height: 25),
                   Button(
@@ -68,7 +68,7 @@ class DobrodosliScreen extends StatelessWidget {
                     buttonText: 'Prijavite se',
                     textColor: Theme.of(context).primaryColor,
                     isBorder: true,
-                    color: Theme.of(context).colorScheme.secondary,
+                    backgroundColor: Theme.of(context).colorScheme.secondary,
                   ),
                   const SizedBox(height: 20),
                 ],

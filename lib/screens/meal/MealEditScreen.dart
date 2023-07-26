@@ -173,22 +173,20 @@ class _MealEditScreenState extends State<MealEditScreen> {
         default:
       }
 
-      await FirebaseFirestore.instance.collection('recepti').doc(widget.receptId).set(
-        {
-          'userId': FirebaseAuth.instance.currentUser!.uid,
-          'favorites': widget.favorites,
-          'naziv': data['naziv'],
-          'opis': data['opis'],
-          'brOsoba': data['brOsoba'],
-          'vrPripreme': data['vrPripreme'],
-          'tezina': strTezina,
-          'sastojci': sastojci,
-          'koraci': koraci,
-          'tagovi': tagovi,
-          'ratings': widget.ratings,
-          'imageUrl': widget.imageUrl,
-        },
-      ).then((value) async {
+      await FirebaseFirestore.instance.collection('recepti').doc(widget.receptId).set({
+        'userId': FirebaseAuth.instance.currentUser!.uid,
+        'imageUrl': widget.imageUrl,
+        'naziv': data['naziv'],
+        'opis': data['opis'],
+        'brOsoba': data['brOsoba'],
+        'vrPripreme': data['vrPripreme'],
+        'tezina': strTezina,
+        'sastojci': sastojci,
+        'koraci': koraci,
+        'tagovi': tagovi,
+        'favorites': widget.favorites,
+        'ratings': widget.ratings,
+      }, SetOptions(merge: true)).then((value) async {
         if (_storedImage != null) {
           await FirebaseStorage.instance.ref().child(widget.receptId).delete();
           final uploadedImage = await FirebaseStorage.instance.ref().child('receptImages').child('${widget.receptId}.jpg').putFile(_storedImage!).then((value) async {

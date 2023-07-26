@@ -161,7 +161,6 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
 
       await FirebaseFirestore.instance.collection('recepti').add({
         'userId': FirebaseAuth.instance.currentUser!.uid,
-        'favorites': [],
         'naziv': data['naziv'],
         'opis': data['opis'],
         'brOsoba': data['brOsoba'],
@@ -170,6 +169,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
         'sastojci': sastojci,
         'koraci': koraci,
         'tagovi': tagovi,
+        'favorites': [],
         'ratings': {},
         "timestamp": FieldValue.serverTimestamp(),
       }).then((value) async {
@@ -352,7 +352,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                 visina: 5,
                                 sirina: 10,
                                 fontsize: 16,
-                                color: Theme.of(context).colorScheme.tertiary,
+                                backgroundColor: Theme.of(context).colorScheme.tertiary,
                                 isBorder: false,
                                 funkcija: () {
                                   setState(() {

@@ -67,24 +67,24 @@ class _MealViewScreenState extends State<MealViewScreen> {
     super.didChangeDependencies();
 
     ref = Provider.of<MealProvider>(context);
-    await ref!.readSingleMeal(widget.receptId);
-
-    final singleMeal = ref!.singleMeal;
-    for (var element in widget.favorites) {
-      favList!.add(element);
-    }
-    rating = 0;
-    userRating = 0;
-    if (singleMeal.data()!['ratings'][FirebaseAuth.instance.currentUser!.uid] != null) {
-      userRating = singleMeal.data()!['ratings'][FirebaseAuth.instance.currentUser!.uid];
-    }
-    if (singleMeal.data()!['ratings'].values.isNotEmpty) {
-      for (var item in singleMeal.data()!['ratings'].values) {
-        rating += item;
+    await ref!.readSingleMeal(widget.receptId).then((value) {
+      final singleMeal = ref!.singleMeal;
+      for (var element in widget.favorites) {
+        favList!.add(element);
       }
-    }
-    setState(() {
+      rating = 0;
+      userRating = 0;
+      if (singleMeal.data()!['ratings'][FirebaseAuth.instance.currentUser!.uid] != null) {
+        userRating = singleMeal.data()!['ratings'][FirebaseAuth.instance.currentUser!.uid];
+      }
+      if (singleMeal.data()!['ratings'].values.isNotEmpty) {
+        for (var item in singleMeal.data()!['ratings'].values) {
+          rating += item;
+        }
+      }
+
       rating /= singleMeal.data()!['ratings'].values.length;
+      setState(() {});
     });
   }
 
@@ -180,7 +180,7 @@ class _MealViewScreenState extends State<MealViewScreen> {
                           onTap: () {
                             Metode.showErrorDialog(
                               context: context,
-                              naslov: 'Koju akciju želite da izvršite',
+                              naslov: 'Koju akciju želite da izvršite?',
                               button1Text: 'Izmijenite recept',
                               isButton1Icon: true,
                               button1Icon: const Icon(
@@ -253,16 +253,13 @@ class _MealViewScreenState extends State<MealViewScreen> {
               child: Column(
                 children: [
                   const SizedBox(height: 20),
-                  Hero(
-                    tag: widget.receptId,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Image.network(
-                        widget.imageUrl,
-                        height: 200,
-                        width: medijakveri.size.width,
-                        fit: BoxFit.cover,
-                      ),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Image.network(
+                      widget.imageUrl,
+                      height: 200,
+                      width: medijakveri.size.width,
+                      fit: BoxFit.cover,
                     ),
                   ),
                   //

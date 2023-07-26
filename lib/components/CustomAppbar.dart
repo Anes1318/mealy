@@ -28,7 +28,6 @@ class CustomAppBar extends StatelessWidget {
         ? SafeArea(
             child: Container(
               padding: EdgeInsets.only(top: (medijakveri.size.height - medijakveri.padding.top) * 0.035, bottom: 10),
-              margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.07),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

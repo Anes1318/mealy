@@ -175,7 +175,7 @@ class _MealCardState extends State<MealCard> {
                                     onTap: () {
                                       Metode.showErrorDialog(
                                         context: context,
-                                        naslov: 'Koju akciju želite da izvršite',
+                                        naslov: 'Koju akciju želite da izvršite?',
                                         button1Text: 'Izmijenite recept',
                                         isButton1Icon: true,
                                         button1Icon: const Icon(
@@ -243,7 +243,7 @@ class _MealCardState extends State<MealCard> {
                       Container(
                         width: widget.medijakveri.size.width * 0.4,
                         child: Text(
-                          widget.opis.length > 85 ? '${widget.opis.substring(1, 85)}...' : widget.opis,
+                          widget.opis.length > 85 ? '${widget.opis.substring(0, 85)}...' : widget.opis,
                           style: Theme.of(context).textTheme.headline5,
                         ),
                       ),

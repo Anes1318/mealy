@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 
 import '../components/metode.dart';
 
@@ -76,6 +77,11 @@ class MealProvider with ChangeNotifier {
                           ? 'Da li želite da ocijenite ovaj recept sa 5 zvjezdicom?'
                           : '',
       button1Text: 'Potvrdi',
+      isButton1Icon: true,
+      button1Icon: Icon(
+        Iconsax.tick_circle,
+        color: Colors.white,
+      ),
       button1Fun: () async {
         try {
           final internetTest = await InternetAddress.lookup('google.com');
@@ -133,6 +139,11 @@ class MealProvider with ChangeNotifier {
       },
       isButton2: true,
       button2Text: 'Otkaži',
+      isButton2Icon: true,
+      button2Icon: Icon(
+        Iconsax.close_circle,
+        color: Colors.white,
+      ),
       button2Fun: () {
         Navigator.pop(context);
       },

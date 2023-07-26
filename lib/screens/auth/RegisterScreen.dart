@@ -225,8 +225,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     ? Image.file(
                                         _storedImage!,
                                         fit: BoxFit.fill,
-                                        width: medijakveri.size.width,
-                                        height: medijakveri.size.width * 0.48,
                                       )
                                     : Text(
                                         'Dodajte sliku',
@@ -452,7 +450,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   _register(),
                                 },
                                 buttonText: 'Registrujte se',
-                                color: Theme.of(context).colorScheme.secondary,
+                                backgroundColor: Theme.of(context).colorScheme.secondary,
                                 textColor: Theme.of(context).primaryColor,
                                 isBorder: true,
                               ),
