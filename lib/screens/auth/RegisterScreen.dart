@@ -116,18 +116,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
             imageUrl = await value.ref.getDownloadURL();
           });
         }
-        await FirebaseAuth.instance.currentUser!.updateDisplayName('${_authData['ime']} ${_authData['prezime']}');
-        await FirebaseAuth.instance.currentUser!.updatePhotoURL(imageUrl);
-        FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).set({
+
+        await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).set({
           'userId': FirebaseAuth.instance.currentUser!.uid,
           'email': FirebaseAuth.instance.currentUser!.email,
           'userName': '${_authData['ime']} ${_authData['prezime']}',
           'imageUrl': imageUrl,
-        }).then((value) {
-          Navigator.pop(context);
-
-          setState(() {
-            isLoading = false;
+        }).then((value) async {
+          await FirebaseAuth.instance.currentUser!.updateDisplayName('${_authData['ime']} ${_authData['prezime']}');
+          await FirebaseAuth.instance.currentUser!.updatePhotoURL(imageUrl).then((value) {
+            setState(() {
+              isLoading = false;
+            });
+            Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
           });
         });
       });

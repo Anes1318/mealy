@@ -98,6 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 }
 
                 final receptDocs = snapshot.data!.docs;
+
                 if (receptDocs.isEmpty) {
                   return Container(
                     height: (medijakveri.size.height - medijakveri.padding.top) * 0.66,

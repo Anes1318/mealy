@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:mealy/screens/account/AccountViewScreen.dart';
 // screens
 import 'package:mealy/screens/main/BottomNavigationBarScreen.dart';
 import 'package:mealy/screens/meal/MealEditScreen.dart';
@@ -56,34 +57,42 @@ class MealViewScreen extends StatefulWidget {
 class _MealViewScreenState extends State<MealViewScreen> {
   bool isFav = false;
 
-  List<String>? favList = [];
   double rating = 0;
   int userRating = 0;
 
   MealProvider? ref;
-
+  DocumentSnapshot<Map<String, dynamic>>? singleMeal;
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
 
     ref = Provider.of<MealProvider>(context);
     await ref!.readSingleMeal(widget.receptId).then((value) {
-      final singleMeal = ref!.singleMeal;
-      for (var element in widget.favorites) {
-        favList!.add(element);
-      }
+      singleMeal = ref!.singleMeal;
+
       rating = 0;
       userRating = 0;
-      if (singleMeal.data()!['ratings'][FirebaseAuth.instance.currentUser!.uid] != null) {
-        userRating = singleMeal.data()!['ratings'][FirebaseAuth.instance.currentUser!.uid];
+      if (singleMeal!.data()!['ratings'][FirebaseAuth.instance.currentUser!.uid] != null) {
+        userRating = singleMeal!.data()!['ratings'][FirebaseAuth.instance.currentUser!.uid];
       }
-      if (singleMeal.data()!['ratings'].values.isNotEmpty) {
-        for (var item in singleMeal.data()!['ratings'].values) {
+      if (singleMeal!.data()!['ratings'].values.isNotEmpty) {
+        for (var item in singleMeal!.data()!['ratings'].values) {
           rating += item;
         }
       }
 
-      rating /= singleMeal.data()!['ratings'].values.length;
+      isFav = false;
+      if (singleMeal!.data()!['favorites'] != null) {
+        for (var element in singleMeal!.data()!['favorites']) {
+          if (element == FirebaseAuth.instance.currentUser!.uid) {
+            setState(() {
+              isFav = true;
+            });
+          }
+        }
+      }
+
+      rating /= singleMeal!.data()!['ratings'].values.length;
       setState(() {});
     });
   }
@@ -92,14 +101,23 @@ class _MealViewScreenState extends State<MealViewScreen> {
   Widget build(BuildContext context) {
     final users = FirebaseFirestore.instance.collection('users').get();
 
-    if (favList != null) {
-      for (var element in favList!) {
-        if (element == FirebaseAuth.instance.currentUser!.uid) {
-          setState(() {
-            isFav = true;
-          });
-        }
+    void favMeal() async {
+      try {
+        final internetTest = await InternetAddress.lookup('google.com');
+      } catch (error) {
+        Metode.showErrorDialog(
+          message: "Došlo je do greške sa internetom. Provjerite svoju konekciju.",
+          context: context,
+          naslov: 'Greška',
+          button1Text: 'Zatvori',
+          button1Fun: () => {
+            Navigator.pop(context),
+          },
+          isButton2: false,
+        );
+        return;
       }
+      Provider.of<MealProvider>(context, listen: false).favMeal(singleMeal!.data()!['favorites'], widget.receptId);
     }
 
     final medijakveri = MediaQuery.of(context);
@@ -136,39 +154,8 @@ class _MealViewScreenState extends State<MealViewScreen> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () async {
-                    try {
-                      final internetTest = await InternetAddress.lookup('google.com');
-                    } catch (error) {
-                      Metode.showErrorDialog(
-                        message: "Došlo je do greške sa internetom. Provjerite svoju konekciju.",
-                        context: context,
-                        naslov: 'Greška',
-                        button1Text: 'Zatvori',
-                        button1Fun: () => {Navigator.pop(context)},
-                        isButton2: false,
-                      );
-                      return;
-                    }
-                    if (isFav) {
-                      await FirebaseFirestore.instance.collection('recepti').doc(widget.receptId).update({
-                        'favorites': FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.uid]),
-                      }).then((value) {
-                        setState(() {
-                          isFav = false;
-                          favList!.remove(FirebaseAuth.instance.currentUser!.uid);
-                        });
-                      });
-                    } else {
-                      await FirebaseFirestore.instance.collection('recepti').doc(widget.receptId).update({
-                        'favorites': FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid]),
-                      }).then((value) {
-                        setState(() {
-                          isFav = true;
-                          favList!.add(FirebaseAuth.instance.currentUser!.uid);
-                        });
-                      });
-                    }
+                  onTap: () {
+                    favMeal();
                   },
                   child: widget.autorId != FirebaseAuth.instance.currentUser!.uid
                       ? SvgPicture.asset(
@@ -307,7 +294,7 @@ class _MealViewScreenState extends State<MealViewScreen> {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              rating.toStringAsFixed(1),
+                              rating.isNaN ? '0.0' : rating.toStringAsFixed(1),
                               style: Theme.of(context).textTheme.headline4!.copyWith(fontSize: 14),
                             ),
                           ],
@@ -620,77 +607,102 @@ class _MealViewScreenState extends State<MealViewScreen> {
                   //
                   // AUTOR
                   const SizedBox(height: 20),
-                  FutureBuilder(
-                    future: users,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Container(
-                          height: (medijakveri.size.height - medijakveri.padding.top) * 0.7,
-                          child: const Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
-                      }
-
-                      final usersDocs = snapshot.data!.docs;
-
-                      final user = usersDocs.where((element) => element['userId'] == widget.autorId).toList();
-
-                      if (user.isEmpty) {
-                        return Container(
-                          height: (medijakveri.size.height - medijakveri.padding.top) * 0.7,
-                          child: Center(
-                            child: Text(
-                              'Greška',
-                              style: Theme.of(context).textTheme.headline2,
+                  if (widget.autorId != FirebaseAuth.instance.currentUser!.uid)
+                    FutureBuilder(
+                      future: users,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return Container(
+                            height: (medijakveri.size.height - medijakveri.padding.top) * 0.7,
+                            child: const Center(
+                              child: CircularProgressIndicator(),
                             ),
-                          ),
-                        );
-                      }
-                      // TODO: DODATI GestureDetector KOJI VODI DO PROFILVIEW PROFILA
-                      return Container(
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Autor',
-                              style: Theme.of(context).textTheme.headline2,
+                          );
+                        }
+
+                        final usersDocs = snapshot.data!.docs;
+
+                        final user = usersDocs.where((element) => element['userId'] == widget.autorId).toList();
+
+                        if (user.isEmpty) {
+                          return Container(
+                            height: (medijakveri.size.height - medijakveri.padding.top) * 0.7,
+                            child: Center(
+                              child: Text(
+                                'Greška',
+                                style: Theme.of(context).textTheme.headline2,
+                              ),
                             ),
-                            const SizedBox(height: 10),
-                            Row(
+                          );
+                        }
+
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                transitionDuration: const Duration(milliseconds: 150),
+                                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                  return SlideTransition(
+                                    position: Tween<Offset>(
+                                      begin: const Offset(1, 0),
+                                      end: Offset.zero,
+                                    ).animate(animation),
+                                    child: child,
+                                  );
+                                },
+                                pageBuilder: (context, animation, duration) => AccountViewScreen(
+                                  userName: user[0].data()['userName'],
+                                  imageUrl: user[0].data()['imageUrl'],
+                                  userId: user[0].data()['userId'],
+                                ),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                user[0].data()['imageUrl'] == ''
-                                    ? SvgPicture.asset(
-                                        'assets/icons/Torta.svg',
-                                        height: 70,
-                                        width: 70,
-                                      )
-                                    : ClipRRect(
-                                        borderRadius: BorderRadius.circular(20),
-                                        child: Image.network(
-                                          '${user[0].data()['imageUrl']}',
-                                          height: 70,
-                                          width: 70,
-                                          fit: BoxFit.fill,
-                                        ),
-                                      ),
-                                const SizedBox(width: 10),
                                 Text(
-                                  '${user[0].data()['userName']}',
-                                  style: Theme.of(context).textTheme.headline3,
+                                  'Autor',
+                                  style: Theme.of(context).textTheme.headline2,
+                                ),
+                                const SizedBox(height: 10),
+                                Row(
+                                  children: [
+                                    user[0].data()['imageUrl'] == ''
+                                        ? SvgPicture.asset(
+                                            'assets/icons/Torta.svg',
+                                            height: 70,
+                                            width: 70,
+                                          )
+                                        : ClipRRect(
+                                            borderRadius: BorderRadius.circular(20),
+                                            child: Image.network(
+                                              '${user[0].data()['imageUrl']}',
+                                              height: 70,
+                                              width: 70,
+                                              fit: BoxFit.fill,
+                                            ),
+                                          ),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      '${user[0].data()['userName']}',
+                                      style: Theme.of(context).textTheme.headline3,
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
+                          ),
+                        );
+                      },
+                    ),
 
                   const SizedBox(height: 30),
                 ],

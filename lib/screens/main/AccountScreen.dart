@@ -24,7 +24,6 @@ class AccountScreen extends StatefulWidget {
 class _AccountScreenState extends State<AccountScreen> {
   bool isLoading = false;
 
-  DocumentSnapshot<Map<String, dynamic>>? user;
   Stream<QuerySnapshot<Map<String, dynamic>>>? meals;
 
   @override
@@ -39,7 +38,6 @@ class _AccountScreenState extends State<AccountScreen> {
   @override
   Widget build(BuildContext context) {
     final medijakveri = MediaQuery.of(context);
-
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -48,6 +46,7 @@ class _AccountScreenState extends State<AccountScreen> {
             isCenter: false,
             drugaIkonica: Iconsax.setting_2,
             drugaIkonicaFunkcija: () {
+              // print(FirebaseAuth.instance.currentUser!.displayName);
               Navigator.push(
                 context,
                 PageRouteBuilder(

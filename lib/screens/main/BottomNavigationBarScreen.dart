@@ -38,11 +38,9 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
     });
   }
 
-  var recepti;
   @override
   Widget build(BuildContext context) {
     final medijakveri = MediaQuery.of(context);
-
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: Container(

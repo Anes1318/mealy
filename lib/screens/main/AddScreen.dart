@@ -171,7 +171,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
         'tagovi': tagovi,
         'favorites': [],
         'ratings': {},
-        "timestamp": FieldValue.serverTimestamp(),
+        "createdAt": DateTime.now().toString(),
       }).then((value) async {
         final uploadedImage = await FirebaseStorage.instance.ref().child('receptImages').child('${value.id}.jpg').putFile(_storedImage!).then((value) async {
           value.ref.name;
