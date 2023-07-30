@@ -65,24 +65,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             GestureDetector(
               onTap: () => Metode.showErrorDialog(
+                isJednoPoredDrugog: true,
                 context: context,
                 naslov: 'Da li ste sigurni da želite da se odjavite?',
-                button1Text: 'Da',
+                button1Text: 'Ne',
                 isButton1Icon: true,
                 button1Icon: Icon(
-                  Iconsax.tick_circle,
-                  color: Colors.white,
+                  Iconsax.close_circle,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
-                button1Fun: () async {
+                button1Fun: () {
+                  Navigator.pop(context);
+                },
+                isButton2: true,
+                button2Text: 'Da',
+                isButton2Icon: true,
+                button2Icon: Icon(
+                  Iconsax.tick_circle,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                button2Fun: () async {
                   try {
-                    final internetTest = await InternetAddress.lookup('google.com');
+                    await InternetAddress.lookup('google.com');
                   } catch (error) {
                     Metode.showErrorDialog(
+                      isJednoPoredDrugog: false,
                       message: "Došlo je do greške sa internetom. Provjerite svoju konekciju.",
                       context: context,
                       naslov: 'Greška',
                       button1Text: 'Zatvori',
-                      button1Fun: () => {Navigator.pop(context)},
+                      button1Fun: () => Navigator.pop(context),
                       isButton2: false,
                     );
                     return;
@@ -92,24 +104,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     Navigator.pushNamedAndRemoveUntil(context, '/', (Route<dynamic> route) => false);
                   } catch (e) {
                     Metode.showErrorDialog(
+                      isJednoPoredDrugog: false,
                       message: "Došlo je do greške sa internetom. Provjerite svoju konekciju.",
                       context: context,
                       naslov: 'Greška',
                       button1Text: 'Zatvori',
-                      button1Fun: () => {Navigator.pop(context)},
+                      button1Fun: () => Navigator.pop(context),
                       isButton2: false,
                     );
                   }
-                },
-                isButton2: true,
-                button2Text: 'Ne',
-                isButton2Icon: true,
-                button2Icon: Icon(
-                  Iconsax.close_circle,
-                  color: Colors.white,
-                ),
-                button2Fun: () {
-                  Navigator.pop(context);
                 },
               ),
               child: Container(

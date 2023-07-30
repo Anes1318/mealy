@@ -97,14 +97,15 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
   String? slikaValidator;
   void submitForm() async {
     try {
-      final internetTest = await InternetAddress.lookup('google.com');
+      await InternetAddress.lookup('google.com');
     } catch (error) {
       Metode.showErrorDialog(
+        isJednoPoredDrugog: false,
         message: "Došlo je do greške sa internetom. Provjerite svoju konekciju.",
         context: context,
         naslov: 'Greška',
         button1Text: 'Zatvori',
-        button1Fun: () => {Navigator.pop(context)},
+        button1Fun: () => Navigator.pop(context),
         isButton2: false,
       );
       return;
@@ -208,6 +209,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
       });
 
       Metode.showErrorDialog(
+        isJednoPoredDrugog: false,
         context: context,
         naslov: 'Došlo je do greške',
         button1Text: 'Zatvori',
@@ -282,6 +284,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                           GestureDetector(
                             onTap: () {
                               Metode.showErrorDialog(
+                                isJednoPoredDrugog: true,
                                 context: context,
                                 naslov: 'Odakle želite da izaberete sliku?',
                                 button1Text: 'Kamera',
@@ -292,7 +295,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                 isButton1Icon: true,
                                 button1Icon: Icon(
                                   Icons.camera_alt,
-                                  color: Colors.white,
+                                  color: Theme.of(context).colorScheme.primary,
                                 ),
                                 isButton2: true,
                                 button2Text: 'Galerija',
@@ -304,7 +307,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                 isButton2Icon: true,
                                 button2Icon: Icon(
                                   Icons.photo,
-                                  color: Colors.white,
+                                  color: Theme.of(context).colorScheme.primary,
                                 ),
                               );
                             },

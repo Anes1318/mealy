@@ -59,6 +59,7 @@ class _MealViewScreenState extends State<MealViewScreen> {
 
   double rating = 0;
   int userRating = 0;
+  bool isInternet = false;
 
   MealProvider? ref;
   DocumentSnapshot<Map<String, dynamic>>? singleMeal;
@@ -93,8 +94,15 @@ class _MealViewScreenState extends State<MealViewScreen> {
       }
 
       rating /= singleMeal!.data()!['ratings'].values.length;
+
       setState(() {});
     });
+    try {
+      final internetTest = await InternetAddress.lookup('google.com');
+      isInternet = true;
+    } catch (error) {
+      isInternet = false;
+    }
   }
 
   @override
@@ -106,6 +114,7 @@ class _MealViewScreenState extends State<MealViewScreen> {
         final internetTest = await InternetAddress.lookup('google.com');
       } catch (error) {
         Metode.showErrorDialog(
+          isJednoPoredDrugog: false,
           message: "Došlo je do greške sa internetom. Provjerite svoju konekciju.",
           context: context,
           naslov: 'Greška',
@@ -154,9 +163,7 @@ class _MealViewScreenState extends State<MealViewScreen> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {
-                    favMeal();
-                  },
+                  onTap: () => favMeal(),
                   child: widget.autorId != FirebaseAuth.instance.currentUser!.uid
                       ? SvgPicture.asset(
                           'assets/icons/${isFav}Heart.svg',
@@ -166,6 +173,7 @@ class _MealViewScreenState extends State<MealViewScreen> {
                       : GestureDetector(
                           onTap: () {
                             Metode.showErrorDialog(
+                              isJednoPoredDrugog: false,
                               context: context,
                               naslov: 'Koju akciju želite da izvršite?',
                               button1Text: 'Izmijenite recept',
@@ -249,6 +257,7 @@ class _MealViewScreenState extends State<MealViewScreen> {
                       fit: BoxFit.cover,
                     ),
                   ),
+
                   //
                   //
                   // STATS

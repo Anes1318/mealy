@@ -108,11 +108,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
       setState(() {
         isLoading = true;
       });
+      // print('PROSO SAM STEFANE SINE');
+      // return;
       await FirebaseAuth.instance.createUserWithEmailAndPassword(email: _authData['email']!, password: _authData['sifra']!).then((value) async {
         String imageUrl = '';
 
         if (_storedImage != null) {
-          final uploadedImage = await FirebaseStorage.instance.ref().child('userImages').child('${value.user!.uid}.jpg').putFile(_storedImage!).then((value) async {
+          await FirebaseStorage.instance.ref().child('userImages').child('${value.user!.uid}.jpg').putFile(_storedImage!).then((value) async {
             imageUrl = await value.ref.getDownloadURL();
           });
         }
@@ -137,11 +139,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
         isLoading = false;
       });
       Metode.showErrorDialog(
+        isJednoPoredDrugog: false,
         message: Metode.getMessageFromErrorCode(error),
         context: context,
         naslov: 'Greška',
         button1Text: 'Zatvori',
-        button1Fun: () => {Navigator.pop(context)},
+        button1Fun: () => Navigator.pop(context),
         isButton2: false,
       );
     } catch (error) {
@@ -150,11 +153,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
       });
 
       Metode.showErrorDialog(
+        isJednoPoredDrugog: false,
         message: 'Došlo je do greške',
         context: context,
         naslov: 'Greška',
         button1Text: 'Zatvori',
-        button1Fun: () => {Navigator.pop(context)},
+        button1Fun: () => Navigator.pop(context),
         isButton2: false,
       );
     }
@@ -186,6 +190,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         GestureDetector(
                           onTap: () {
                             Metode.showErrorDialog(
+                              isJednoPoredDrugog: true,
                               context: context,
                               naslov: 'Odakle želite da izaberete sliku?',
                               button1Text: 'Kamera',
@@ -196,7 +201,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               isButton1Icon: true,
                               button1Icon: Icon(
                                 Icons.camera_alt,
-                                color: Colors.white,
+                                color: Theme.of(context).colorScheme.primary,
                               ),
                               isButton2: true,
                               button2Text: 'Galerija',
@@ -208,7 +213,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               isButton2Icon: true,
                               button2Icon: Icon(
                                 Icons.photo,
-                                color: Colors.white,
+                                color: Theme.of(context).colorScheme.primary,
                               ),
                             );
                           },
@@ -414,6 +419,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 onFieldSubmitted: (_) {
                                   FocusManager.instance.primaryFocus?.unfocus();
                                   FocusScope.of(context).unfocus();
+
+                                  imeNode.unfocus();
+                                  prezimeNode.unfocus();
+                                  emailNode.unfocus();
+                                  pass1Node.unfocus();
+                                  pass2Node.unfocus();
+
                                   _register();
                                 },
                                 decoration: InputDecoration(

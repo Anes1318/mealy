@@ -2,6 +2,7 @@ import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:mealy/screens/account/AccountEditScreen.dart';
 
 // screens
 import 'package:mealy/screens/auth/WelcomeScreen.dart';
@@ -87,6 +88,7 @@ class MyApp extends StatelessWidget {
             BottomNavigationBarScreen.routeName: (context) => const BottomNavigationBarScreen(),
             SettingsScreen.routeName: (context) => const SettingsScreen(),
             AccountScreen.routeName: (context) => const AccountScreen(),
+            AccountEditScreen.routeName: (context) => const AccountEditScreen(),
           },
           home: snapshot.data == null ? const WelcomeScreen() : const BottomNavigationBarScreen(),
         ),

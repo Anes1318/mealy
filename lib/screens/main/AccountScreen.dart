@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -38,6 +40,7 @@ class _AccountScreenState extends State<AccountScreen> {
   @override
   Widget build(BuildContext context) {
     final medijakveri = MediaQuery.of(context);
+
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -46,7 +49,6 @@ class _AccountScreenState extends State<AccountScreen> {
             isCenter: false,
             drugaIkonica: Iconsax.setting_2,
             drugaIkonicaFunkcija: () {
-              // print(FirebaseAuth.instance.currentUser!.displayName);
               Navigator.push(
                 context,
                 PageRouteBuilder(

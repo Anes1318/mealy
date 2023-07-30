@@ -1,6 +1,17 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 class Metode {
+  static Future<bool> checkConnection({required context}) async {
+    try {
+      await InternetAddress.lookup('google.com');
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
   static void showErrorDialog({
     String? message,
     required BuildContext context,
@@ -14,11 +25,13 @@ class Metode {
     Function? button2Fun,
     bool isButton2Icon = false,
     Widget? button2Icon,
+    required bool isJednoPoredDrugog,
   }) {
     showDialog(
       context: context,
       builder: (context) {
         final medijakveri = MediaQuery.of(context);
+
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           title: Text(
@@ -39,72 +52,148 @@ class Metode {
                 )
               : null,
           actions: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                GestureDetector(
-                  onTap: () => button1Fun(),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 10,
-                      horizontal: 10,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      children: [
-                        if (isButton1Icon) button1Icon!,
-                        if (isButton1Icon) const SizedBox(width: 5),
-                        Text(
-                          button1Text,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            if (isButton2) const SizedBox(height: 20),
-            if (isButton2)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    onTap: () => button2Fun!(),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 10,
-                        horizontal: 10,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            isJednoPoredDrugog == true
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          if (isButton2Icon) button2Icon!,
-                          if (isButton2Icon) const SizedBox(width: 5),
-                          Text(
-                            button2Text!,
-                            style: const TextStyle(
-                              //fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                              color: Colors.white,
+                          GestureDetector(
+                            onTap: () => button1Fun(),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 10,
+                                horizontal: 10,
+                              ),
+                              decoration: BoxDecoration(
+                                // color: Theme.of(context).primaryColor,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
+                                children: [
+                                  if (isButton1Icon) button1Icon!,
+                                  if (isButton1Icon) const SizedBox(width: 5),
+                                  Text(
+                                    button1Text,
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context).colorScheme.primary,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ],
                       ),
-                    ),
+                      if (isButton2)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              onTap: () => button2Fun!(),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 10,
+                                  horizontal: 10,
+                                ),
+                                decoration: BoxDecoration(
+                                  // color: Theme.of(context).primaryColor,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    if (isButton2Icon) button2Icon!,
+                                    if (isButton2Icon) const SizedBox(width: 5),
+                                    Text(
+                                      button2Text!,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                        // color: Colors.white,
+                                        color: Theme.of(context).colorScheme.primary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                    ],
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () => button1Fun(),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 10,
+                            horizontal: 10,
+                          ),
+                          decoration: BoxDecoration(
+                            // color: Theme.of(context).primaryColor,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            children: [
+                              if (isButton1Icon) button1Icon!,
+                              if (isButton1Icon) const SizedBox(width: 5),
+                              Text(
+                                button1Text,
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+            if (!isJednoPoredDrugog)
+              if (isButton2) const SizedBox(height: 20),
+            if (isButton2)
+              if (!isJednoPoredDrugog)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () => button2Fun!(),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          // color: Theme.of(context).primaryColor,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            if (isButton2Icon) button2Icon!,
+                            if (isButton2Icon) const SizedBox(width: 5),
+                            Text(
+                              button2Text!,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
           ],
         );
       },
@@ -117,7 +206,8 @@ class Metode {
       case "account-exists-with-different-credential":
       case "email-already-in-use":
         return "Taj E-mail je već u upotrebi.";
-
+      case 'invalid-phone-number':
+        return 'Taj broj telefona nije validan';
       case "network-request-failed":
         return "Nema internet konekcije";
       case "ERROR_WRONG_PASSWORD":

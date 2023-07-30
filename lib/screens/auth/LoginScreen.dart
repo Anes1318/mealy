@@ -62,11 +62,12 @@ class _LoginScreenState extends State<LoginScreen> {
       });
 
       Metode.showErrorDialog(
+        isJednoPoredDrugog: false,
         message: Metode.getMessageFromErrorCode(error),
         context: context,
         naslov: 'Greška',
         button1Text: 'Zatvori',
-        button1Fun: () => {Navigator.pop(context)},
+        button1Fun: () => Navigator.pop(context),
         isButton2: false,
       );
     } catch (error) {
@@ -75,11 +76,12 @@ class _LoginScreenState extends State<LoginScreen> {
       });
 
       Metode.showErrorDialog(
+        isJednoPoredDrugog: false,
         message: 'Došlo je do greške',
         context: context,
         naslov: 'Greška',
         button1Text: 'Zatvori',
-        button1Fun: () => {Navigator.pop(context)},
+        button1Fun: () => Navigator.pop(context),
         isButton2: false,
       );
     }

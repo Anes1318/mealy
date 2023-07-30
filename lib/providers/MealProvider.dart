@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
@@ -36,11 +37,6 @@ class MealProvider with ChangeNotifier {
     return _user!;
   }
 
-  int get brFav {
-    print(_meals);
-    return 2;
-  }
-
   void favMeal(List<dynamic> mealFavorites, String mealId) async {
     bool isFav = false;
     mealFavorites.forEach((element) async {
@@ -64,6 +60,7 @@ class MealProvider with ChangeNotifier {
 
   void rateMeal(context, mealId, brZvjezdica) {
     Metode.showErrorDialog(
+      isJednoPoredDrugog: false,
       context: context,
       naslov: brZvjezdica == 1
           ? 'Da li želite da ocijenite ovaj recept sa 1 zvjezdicom?'
@@ -84,16 +81,17 @@ class MealProvider with ChangeNotifier {
       ),
       button1Fun: () async {
         try {
-          final internetTest = await InternetAddress.lookup('google.com');
+          await InternetAddress.lookup('google.com');
         } catch (error) {
           Navigator.pop(context);
 
           Metode.showErrorDialog(
+            isJednoPoredDrugog: false,
             message: "Došlo je do greške sa internetom. Provjerite svoju konekciju.",
             context: context,
             naslov: 'Greška',
             button1Text: 'Zatvori',
-            button1Fun: () => {Navigator.pop(context)},
+            button1Fun: () => Navigator.pop(context),
             isButton2: false,
           );
           return;
@@ -127,6 +125,7 @@ class MealProvider with ChangeNotifier {
           Navigator.pop(context);
 
           Metode.showErrorDialog(
+            isJednoPoredDrugog: false,
             context: context,
             naslov: 'Došlo je do greške',
             button1Text: 'Zatvori',

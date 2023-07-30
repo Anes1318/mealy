@@ -123,14 +123,15 @@ class _MealEditScreenState extends State<MealEditScreen> {
 
   void submitForm() async {
     try {
-      final internetTest = await InternetAddress.lookup('google.com');
+      await InternetAddress.lookup('google.com');
     } catch (error) {
       Metode.showErrorDialog(
+        isJednoPoredDrugog: false,
         message: "Došlo je do greške sa internetom. Provjerite svoju konekciju.",
         context: context,
         naslov: 'Greška',
         button1Text: 'Zatvori',
-        button1Fun: () => {Navigator.pop(context)},
+        button1Fun: () => Navigator.pop(context),
         isButton2: false,
       );
       return;
@@ -223,6 +224,7 @@ class _MealEditScreenState extends State<MealEditScreen> {
       });
 
       Metode.showErrorDialog(
+        isJednoPoredDrugog: false,
         context: context,
         naslov: 'Došlo je do greške',
         button1Text: 'Zatvori',
@@ -347,6 +349,7 @@ class _MealEditScreenState extends State<MealEditScreen> {
                               GestureDetector(
                                 onTap: () {
                                   Metode.showErrorDialog(
+                                    isJednoPoredDrugog: false,
                                     context: context,
                                     naslov: 'Odakle želite da izaberete sliku?',
                                     button1Text: 'Kamera',

@@ -63,7 +63,7 @@ class _MealCardState extends State<MealCard> {
       }
     }
     rating /= widget.ratings.length;
-
+    isFav = false;
     for (var element in widget.favorites) {
       if (element == FirebaseAuth.instance.currentUser!.uid) {
         isFav = true;
@@ -74,6 +74,7 @@ class _MealCardState extends State<MealCard> {
         final internetTest = await InternetAddress.lookup('google.com');
       } catch (error) {
         Metode.showErrorDialog(
+          isJednoPoredDrugog: false,
           message: "Došlo je do greške sa internetom. Provjerite svoju konekciju.",
           context: context,
           naslov: 'Greška',
@@ -173,13 +174,14 @@ class _MealCardState extends State<MealCard> {
                                 : GestureDetector(
                                     onTap: () {
                                       Metode.showErrorDialog(
+                                        isJednoPoredDrugog: false,
                                         context: context,
                                         naslov: 'Koju akciju želite da izvršite?',
                                         button1Text: 'Izmijenite recept',
                                         isButton1Icon: true,
-                                        button1Icon: const Icon(
+                                        button1Icon: Icon(
                                           Iconsax.edit,
-                                          color: Colors.white,
+                                          color: Theme.of(context).colorScheme.primary,
                                         ),
                                         button1Fun: () {
                                           Navigator.pop(context);
@@ -217,9 +219,9 @@ class _MealCardState extends State<MealCard> {
                                         isButton2: true,
                                         button2Text: 'Izbrišite recept',
                                         isButton2Icon: true,
-                                        button2Icon: const Icon(
+                                        button2Icon: Icon(
                                           Iconsax.trash,
-                                          color: Colors.white,
+                                          color: Theme.of(context).colorScheme.primary,
                                         ),
                                         button2Fun: () async {
                                           await FirebaseFirestore.instance.collection('recepti').doc(widget.receptId).delete();

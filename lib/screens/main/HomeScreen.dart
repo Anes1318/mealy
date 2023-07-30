@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -7,6 +10,7 @@ import 'package:mealy/components/CustomAppbar.dart';
 import 'package:mealy/components/MealCard.dart';
 import 'package:provider/provider.dart';
 
+import '../../components/metode.dart';
 import '../../providers/MealProvider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -17,13 +21,15 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  Stream<QuerySnapshot<Map<String, dynamic>>>? recepti;
+  Stream<QuerySnapshot<Map<String, dynamic>>>? meals;
+  ConnectivityResult? connectivityResult;
+
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     Provider.of<MealProvider>(context).readMeals();
-    recepti = Provider.of<MealProvider>(context).meals;
+    meals = Provider.of<MealProvider>(context).meals;
   }
 
   @override
@@ -67,7 +73,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    FirebaseAuth.instance.signOut();
+                    print(connectivityResult);
+                    // FirebaseAuth.instance.signOut();
                   },
                   child: Container(
                     padding: const EdgeInsets.all(10),
@@ -85,59 +92,61 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             const SizedBox(height: 20),
-            StreamBuilder(
-              stream: recepti,
-              builder: ((context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.66,
-                    child: const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
-                }
-
-                final receptDocs = snapshot.data!.docs;
-
-                if (receptDocs.isEmpty) {
-                  return Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.66,
-                    child: Center(
-                      child: Text(
-                        'Nema recepata',
-                        style: Theme.of(context).textTheme.headline2,
+            if (connectivityResult != ConnectivityResult.none)
+              StreamBuilder(
+                stream: meals,
+                builder: ((context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Container(
+                      height: (medijakveri.size.height - medijakveri.padding.top) * 0.66,
+                      child: const Center(
+                        child: CircularProgressIndicator(),
                       ),
-                    ),
-                  );
-                }
+                    );
+                  }
 
-                return Container(
-                  height: medijakveri.size.height * 0.66,
-                  child: ListView.separated(
-                      padding: const EdgeInsets.symmetric(vertical: 0),
-                      separatorBuilder: ((context, index) => const SizedBox(height: 15)),
-                      itemCount: receptDocs.length,
-                      itemBuilder: (context, index) {
-                        return MealCard(
-                          medijakveri: medijakveri,
-                          receptId: receptDocs[index].id,
-                          autorId: receptDocs[index].data()['userId'],
-                          naziv: receptDocs[index].data()['naziv'],
-                          opis: receptDocs[index].data()['opis'],
-                          brOsoba: receptDocs[index].data()['brOsoba'],
-                          vrPripreme: receptDocs[index].data()['vrPripreme'],
-                          tezina: receptDocs[index].data()['tezina'],
-                          imageUrl: receptDocs[index].data()['imageUrl'],
-                          ratings: receptDocs[index].data()['ratings'],
-                          sastojci: receptDocs[index].data()['sastojci'],
-                          koraci: receptDocs[index].data()['koraci'],
-                          favorites: receptDocs[index].data()['favorites'],
-                          tagovi: receptDocs[index].data()['tagovi'],
-                        );
-                      }),
-                );
-              }),
-            ),
+                  final receptDocs = snapshot.data!.docs;
+
+                  if (receptDocs.isEmpty) {
+                    return Container(
+                      height: (medijakveri.size.height - medijakveri.padding.top) * 0.66,
+                      child: Center(
+                        child: Text(
+                          'Nema recepata',
+                          style: Theme.of(context).textTheme.headline2,
+                        ),
+                      ),
+                    );
+                  }
+
+                  return Container(
+                    height: medijakveri.size.height * 0.66,
+                    child: ListView.separated(
+                        shrinkWrap: true,
+                        padding: const EdgeInsets.symmetric(vertical: 0),
+                        separatorBuilder: ((context, index) => const SizedBox(height: 15)),
+                        itemCount: receptDocs.length,
+                        itemBuilder: (context, index) {
+                          return MealCard(
+                            medijakveri: medijakveri,
+                            receptId: receptDocs[index].id,
+                            autorId: receptDocs[index].data()['userId'],
+                            naziv: receptDocs[index].data()['naziv'],
+                            opis: receptDocs[index].data()['opis'],
+                            brOsoba: receptDocs[index].data()['brOsoba'],
+                            vrPripreme: receptDocs[index].data()['vrPripreme'],
+                            tezina: receptDocs[index].data()['tezina'],
+                            imageUrl: receptDocs[index].data()['imageUrl'],
+                            ratings: receptDocs[index].data()['ratings'],
+                            sastojci: receptDocs[index].data()['sastojci'],
+                            koraci: receptDocs[index].data()['koraci'],
+                            favorites: receptDocs[index].data()['favorites'],
+                            tagovi: receptDocs[index].data()['tagovi'],
+                          );
+                        }),
+                  );
+                }),
+              ),
           ],
         ),
       ),
