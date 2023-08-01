@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -36,11 +38,21 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
 
       _selectedIndex = index;
     });
+    try {
+      await InternetAddress.lookup('google.com').then((value) {
+        Provider.of<MealProvider>(context, listen: false).setIsInternet(true);
+      });
+      print('MORE');
+    } catch (error) {
+      print('NEMORE');
+      Provider.of<MealProvider>(context, listen: false).setIsInternet(false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final medijakveri = MediaQuery.of(context);
+
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: Container(

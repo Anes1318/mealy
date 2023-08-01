@@ -27,6 +27,7 @@ class _AccountScreenState extends State<AccountScreen> {
   bool isLoading = false;
 
   Stream<QuerySnapshot<Map<String, dynamic>>>? meals;
+  bool? isInternet;
 
   @override
   void didChangeDependencies() async {
@@ -35,12 +36,12 @@ class _AccountScreenState extends State<AccountScreen> {
 
     Provider.of<MealProvider>(context, listen: false).readMeals();
     meals = Provider.of<MealProvider>(context, listen: false).meals;
+    isInternet = Provider.of<MealProvider>(context).getIsInternet;
   }
 
   @override
   Widget build(BuildContext context) {
     final medijakveri = MediaQuery.of(context);
-
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -70,22 +71,24 @@ class _AccountScreenState extends State<AccountScreen> {
           const SizedBox(height: 10),
           GestureDetector(
             onTap: () {
-              Navigator.push(
-                context,
-                PageRouteBuilder(
-                  transitionDuration: const Duration(milliseconds: 150),
-                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                    return SlideTransition(
-                      position: Tween<Offset>(
-                        begin: const Offset(1, 0),
-                        end: Offset.zero,
-                      ).animate(animation),
-                      child: child,
-                    );
-                  },
-                  pageBuilder: (context, animation, duration) => AccountInfoScreen(),
-                ),
-              );
+              if (isInternet!) {
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    transitionDuration: const Duration(milliseconds: 150),
+                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                      return SlideTransition(
+                        position: Tween<Offset>(
+                          begin: const Offset(1, 0),
+                          end: Offset.zero,
+                        ).animate(animation),
+                        child: child,
+                      );
+                    },
+                    pageBuilder: (context, animation, duration) => AccountInfoScreen(),
+                  ),
+                );
+              }
             },
             child: Container(
               padding: const EdgeInsets.all(20),
@@ -98,21 +101,27 @@ class _AccountScreenState extends State<AccountScreen> {
                 children: [
                   Row(
                     children: [
-                      FirebaseAuth.instance.currentUser!.photoURL == null
+                      isInternet! == false
                           ? SvgPicture.asset(
                               'assets/icons/Torta.svg',
                               height: 75,
                               width: 75,
                             )
-                          : ClipRRect(
-                              borderRadius: BorderRadius.circular(20),
-                              child: Image.network(
-                                '${FirebaseAuth.instance.currentUser!.photoURL}',
-                                height: 75,
-                                width: 75,
-                                fit: BoxFit.fill,
-                              ),
-                            ),
+                          : FirebaseAuth.instance.currentUser!.photoURL == null
+                              ? SvgPicture.asset(
+                                  'assets/icons/Torta.svg',
+                                  height: 75,
+                                  width: 75,
+                                )
+                              : ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: Image.network(
+                                    '${FirebaseAuth.instance.currentUser!.photoURL}',
+                                    height: 75,
+                                    width: 75,
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
                       const SizedBox(width: 10),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -152,7 +161,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 builder: ((context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Container(
-                      height: (medijakveri.size.height - medijakveri.padding.top) * 0.54,
+                      height: (medijakveri.size.height - medijakveri.padding.top) * 0.59,
                       child: const Center(
                         child: CircularProgressIndicator(),
                       ),
@@ -160,6 +169,13 @@ class _AccountScreenState extends State<AccountScreen> {
                   }
 
                   final receptDocs = snapshot.data!.docs;
+                  receptDocs.sort((a, b) {
+                    if (DateTime.parse(a.data()['createdAt']).isAfter(DateTime.parse(b.data()['createdAt']))) {
+                      return 0;
+                    } else {
+                      return 1;
+                    }
+                  });
                   List<dynamic> ownRecepti = [];
 
                   receptDocs.forEach((element) {
@@ -170,7 +186,7 @@ class _AccountScreenState extends State<AccountScreen> {
 
                   if (ownRecepti.isEmpty || meals == null) {
                     return Container(
-                      height: (medijakveri.size.height - medijakveri.padding.top) * 0.54,
+                      height: (medijakveri.size.height - medijakveri.padding.top) * 0.59,
                       child: Center(
                         child: Text(
                           'Nema recepata',
@@ -181,7 +197,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   }
 
                   return Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.54,
+                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.59,
                     child: ListView.separated(
                         padding: EdgeInsets.zero,
                         separatorBuilder: ((context, index) => const SizedBox(height: 15)),
@@ -201,6 +217,7 @@ class _AccountScreenState extends State<AccountScreen> {
                             vrPripreme: ownRecepti[index].data()['vrPripreme'],
                             tezina: ownRecepti[index].data()['tezina'],
                             imageUrl: ownRecepti[index].data()['imageUrl'],
+                            createdAt: receptDocs[index].data()['createdAt'],
                             ratings: ownRecepti[index].data()['ratings'],
                             sastojci: ownRecepti[index].data()['sastojci'],
                             koraci: ownRecepti[index].data()['koraci'],

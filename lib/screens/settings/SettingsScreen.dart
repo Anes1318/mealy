@@ -88,6 +88,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   try {
                     await InternetAddress.lookup('google.com');
                   } catch (error) {
+                    Navigator.pop(context);
+
                     Metode.showErrorDialog(
                       isJednoPoredDrugog: false,
                       message: "Došlo je do greške sa internetom. Provjerite svoju konekciju.",

@@ -149,6 +149,7 @@ class _AccountViewScreenState extends State<AccountViewScreen> {
                                 vrPripreme: ownRecepti[index].data()['vrPripreme'],
                                 tezina: ownRecepti[index].data()['tezina'],
                                 imageUrl: ownRecepti[index].data()['imageUrl'],
+                                createdAt: receptDocs[index].data()['createdAt'],
                                 ratings: ownRecepti[index].data()['ratings'],
                                 sastojci: ownRecepti[index].data()['sastojci'],
                                 koraci: ownRecepti[index].data()['koraci'],

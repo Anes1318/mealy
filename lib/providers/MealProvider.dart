@@ -12,6 +12,16 @@ class MealProvider with ChangeNotifier {
   Stream<QuerySnapshot<Map<String, dynamic>>>? _meals;
   DocumentSnapshot<Map<String, dynamic>>? _singleMeal;
   DocumentSnapshot<Map<String, dynamic>>? _user;
+  bool? _isInternet = true;
+
+  void setIsInternet(value) {
+    _isInternet = value;
+    notifyListeners();
+  }
+
+  bool get getIsInternet {
+    return _isInternet!;
+  }
 
   void readMeals() {
     _meals = FirebaseFirestore.instance.collection('recepti').snapshots();
@@ -46,12 +56,14 @@ class MealProvider with ChangeNotifier {
     });
     if (isFav) {
       await FirebaseFirestore.instance.collection('recepti').doc(mealId).update({
-        'favorites': FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.uid]),
+        'favorites.${FirebaseAuth.instance.currentUser!.uid}': FieldValue.delete(),
       });
       notifyListeners();
     } else {
       await FirebaseFirestore.instance.collection('recepti').doc(mealId).update({
-        'favorites': FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid]),
+        'favorites': {
+          FirebaseAuth.instance.currentUser!.uid: DateTime.now().toIso8601String(),
+        },
       });
       notifyListeners();
     }

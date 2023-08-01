@@ -95,6 +95,65 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
   bool tezinaValidator = false;
   bool tagValidator = false;
   String? slikaValidator;
+  int brRecepata = 0;
+
+  final dummyData = {
+    'userId': FirebaseAuth.instance.currentUser!.uid,
+    'naziv': 'recept',
+    'opis': 'opis 1',
+    'brOsoba': '5',
+    'vrPripreme': '35',
+    'tezina': 'Umjereno',
+    'sastojci': ['sastojak 1, sastojak 2'],
+    'koraci': ['korak 1, korak 2'],
+    'tagovi': ['Zdravo, Ručak'],
+  };
+
+  void addMealTest() async {
+    await FirebaseFirestore.instance.collection('recepti').add(
+      {
+        'userId': FirebaseAuth.instance.currentUser!.uid,
+        'naziv': '${dummyData['naziv']} $brRecepata',
+        'opis': dummyData['opis'],
+        'brOsoba': dummyData['brOsoba'],
+        'imageUrl': 'https://firebasestorage.googleapis.com/v0/b/mealy1318-fabad.appspot.com/o/receptImages%2FPnLqVfm3TduPSOLAlqMC.jpg?alt=media&token=975746f2-27fa-4749-bb76-f6fe44e4a686',
+        'vrPripreme': dummyData['vrPripreme'],
+        'tezina': dummyData['tezina'],
+        'sastojci': dummyData['sastojci'],
+        'koraci': dummyData['koraci'],
+        'tagovi': dummyData['tagovi'],
+        'favorites': {},
+        'ratings': {},
+        "createdAt": DateTime.now().toIso8601String(),
+      },
+    ).then((value) async {
+      print(value.id);
+      brRecepata++;
+      setState(() {
+        isLoading = false;
+      });
+      _storedImage = null;
+      data['naziv'] = '';
+      data['opis'] = '';
+      data['brOsoba'] = 0;
+      data['vrPripreme'] = 0;
+      tezina = null;
+      strTezina = null;
+      sastojci.clear();
+      koraci.clear();
+      tagovi.clear();
+
+      _form.currentState!.reset();
+
+      sastojakFokus = [FocusNode()];
+      sastojakInput = [TextEditingController()];
+      korakFokus = [FocusNode()];
+      korakInput = [TextEditingController()];
+
+      // Navigator.pushReplacementNamed(context, BottomNavigationBarScreen.routeName);
+    });
+  }
+
   void submitForm() async {
     try {
       await InternetAddress.lookup('google.com');
@@ -114,8 +173,8 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
     if (tezina == null) {
       setState(() {
         tezinaValidator = true;
-        return;
       });
+      return;
     }
     if (tagovi.isEmpty) {
       setState(() {
@@ -142,23 +201,22 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
       return;
     }
     _form.currentState!.save();
-
+    switch (tezina) {
+      case Tezina.lako:
+        strTezina = 'Lako';
+        break;
+      case Tezina.umjereno:
+        strTezina = 'Umjereno';
+        break;
+      case Tezina.tesko:
+        strTezina = 'Tesko';
+        break;
+      default:
+    }
     try {
       setState(() {
         isLoading = true;
       });
-      switch (tezina) {
-        case Tezina.lako:
-          strTezina = 'Lako';
-          break;
-        case Tezina.umjereno:
-          strTezina = 'Umjereno';
-          break;
-        case Tezina.tesko:
-          strTezina = 'Tesko';
-          break;
-        default:
-      }
 
       await FirebaseFirestore.instance.collection('recepti').add({
         'userId': FirebaseAuth.instance.currentUser!.uid,
@@ -170,9 +228,9 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
         'sastojci': sastojci,
         'koraci': koraci,
         'tagovi': tagovi,
-        'favorites': [],
+        'favorites': {},
         'ratings': {},
-        "createdAt": DateTime.now().toString(),
+        "createdAt": DateTime.now().toIso8601String(),
       }).then((value) async {
         final uploadedImage = await FirebaseStorage.instance.ref().child('receptImages').child('${value.id}.jpg').putFile(_storedImage!).then((value) async {
           value.ref.name;
@@ -258,7 +316,18 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                         : GestureDetector(
                             onTap: () {
                               FocusManager.instance.primaryFocus?.unfocus();
-                              submitForm();
+                              nazivNode.unfocus();
+                              opisNode.unfocus();
+                              brOsobaNode.unfocus();
+                              vrPripremeNode.unfocus();
+                              sastojakFokus.forEach((element) {
+                                element.unfocus();
+                              });
+                              korakFokus.forEach((element) {
+                                element.unfocus();
+                              });
+                              // submitForm();
+                              addMealTest();
                             },
                             child: Icon(
                               Iconsax.tick_circle,
@@ -380,14 +449,12 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                             validator: (value) {
                               if (opisNode.hasFocus || brOsobaNode.hasFocus || vrPripremeNode.hasFocus) {
                                 return null;
-                              } else if (value!.isEmpty || value.trim().isEmpty) {
+                              } else if (value!.isEmpty || value.trim().isEmpty || value == '') {
                                 return 'Molimo Vas da unesete naziv recepta';
                               } else if (value.length < 2) {
                                 return 'Naziv recepta mora biti duži';
                               } else if (value.length > 45) {
                                 return 'Naziv recepta mora biti kraći';
-                              } else if (value.contains(RegExp(r'[0-9]'))) {
-                                return 'Naziv recepta smije sadržati samo velika i mala slova, i simbole';
                               }
                             },
                             onSaved: (value) {
@@ -604,6 +671,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                   inputType: TextInputType.text,
                                   sirina: 0.77,
                                   borderRadijus: 10,
+                                  brMaxLinija: 2,
                                   controller: sastojakInput[index],
                                   focusNode: sastojakFokus[index],
                                   obscureText: false,
@@ -808,6 +876,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                             'Tagovi',
                             style: Theme.of(context).textTheme.headline2,
                           ),
+                          const SizedBox(height: 10),
                           GestureDetector(
                             onTap: () {
                               if (tagovi.length == 5) {

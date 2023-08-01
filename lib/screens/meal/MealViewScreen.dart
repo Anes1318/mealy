@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:intl/intl.dart';
 import 'package:mealy/screens/account/AccountViewScreen.dart';
 // screens
 import 'package:mealy/screens/main/BottomNavigationBarScreen.dart';
@@ -28,10 +29,11 @@ class MealViewScreen extends StatefulWidget {
   final String vrPripreme;
   final String tezina;
   final String imageUrl;
+  final String createdAt;
   final Map<String, dynamic> ratings;
   final List<dynamic> sastojci;
   final List<dynamic> koraci;
-  final List<dynamic> favorites;
+  final Map<String, dynamic> favorites;
   final List<dynamic> tagovi;
 
   MealViewScreen({
@@ -48,6 +50,7 @@ class MealViewScreen extends StatefulWidget {
     required this.koraci,
     required this.favorites,
     required this.tagovi,
+    required this.createdAt,
   });
 
   @override
@@ -178,9 +181,9 @@ class _MealViewScreenState extends State<MealViewScreen> {
                               naslov: 'Koju akciju želite da izvršite?',
                               button1Text: 'Izmijenite recept',
                               isButton1Icon: true,
-                              button1Icon: const Icon(
+                              button1Icon: Icon(
                                 Iconsax.edit,
-                                color: Colors.white,
+                                color: Theme.of(context).colorScheme.primary,
                               ),
                               button1Fun: () {
                                 Navigator.pop(context);
@@ -218,15 +221,16 @@ class _MealViewScreenState extends State<MealViewScreen> {
                               isButton2: true,
                               button2Text: 'Izbrišite recept',
                               isButton2Icon: true,
-                              button2Icon: const Icon(
+                              button2Icon: Icon(
                                 Iconsax.trash,
-                                color: Colors.white,
+                                color: Theme.of(context).colorScheme.primary,
                               ),
                               button2Fun: () async {
-                                await FirebaseFirestore.instance.collection('recepti').doc(widget.receptId).delete();
+                                await FirebaseFirestore.instance.collection('recepti').doc(widget.receptId).delete().then((value) {
+                                  Navigator.pop(context);
+                                  // Navigator.pushReplacementNamed(context, BottomNavigationBarScreen.routeName);
+                                });
                                 await FirebaseStorage.instance.ref().child('receptImages').child('${widget.receptId}.jpg').delete();
-                                Navigator.pop(context);
-                                Navigator.pushReplacementNamed(context, BottomNavigationBarScreen.routeName);
                               },
                             );
                           },
@@ -616,37 +620,38 @@ class _MealViewScreenState extends State<MealViewScreen> {
                   //
                   // AUTOR
                   const SizedBox(height: 20),
-                  if (widget.autorId != FirebaseAuth.instance.currentUser!.uid)
-                    FutureBuilder(
-                      future: users,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return Container(
-                            height: (medijakveri.size.height - medijakveri.padding.top) * 0.7,
-                            child: const Center(
-                              child: CircularProgressIndicator(),
+
+                  FutureBuilder(
+                    future: users,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Container(
+                          height: (medijakveri.size.height - medijakveri.padding.top) * 0.7,
+                          child: const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      }
+
+                      final usersDocs = snapshot.data!.docs;
+
+                      final user = usersDocs.where((element) => element['userId'] == widget.autorId).toList();
+
+                      if (user.isEmpty) {
+                        return Container(
+                          height: (medijakveri.size.height - medijakveri.padding.top) * 0.7,
+                          child: Center(
+                            child: Text(
+                              'Greška',
+                              style: Theme.of(context).textTheme.headline2,
                             ),
-                          );
-                        }
+                          ),
+                        );
+                      }
 
-                        final usersDocs = snapshot.data!.docs;
-
-                        final user = usersDocs.where((element) => element['userId'] == widget.autorId).toList();
-
-                        if (user.isEmpty) {
-                          return Container(
-                            height: (medijakveri.size.height - medijakveri.padding.top) * 0.7,
-                            child: Center(
-                              child: Text(
-                                'Greška',
-                                style: Theme.of(context).textTheme.headline2,
-                              ),
-                            ),
-                          );
-                        }
-
-                        return GestureDetector(
-                          onTap: () {
+                      return GestureDetector(
+                        onTap: () {
+                          if (widget.autorId != FirebaseAuth.instance.currentUser!.uid) {
                             Navigator.push(
                               context,
                               PageRouteBuilder(
@@ -667,51 +672,62 @@ class _MealViewScreenState extends State<MealViewScreen> {
                                 ),
                               ),
                             );
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Autor',
-                                  style: Theme.of(context).textTheme.headline2,
-                                ),
-                                const SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    user[0].data()['imageUrl'] == ''
-                                        ? SvgPicture.asset(
-                                            'assets/icons/Torta.svg',
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Autor',
+                                style: Theme.of(context).textTheme.headline2,
+                              ),
+                              const SizedBox(height: 10),
+                              Row(
+                                children: [
+                                  user[0].data()['imageUrl'] == ''
+                                      ? SvgPicture.asset(
+                                          'assets/icons/Torta.svg',
+                                          height: 70,
+                                          width: 70,
+                                        )
+                                      : ClipRRect(
+                                          borderRadius: BorderRadius.circular(20),
+                                          child: Image.network(
+                                            '${user[0].data()['imageUrl']}',
                                             height: 70,
                                             width: 70,
-                                          )
-                                        : ClipRRect(
-                                            borderRadius: BorderRadius.circular(20),
-                                            child: Image.network(
-                                              '${user[0].data()['imageUrl']}',
-                                              height: 70,
-                                              width: 70,
-                                              fit: BoxFit.fill,
-                                            ),
+                                            fit: BoxFit.fill,
                                           ),
-                                    const SizedBox(width: 10),
-                                    Text(
-                                      '${user[0].data()['userName']}',
-                                      style: Theme.of(context).textTheme.headline3,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                                        ),
+                                  const SizedBox(width: 10),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '${user[0].data()['userName']}',
+                                        style: Theme.of(context).textTheme.headline3,
+                                      ),
+                                      const SizedBox(height: 5),
+                                      Text(
+                                        'Objavljeno ${DateFormat('dd. MMM y.').format(DateTime.parse(widget.createdAt))}',
+                                        style: Theme.of(context).textTheme.headline4,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                        );
-                      },
-                    ),
+                        ),
+                      );
+                    },
+                  ),
 
                   const SizedBox(height: 30),
                 ],

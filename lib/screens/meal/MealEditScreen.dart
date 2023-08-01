@@ -30,7 +30,7 @@ class MealEditScreen extends StatefulWidget {
   final Map<String, dynamic> ratings;
   final List<dynamic> sastojci;
   final List<dynamic> koraci;
-  final List<dynamic> favorites;
+  final Map<String, dynamic> favorites;
   final List<dynamic> tagovi;
 
   MealEditScreen({
@@ -386,6 +386,8 @@ class _MealEditScreenState extends State<MealEditScreen> {
                                           : Image.network(
                                               widget.imageUrl,
                                               fit: BoxFit.fill,
+                                              width: medijakveri.size.width,
+                                              height: medijakveri.size.width * 0.48,
                                             ),
                                     ),
                                   ),
@@ -994,7 +996,7 @@ class _MealEditScreenState extends State<MealEditScreen> {
                                     style: Theme.of(context).textTheme.headline5!.copyWith(color: Colors.red),
                                   ),
                                 ),
-                              // SizedBox(height: widget.tastaturaHeight!),
+
                               const SizedBox(height: 60),
                             ],
                           ),

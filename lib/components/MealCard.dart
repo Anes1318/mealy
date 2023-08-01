@@ -24,11 +24,13 @@ class MealCard extends StatefulWidget {
   final String vrPripreme;
   final String tezina;
   final String imageUrl;
+  final String createdAt;
   final Map<String, dynamic> ratings;
   final List<dynamic> sastojci;
   final List<dynamic> koraci;
-  final List<dynamic> favorites;
+  final Map<String, dynamic> favorites;
   final List<dynamic> tagovi;
+  // TODO: poceo si da pravis da je favorites mapa dje se cuva i vrijeme da bi mogo favscreen da sortiras po vremenu favoritanja
 
   MealCard({
     required this.medijakveri,
@@ -45,6 +47,7 @@ class MealCard extends StatefulWidget {
     required this.koraci,
     required this.favorites,
     required this.tagovi,
+    required this.createdAt,
   });
 
   @override
@@ -64,7 +67,7 @@ class _MealCardState extends State<MealCard> {
     }
     rating /= widget.ratings.length;
     isFav = false;
-    for (var element in widget.favorites) {
+    for (var element in widget.favorites.keys) {
       if (element == FirebaseAuth.instance.currentUser!.uid) {
         isFav = true;
       }
@@ -75,7 +78,7 @@ class _MealCardState extends State<MealCard> {
       } catch (error) {
         Metode.showErrorDialog(
           isJednoPoredDrugog: false,
-          message: "Došlo je do greške sa internetom. Provjerite svoju konekciju.",
+          message: "Došlo je do greške sa lom. Provjerite svoju konekciju.",
           context: context,
           naslov: 'Greška',
           button1Text: 'Zatvori',
@@ -86,7 +89,19 @@ class _MealCardState extends State<MealCard> {
         );
         return;
       }
-      Provider.of<MealProvider>(context, listen: false).favMeal(widget.favorites, widget.receptId);
+      try {
+        Provider.of<MealProvider>(context, listen: false).favMeal(widget.favorites.keys.toList(), widget.receptId);
+      } catch (e) {
+        Metode.showErrorDialog(
+          context: context,
+          naslov: 'Greška',
+          message: Metode.getMessageFromErrorCode(e),
+          button1Text: 'Zatvori',
+          button1Fun: () => Navigator.pop(context),
+          isButton2: false,
+          isJednoPoredDrugog: false,
+        );
+      }
     }
 
     return GestureDetector(
@@ -118,6 +133,7 @@ class _MealCardState extends State<MealCard> {
               receptId: widget.receptId,
               favorites: widget.favorites,
               tagovi: widget.tagovi,
+              createdAt: widget.createdAt,
             ),
           ),
         );
@@ -224,10 +240,22 @@ class _MealCardState extends State<MealCard> {
                                           color: Theme.of(context).colorScheme.primary,
                                         ),
                                         button2Fun: () async {
-                                          await FirebaseFirestore.instance.collection('recepti').doc(widget.receptId).delete();
-                                          await FirebaseStorage.instance.ref().child('receptImages').child('${widget.receptId}.jpg').delete();
-                                          Navigator.pop(context);
-                                          Navigator.pushReplacementNamed(context, BottomNavigationBarScreen.routeName);
+                                          try {
+                                            Navigator.pop(context);
+
+                                            await FirebaseFirestore.instance.collection('recepti').doc(widget.receptId).delete().then((value) {});
+                                            // await FirebaseStorage.instance.ref().child('receptImages').child('${widget.receptId}.jpg').delete();
+                                          } catch (e) {
+                                            Metode.showErrorDialog(
+                                              isJednoPoredDrugog: false,
+                                              message: Metode.getMessageFromErrorCode(e),
+                                              context: context,
+                                              naslov: 'Greška',
+                                              button1Text: 'Zatvori',
+                                              button1Fun: () => Navigator.pop(context),
+                                              isButton2: false,
+                                            );
+                                          }
                                         },
                                       );
                                     },
