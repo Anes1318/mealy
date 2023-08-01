@@ -35,16 +35,6 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
   final vrPripremeNode = FocusNode();
   final tagNode = FocusNode();
 
-  @override
-  void dispose() {
-    super.dispose();
-    nazivNode.dispose();
-    opisNode.dispose();
-    brOsobaNode.dispose();
-    vrPripremeNode.dispose();
-    tagNode.dispose();
-  }
-
   List<String> localAvailableTagovi = availableTagovi;
 
   List<TextEditingController> sastojakInput = [TextEditingController()];
@@ -168,7 +158,9 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
       );
       return;
     }
-
+    if (!_form.currentState!.validate()) {
+      return;
+    }
     if (tezina == null) {
       setState(() {
         tezinaValidator = true;
@@ -196,9 +188,6 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
       return;
     }
 
-    if (!_form.currentState!.validate()) {
-      return;
-    }
     _form.currentState!.save();
     switch (tezina) {
       case Tezina.lako:
@@ -903,7 +892,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                               textFieldFocus: tagNode,
                               clearSearchFieldOnSelect: true,
                               searchFieldTextStyle: Theme.of(context).textTheme.headline4,
-                              itemsVisibility: ShowedItemsVisibility.onType,
+                              itemsVisibility: ShowedItemsVisibility.alwaysOn,
                               showSelectAllButton: false,
                               pickedItemsContainerMinHeight: 40,
                               pickedItemsBoxDecoration: BoxDecoration(
@@ -949,7 +938,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                               ),
                               showedItemsScrollbarColor: Colors.transparent,
                               searchFieldInputDecoration: InputDecoration(
-                                hintText: "Upišite tag",
+                                hintText: "Potražite tag",
                                 contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                                 hintStyle: Theme.of(context).textTheme.headline4?.copyWith(
                                       color: Colors.grey,
@@ -967,11 +956,10 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                               ),
                               itemBuilder: (tag, index) => Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                                margin: const EdgeInsets.symmetric(vertical: 3),
+                                margin: const EdgeInsets.only(top: 10),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(10),
-                                  boxShadow: null,
                                 ),
                                 child: Text(
                                   tag,
@@ -1030,5 +1018,15 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    nazivNode.dispose();
+    opisNode.dispose();
+    brOsobaNode.dispose();
+    vrPripremeNode.dispose();
+    tagNode.dispose();
   }
 }
