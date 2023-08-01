@@ -1,8 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
-import 'package:mealy/screens/account/AccountEditScreen.dart';
+import 'package:provider/provider.dart';
 
 // screens
 import 'package:mealy/screens/auth/WelcomeScreen.dart';
@@ -12,8 +12,9 @@ import 'package:mealy/screens/auth/RegisterScreen.dart';
 import 'package:mealy/screens/main/AccountScreen.dart';
 import 'package:mealy/screens/main/BottomNavigationBarScreen.dart';
 import 'package:mealy/screens/settings/SettingsScreen.dart';
-import 'package:provider/provider.dart';
+import 'package:mealy/screens/account/AccountEditScreen.dart';
 
+// providers
 import 'providers/MealProvider.dart';
 
 // components
@@ -45,7 +46,7 @@ class MyApp extends StatelessWidget {
             primaryColor: const Color(0xFF331618),
             colorScheme: ThemeData().colorScheme.copyWith(
                   primary: const Color(0xFF331618), // da bi suffix ikonica i border input polja(u search baru) promijenila boju kad je focused
-                  secondary: const Color(0xFFFDC7C7),
+                  secondary: Color.fromRGBO(253, 199, 199, 1),
                   tertiary: const Color(0xFFDB6D6E),
                 ),
             textTheme: const TextTheme(
