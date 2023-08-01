@@ -61,8 +61,22 @@ class WelcomeScreen extends StatelessWidget {
                     isFullWidth: true,
                     borderRadius: 20,
                     visina: 18,
-                    funkcija: () => {
-                      Navigator.pushNamed(context, RegisterScreen.routeName),
+                    funkcija: () {
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                            transitionDuration: const Duration(milliseconds: 150),
+                            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                              return SlideTransition(
+                                position: Tween<Offset>(
+                                  begin: const Offset(1, 0),
+                                  end: Offset.zero,
+                                ).animate(animation),
+                                child: child,
+                              );
+                            },
+                            pageBuilder: (context, animation, duration) => RegisterScreen()),
+                      );
                     },
                     buttonText: 'Registrujte se',
                     textColor: Colors.white,
@@ -74,8 +88,23 @@ class WelcomeScreen extends StatelessWidget {
                     isFullWidth: true,
                     borderRadius: 20,
                     visina: 18,
-                    funkcija: () => {
-                      Navigator.pushNamed(context, LoginScreen.routeName),
+                    funkcija: () {
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          transitionDuration: const Duration(milliseconds: 150),
+                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                            return SlideTransition(
+                              position: Tween<Offset>(
+                                begin: const Offset(1, 0),
+                                end: Offset.zero,
+                              ).animate(animation),
+                              child: child,
+                            );
+                          },
+                          pageBuilder: (context, animation, duration) => LoginScreen(),
+                        ),
+                      );
                     },
                     buttonText: 'Prijavite se',
                     textColor: Theme.of(context).primaryColor,

@@ -42,9 +42,9 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
       await InternetAddress.lookup('google.com').then((value) {
         Provider.of<MealProvider>(context, listen: false).setIsInternet(true);
       });
-      print('MORE');
+     
     } catch (error) {
-      print('NEMORE');
+      
       Provider.of<MealProvider>(context, listen: false).setIsInternet(false);
     }
   }

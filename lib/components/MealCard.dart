@@ -90,7 +90,7 @@ class _MealCardState extends State<MealCard> {
         return;
       }
       try {
-        Provider.of<MealProvider>(context, listen: false).favMeal(widget.favorites.keys.toList(), widget.receptId);
+        Provider.of<MealProvider>(context, listen: false).favMeal(widget.favorites, widget.receptId);
       } catch (e) {
         Metode.showErrorDialog(
           context: context,
@@ -244,7 +244,7 @@ class _MealCardState extends State<MealCard> {
                                             Navigator.pop(context);
 
                                             await FirebaseFirestore.instance.collection('recepti').doc(widget.receptId).delete().then((value) {});
-                                            // await FirebaseStorage.instance.ref().child('receptImages').child('${widget.receptId}.jpg').delete();
+                                            await FirebaseStorage.instance.ref().child('receptImages').child('${widget.receptId}.jpg').delete();
                                           } catch (e) {
                                             Metode.showErrorDialog(
                                               isJednoPoredDrugog: false,

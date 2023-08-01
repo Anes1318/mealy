@@ -444,8 +444,6 @@ class _MealEditScreenState extends State<MealEditScreen> {
                                     return 'Naziv recepta mora biti duži';
                                   } else if (value.length > 45) {
                                     return 'Naziv recepta mora biti kraći';
-                                  } else if (value.contains(RegExp(r'[0-9]'))) {
-                                    return 'Naziv recepta smije sadržati samo velika i mala slova, i simbole';
                                   }
                                 },
                                 onSaved: (value) {

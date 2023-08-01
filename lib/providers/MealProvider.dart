@@ -47,9 +47,9 @@ class MealProvider with ChangeNotifier {
     return _user!;
   }
 
-  void favMeal(List<dynamic> mealFavorites, String mealId) async {
+  void favMeal(Map<String, dynamic> mealFavorites, String mealId) async {
     bool isFav = false;
-    mealFavorites.forEach((element) async {
+    mealFavorites.keys.forEach((element) async {
       if (element == FirebaseAuth.instance.currentUser!.uid) {
         isFav = true;
       }
@@ -72,7 +72,7 @@ class MealProvider with ChangeNotifier {
 
   void rateMeal(context, mealId, brZvjezdica) {
     Metode.showErrorDialog(
-      isJednoPoredDrugog: false,
+      isJednoPoredDrugog: true,
       context: context,
       naslov: brZvjezdica == 1
           ? 'Da li želite da ocijenite ovaj recept sa 1 zvjezdicom?'
@@ -85,13 +85,23 @@ class MealProvider with ChangeNotifier {
                       : brZvjezdica == 5
                           ? 'Da li želite da ocijenite ovaj recept sa 5 zvjezdicom?'
                           : '',
-      button1Text: 'Potvrdi',
+      button1Text: 'Otkaži',
       isButton1Icon: true,
       button1Icon: Icon(
-        Iconsax.tick_circle,
-        color: Colors.white,
+        Iconsax.close_circle,
+        color: Theme.of(context).colorScheme.primary,
       ),
-      button1Fun: () async {
+      button1Fun: () {
+        Navigator.pop(context);
+      },
+      isButton2: true,
+      button2Text: 'Potvrdi',
+      isButton2Icon: true,
+      button2Icon: Icon(
+        Iconsax.tick_circle,
+        color: Theme.of(context).colorScheme.primary,
+      ),
+      button2Fun: () async {
         try {
           await InternetAddress.lookup('google.com');
         } catch (error) {
@@ -147,16 +157,6 @@ class MealProvider with ChangeNotifier {
             isButton2: false,
           );
         }
-      },
-      isButton2: true,
-      button2Text: 'Otkaži',
-      isButton2Icon: true,
-      button2Icon: Icon(
-        Iconsax.close_circle,
-        color: Colors.white,
-      ),
-      button2Fun: () {
-        Navigator.pop(context);
       },
     );
     notifyListeners();

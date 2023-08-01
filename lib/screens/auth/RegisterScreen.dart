@@ -108,8 +108,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       setState(() {
         isLoading = true;
       });
-      // print('PROSO SAM STEFANE SINE');
-      // return;
+
       await FirebaseAuth.instance.createUserWithEmailAndPassword(email: _authData['email']!, password: _authData['sifra']!).then((value) async {
         String imageUrl = '';
 
@@ -473,7 +472,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   TextButton(
                     onPressed: () {
-                      Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+                      Navigator.pushReplacement(
+                        context,
+                        PageRouteBuilder(
+                          transitionDuration: const Duration(milliseconds: 150),
+                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                            return SlideTransition(
+                              position: Tween<Offset>(
+                                begin: const Offset(1, 0),
+                                end: Offset.zero,
+                              ).animate(animation),
+                              child: child,
+                            );
+                          },
+                          pageBuilder: (context, animation, duration) => LoginScreen(),
+                        ),
+                      );
                     },
                     child: Text(
                       'Već imate nalog?',

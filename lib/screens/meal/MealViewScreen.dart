@@ -86,8 +86,8 @@ class _MealViewScreenState extends State<MealViewScreen> {
       }
 
       isFav = false;
-      if (singleMeal!.data()!['favorites'] != null) {
-        for (var element in singleMeal!.data()!['favorites']) {
+      if (singleMeal!.data()!['favorites'].keys != null) {
+        for (var element in singleMeal!.data()!['favorites'].keys) {
           if (element == FirebaseAuth.instance.currentUser!.uid) {
             setState(() {
               isFav = true;
@@ -226,11 +226,17 @@ class _MealViewScreenState extends State<MealViewScreen> {
                                 color: Theme.of(context).colorScheme.primary,
                               ),
                               button2Fun: () async {
-                                await FirebaseFirestore.instance.collection('recepti').doc(widget.receptId).delete().then((value) {
-                                  Navigator.pop(context);
-                                  // Navigator.pushReplacementNamed(context, BottomNavigationBarScreen.routeName);
-                                });
-                                await FirebaseStorage.instance.ref().child('receptImages').child('${widget.receptId}.jpg').delete();
+                                try {
+                                  await FirebaseFirestore.instance.collection('recepti').doc(widget.receptId).delete().then((value) async {
+                                    await FirebaseStorage.instance.ref().child('receptImages').child('${widget.receptId}.jpg').delete().then((value) {
+                                      Navigator.pushReplacementNamed(context, BottomNavigationBarScreen.routeName);
+                                    });
+                                  });
+                                } catch (e) {
+                                  Navigator.pushReplacementNamed(context, BottomNavigationBarScreen.routeName);
+                                }
+
+                                // Navigator.pop(context);
                               },
                             );
                           },

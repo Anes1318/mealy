@@ -127,7 +127,6 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
         "createdAt": DateTime.now().toIso8601String(),
       },
     ).then((value) async {
-      print(value.id);
       brRecepata++;
       setState(() {
         isLoading = false;
@@ -326,8 +325,8 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                               korakFokus.forEach((element) {
                                 element.unfocus();
                               });
-                              // submitForm();
-                              addMealTest();
+                              submitForm();
+                              // addMealTest();
                             },
                             child: Icon(
                               Iconsax.tick_circle,
