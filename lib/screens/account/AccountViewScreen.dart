@@ -155,6 +155,7 @@ class _AccountViewScreenState extends State<AccountViewScreen> {
                                 koraci: ownRecepti[index].data()['koraci'],
                                 favorites: ownRecepti[index].data()['favorites'],
                                 tagovi: ownRecepti[index].data()['tagovi'],
+                                isAutorClick: false,
                               );
                             }),
                       );

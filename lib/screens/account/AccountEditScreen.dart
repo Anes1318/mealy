@@ -357,7 +357,9 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
                             return 'Molimo Vas da unesete ime';
                           } else if (value.length < 2) {
                             return 'Ime mora biti duže';
-                          } else if (value.contains(RegExp(r'[0-9]')) || value.contains(' ')) {
+                          } else if (value.length > 30) {
+                            return 'Ime mora biti kraće';
+                          } else if (value.contains(RegExp(r'[0-9]')) || value.contains(' ') || !RegExp(r'^[a-zA-Z]+$').hasMatch(value!)) {
                             return 'Ime smije sadržati samo velika i mala slova i simbole';
                           }
                         },
@@ -387,7 +389,9 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
                             return 'Molimo Vas da unesete prezime';
                           } else if (value.length < 2) {
                             return 'Prezime mora biti duže';
-                          } else if (value.contains(RegExp(r'[0-9]')) || value.contains(' ')) {
+                          } else if (value.length > 30) {
+                            return 'Prezime mora biti kraće';
+                          } else if (value.contains(RegExp(r'[0-9]')) || value.contains(' ') || !RegExp(r'^[a-zA-Z]+$').hasMatch(value!)) {
                             return 'Prezime smije sadržati samo velika i mala slova i simbole';
                           }
                         },

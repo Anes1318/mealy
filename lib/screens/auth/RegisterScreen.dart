@@ -230,6 +230,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     ? Image.file(
                                         _storedImage!,
                                         fit: BoxFit.fill,
+                                        width: medijakveri.size.width * 0.4,
+                                        height: medijakveri.size.width * 0.4,
                                       )
                                     : Text(
                                         'Dodajte sliku',
@@ -261,6 +263,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               return 'Molimo Vas da unesete ime';
                             } else if (value.length < 2) {
                               return 'Ime mora biti duže';
+                            } else if (!RegExp(r'^[a-zA-Z\S]+$').hasMatch(value)) {
+                              return 'Ime nije validano';
+                            } else if (value.length > 30) {
+                              return 'Ime mora biti kraće';
                             } else if (value.contains(RegExp(r'[0-9]')) || value.contains(' ')) {
                               return 'Ime smije sadržati samo velika i mala slova i simbole';
                             }
@@ -290,6 +296,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               return 'Molimo Vas da unesete prezime';
                             } else if (value.length < 2) {
                               return 'Prezime mora biti duže';
+                            } else if (!RegExp(r'^[a-zA-Z\S]+$').hasMatch(value)) {
+                              return 'Prezime nije validano';
+                            } else if (value.length > 30) {
+                              return 'Prezime mora biti kraće';
                             } else if (value.contains(RegExp(r'[0-9]')) || value.contains(' ')) {
                               return 'Prezime smije sadržati samo velika i mala slova i simbole';
                             }
@@ -356,6 +366,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     return 'Molimo Vas unesite šifru';
                                   } else if (value.length < 5) {
                                     return 'Šifra mora imati više od 4 karaktera';
+                                  } else if (value.length < 50) {
+                                    return 'Šifra mora imati manje od 50 karaktera';
+                                  } else if (!RegExp(r'^[a-zA-Z\S]+$').hasMatch(value)) {
+                                    return 'Šifra nije validna';
                                   }
                                 },
                                 decoration: InputDecoration(

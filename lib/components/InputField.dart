@@ -21,6 +21,8 @@ class InputField extends StatelessWidget {
   final double visina;
   final FocusNode? focusNode;
   final bool isMargin;
+  final bool? isFixedWidth;
+  final double? fixedWidth;
   final TextEditingController? controller;
   final double? hintTextSize;
   final TextStyle? errorStyle;
@@ -49,12 +51,14 @@ class InputField extends StatelessWidget {
     this.hintTextSize,
     this.errorStyle,
     this.kapitulacija,
+    this.isFixedWidth,
+    this.fixedWidth,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: medijakveri.size.width * sirina,
+      width: isFixedWidth == null ? medijakveri.size.width * sirina : fixedWidth,
       margin: isMargin ? EdgeInsets.only(bottom: (medijakveri.size.height - medijakveri.padding.top) * 0.025) : EdgeInsets.zero,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

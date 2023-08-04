@@ -438,6 +438,8 @@ class _MealEditScreenState extends State<MealEditScreen> {
                                 validator: (value) {
                                   if (opisNode.hasFocus || brOsobaNode.hasFocus || vrPripremeNode.hasFocus) {
                                     return null;
+                                  } else if (!RegExp(r'^[a-zA-Z0-9\S]+$').hasMatch(value!)) {
+                                    return 'Taj naziv nije validan';
                                   } else if (value!.isEmpty || value.trim().isEmpty) {
                                     return 'Molimo Vas da unesete naziv recepta';
                                   } else if (value.length < 2) {
@@ -470,7 +472,9 @@ class _MealEditScreenState extends State<MealEditScreen> {
                                 validator: (value) {
                                   if (nazivNode.hasFocus || brOsobaNode.hasFocus || vrPripremeNode.hasFocus) {
                                     return null;
-                                  } else if (value!.isEmpty || value.trim().isEmpty) {
+                                  } else if (!RegExp(r'^[a-zA-Z0-9\S]+$').hasMatch(value!)) {
+                                    return 'Taj opis nije validan';
+                                  } else if (value.isEmpty || value.trim().isEmpty) {
                                     return 'Molimo Vas da unesete opis jela';
                                   } else if (value.length < 2) {
                                     return 'Opis jela mora biti duži';
@@ -504,6 +508,8 @@ class _MealEditScreenState extends State<MealEditScreen> {
                                         return null;
                                       } else if (value!.isEmpty || value.trim().isEmpty) {
                                         return 'Molimo Vas da unesete polje';
+                                      } else if (value.contains(',') || value.contains('.') || value.contains('-')) {
+                                        return 'Polje smije sadržati samo brojeve';
                                       } else if (int.parse(value) > 20 || int.parse(value) < 1) {
                                         return 'Polje ne može biti veće od 20 ili manje od 1';
                                       }
@@ -533,6 +539,8 @@ class _MealEditScreenState extends State<MealEditScreen> {
                                         return null;
                                       } else if (value!.isEmpty || value.trim().isEmpty) {
                                         return 'Molimo Vas da unesete polje';
+                                      } else if (value.contains(',') || value.contains('.') || value.contains('-')) {
+                                        return 'Polje smije sadržati samo brojeve';
                                       } else if (int.parse(value) > 999 || int.parse(value) < 1) {
                                         return 'Polje ne može biti veće od 999 ili manje od 1';
                                       }
@@ -667,6 +675,10 @@ class _MealEditScreenState extends State<MealEditScreen> {
 
                                         if (value!.trim().isEmpty) {
                                           return 'Molimo Vas da unesete polje';
+                                        } else if (!RegExp(r'^[a-zA-Z0-9\S]+$').hasMatch(value)) {
+                                          return 'Polje nije validano';
+                                        } else if (value.length > 150) {
+                                          return 'Polje mora biti kraće';
                                         }
                                       },
                                       onSaved: (value) {
@@ -785,6 +797,10 @@ class _MealEditScreenState extends State<MealEditScreen> {
                                         }
                                         if (value!.trim().isEmpty) {
                                           return 'Molimo Vas da unesete polje';
+                                        } else if (!RegExp(r'^[a-zA-Z0-9\S]+$').hasMatch(value)) {
+                                          return 'Polje nije validano';
+                                        } else if (value.length > 300) {
+                                          return 'Polje mora biti kraće';
                                         }
                                       },
                                       onSaved: (value) {
@@ -880,7 +896,7 @@ class _MealEditScreenState extends State<MealEditScreen> {
                                   textFieldFocus: tagNode,
                                   clearSearchFieldOnSelect: true,
                                   searchFieldTextStyle: Theme.of(context).textTheme.headline4,
-                                  itemsVisibility: ShowedItemsVisibility.onType,
+                                  itemsVisibility: ShowedItemsVisibility.alwaysOn,
                                   showSelectAllButton: false,
                                   pickedItemsContainerMinHeight: 40,
                                   pickedItemsBoxDecoration: BoxDecoration(
@@ -945,10 +961,11 @@ class _MealEditScreenState extends State<MealEditScreen> {
                                   itemBuilder: (tag, index) => Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                                     margin: const EdgeInsets.symmetric(vertical: 3),
-                                    decoration: BoxDecoration(
+                                    decoration: const BoxDecoration(
                                       color: Colors.white,
-                                      borderRadius: BorderRadius.circular(10),
-                                      boxShadow: null,
+                                      border: Border(
+                                        bottom: BorderSide(color: Colors.black, width: 0.5),
+                                      ),
                                     ),
                                     child: Text(
                                       tag,
@@ -967,8 +984,9 @@ class _MealEditScreenState extends State<MealEditScreen> {
                                   onTapClearAll: () {
                                     tagovi.clear();
                                   },
-                                  showedItemsBoxDecoration: const BoxDecoration(
-                                    color: Color(0xFFFFEEEE),
+                                  showedItemsBoxDecoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
                                   noResultsWidget: Container(
                                     decoration: BoxDecoration(

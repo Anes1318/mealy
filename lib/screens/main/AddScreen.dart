@@ -437,8 +437,10 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                             validator: (value) {
                               if (opisNode.hasFocus || brOsobaNode.hasFocus || vrPripremeNode.hasFocus) {
                                 return null;
-                              } else if (value!.isEmpty || value.trim().isEmpty || value == '') {
+                              } else if (value!.trim().isEmpty || value == '') {
                                 return 'Molimo Vas da unesete naziv recepta';
+                              } else if (!RegExp(r'^[a-zA-Z0-9\S]+$').hasMatch(value)) {
+                                return 'Taj naziv nije validan';
                               } else if (value.length < 2) {
                                 return 'Naziv recepta mora biti duži';
                               } else if (value.length > 45) {
@@ -468,8 +470,10 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                             validator: (value) {
                               if (nazivNode.hasFocus || brOsobaNode.hasFocus || vrPripremeNode.hasFocus) {
                                 return null;
-                              } else if (value!.isEmpty || value.trim().isEmpty) {
+                              } else if (value!.trim().isEmpty) {
                                 return 'Molimo Vas da unesete opis jela';
+                              } else if (!RegExp(r'^[a-zA-Z0-9\S]+$').hasMatch(value)) {
+                                return 'Taj opis nije validan';
                               } else if (value.length < 2) {
                                 return 'Opis jela mora biti duži';
                               } else if (value.length > 250) {
@@ -501,6 +505,8 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                     return null;
                                   } else if (value!.isEmpty || value.trim().isEmpty) {
                                     return 'Molimo Vas da unesete polje';
+                                  } else if (value.contains(',') || value.contains('.') || value.contains('-')) {
+                                    return 'Polje smije sadržati samo brojeve';
                                   } else if (int.parse(value) > 20 || int.parse(value) < 1) {
                                     return 'Polje ne može biti veće od 20 ili manje od 1';
                                   }
@@ -509,7 +515,8 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                   data['brOsoba'] = value!.trim();
                                 },
                                 borderRadijus: 10,
-                                sirina: 0.4,
+                                isFixedWidth: true,
+                                fixedWidth: 168,
                               ),
                               InputField(
                                 focusNode: vrPripremeNode,
@@ -529,6 +536,8 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                     return null;
                                   } else if (value!.isEmpty || value.trim().isEmpty) {
                                     return 'Molimo Vas da unesete polje';
+                                  } else if (value.contains(',') || value.contains('.') || value.contains('-')) {
+                                    return 'Polje smije sadržati samo brojeve';
                                   } else if (int.parse(value) > 999 || int.parse(value) < 1) {
                                     return 'Polje ne može biti veće od 999 ili manje od 1';
                                   }
@@ -537,10 +546,14 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                   data['vrPripreme'] = value!.trim();
                                 },
                                 borderRadijus: 10,
-                                sirina: 0.4,
+                                isFixedWidth: true,
+                                fixedWidth: 168,
                               ),
                             ],
                           ),
+                          //
+                          //
+                          // TEZINA
                           const SizedBox(height: 20),
                           Text(
                             'Težina',
@@ -678,6 +691,10 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
 
                                     if (value!.trim().isEmpty) {
                                       return 'Molimo Vas da unesete polje';
+                                    } else if (!RegExp(r'^[a-zA-Z0-9\S]+$').hasMatch(value)) {
+                                      return 'Polje nije validano';
+                                    } else if (value.length > 150) {
+                                      return 'Polje mora biti kraće';
                                     }
                                   },
                                   onSaved: (value) {
@@ -796,6 +813,10 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                     }
                                     if (value!.trim().isEmpty) {
                                       return 'Molimo Vas da unesete polje';
+                                    } else if (!RegExp(r'^[a-zA-Z0-9\S]+$').hasMatch(value)) {
+                                      return 'Polje nije validano';
+                                    } else if (value.length > 300) {
+                                      return 'Polje mora biti kraće';
                                     }
                                   },
                                   onSaved: (value) {
@@ -957,9 +978,11 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                               itemBuilder: (tag, index) => Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                                 margin: const EdgeInsets.only(top: 10),
-                                decoration: BoxDecoration(
+                                decoration: const BoxDecoration(
                                   color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border(
+                                    bottom: BorderSide(color: Colors.black, width: 0.5),
+                                  ),
                                 ),
                                 child: Text(
                                   tag,
@@ -978,9 +1001,11 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                               onTapClearAll: () {
                                 tagovi.clear();
                               },
-                              showedItemsBoxDecoration: const BoxDecoration(
-                                color: Color(0xFFFFEEEE),
+                              showedItemsBoxDecoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
                               ),
+                              maximumShowItemsHeight: 200,
                               noResultsWidget: Container(
                                 decoration: BoxDecoration(
                                   color: Colors.white,

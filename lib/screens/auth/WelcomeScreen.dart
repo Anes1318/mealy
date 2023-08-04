@@ -65,17 +65,18 @@ class WelcomeScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         PageRouteBuilder(
-                            transitionDuration: const Duration(milliseconds: 150),
-                            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                              return SlideTransition(
-                                position: Tween<Offset>(
-                                  begin: const Offset(1, 0),
-                                  end: Offset.zero,
-                                ).animate(animation),
-                                child: child,
-                              );
-                            },
-                            pageBuilder: (context, animation, duration) => RegisterScreen()),
+                          transitionDuration: const Duration(milliseconds: 200),
+                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                            return SlideTransition(
+                              position: Tween<Offset>(
+                                begin: const Offset(0.7, 0),
+                                end: Offset.zero,
+                              ).animate(animation),
+                              child: child,
+                            );
+                          },
+                          pageBuilder: (context, animation, duration) => RegisterScreen(),
+                        ),
                       );
                     },
                     buttonText: 'Registrujte se',
@@ -92,11 +93,11 @@ class WelcomeScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         PageRouteBuilder(
-                          transitionDuration: const Duration(milliseconds: 150),
+                          transitionDuration: const Duration(milliseconds: 200),
                           transitionsBuilder: (context, animation, secondaryAnimation, child) {
                             return SlideTransition(
                               position: Tween<Offset>(
-                                begin: const Offset(1, 0),
+                                begin: const Offset(0.7, 0),
                                 end: Offset.zero,
                               ).animate(animation),
                               child: child,

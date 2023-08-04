@@ -30,7 +30,7 @@ class MealCard extends StatefulWidget {
   final List<dynamic> koraci;
   final Map<String, dynamic> favorites;
   final List<dynamic> tagovi;
-  // TODO: poceo si da pravis da je favorites mapa dje se cuva i vrijeme da bi mogo favscreen da sortiras po vremenu favoritanja
+  bool? isAutorClick;
 
   MealCard({
     required this.medijakveri,
@@ -48,6 +48,7 @@ class MealCard extends StatefulWidget {
     required this.favorites,
     required this.tagovi,
     required this.createdAt,
+    this.isAutorClick = true,
   });
 
   @override
@@ -134,6 +135,7 @@ class _MealCardState extends State<MealCard> {
               favorites: widget.favorites,
               tagovi: widget.tagovi,
               createdAt: widget.createdAt,
+              isAutorClick: widget.isAutorClick,
             ),
           ),
         );

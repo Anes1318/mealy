@@ -123,19 +123,26 @@ class _AccountScreenState extends State<AccountScreen> {
                                   ),
                                 ),
                       const SizedBox(width: 10),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '${FirebaseAuth.instance.currentUser!.displayName}',
-                            style: Theme.of(context).textTheme.headline3,
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            '${FirebaseAuth.instance.currentUser!.email}',
-                            style: Theme.of(context).textTheme.headline3,
-                          ),
-                        ],
+                      Container(
+                        // width: 200,
+                        width: medijakveri.size.width * 0.49,
+
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${FirebaseAuth.instance.currentUser!.displayName}',
+                              style: Theme.of(context).textTheme.headline3,
+                            ),
+                            const SizedBox(height: 10),
+                            FittedBox(
+                              child: Text(
+                                FirebaseAuth.instance.currentUser!.email!.length > 29 ? '${FirebaseAuth.instance.currentUser!.email!.substring(0, 29)}...' : FirebaseAuth.instance.currentUser!.email!,
+                                style: Theme.of(context).textTheme.headline3,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
