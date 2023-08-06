@@ -125,7 +125,8 @@ class _AccountScreenState extends State<AccountScreen> {
                       const SizedBox(width: 10),
                       Container(
                         // width: 200,
-                        width: medijakveri.size.width * 0.49,
+
+                        width: medijakveri.size.width * 0.45,
 
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

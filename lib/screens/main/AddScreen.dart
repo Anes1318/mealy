@@ -423,6 +423,9 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                               ),
                             ),
 
+                          //
+                          //
+                          // NAZIV
                           const SizedBox(height: 10),
                           InputField(
                             focusNode: nazivNode,
@@ -440,7 +443,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                 return null;
                               } else if (value!.trim().isEmpty || value == '') {
                                 return 'Molimo Vas da unesete naziv recepta';
-                              } else if (!RegExp(r'^[a-zA-Z0-9\S ]+$').hasMatch(value)) {
+                              } else if (!RegExp(r'^[a-zA-Z0-9 ]+$').hasMatch(value)) {
                                 return 'Taj naziv nije validan';
                               } else if (value.length < 2) {
                                 return 'Naziv recepta mora biti duži';
@@ -454,6 +457,9 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                             borderRadijus: 10,
                           ),
                           const SizedBox(height: 15),
+                          //
+                          //
+                          // OPIS
                           InputField(
                             focusNode: opisNode,
                             isMargin: false,
@@ -473,7 +479,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                 return null;
                               } else if (value!.trim().isEmpty) {
                                 return 'Molimo Vas da unesete opis jela';
-                              } else if (!RegExp(r'^[a-zA-Z0-9\S ]+$').hasMatch(value)) {
+                              } else if (!RegExp(r'^[a-zA-Z0-9 ]+$').hasMatch(value)) {
                                 return 'Taj opis nije validan';
                               } else if (value.length < 2) {
                                 return 'Opis jela mora biti duži';
@@ -486,9 +492,13 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                             },
                           ),
                           const SizedBox(height: 15),
+
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
+                              //
+                              //
+                              // BROJ OSOBA
                               InputField(
                                 focusNode: brOsobaNode,
                                 isMargin: false,
@@ -502,10 +512,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                 errorStyle: Theme.of(context).textTheme.headline5!.copyWith(color: Colors.red),
                                 onChanged: (_) => _form.currentState!.validate(),
                                 textInputFormater: <TextInputFormatter>[
-                                  // for below version 2 use this
                                   FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-                                  // for version 2 and greater youcan also use this
-                                  FilteringTextInputFormatter.digitsOnly
                                 ],
                                 validator: (value) {
                                   if (nazivNode.hasFocus || opisNode.hasFocus || vrPripremeNode.hasFocus) {
@@ -526,6 +533,9 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                 // fixedWidth: 168,
                                 fixedWidth: medijakveri.size.width * 0.41,
                               ),
+                              //
+                              //
+                              // VRIJEME PRIPREME
                               InputField(
                                 focusNode: vrPripremeNode,
                                 isMargin: false,
@@ -540,10 +550,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                 errorStyle: Theme.of(context).textTheme.headline5!.copyWith(color: Colors.red),
                                 onChanged: (_) => _form.currentState!.validate(),
                                 textInputFormater: <TextInputFormatter>[
-                                  // for below version 2 use this
                                   FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-                                  // for version 2 and greater youcan also use this
-                                  FilteringTextInputFormatter.digitsOnly
                                 ],
                                 validator: (value) {
                                   if (nazivNode.hasFocus || opisNode.hasFocus || brOsobaNode.hasFocus) {
@@ -677,7 +684,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                             'Sastojci',
                             style: Theme.of(context).textTheme.headline2,
                           ),
-                          SizedBox(height: 15),
+                          const SizedBox(height: 15),
                           ListView.separated(
                             shrinkWrap: true,
                             primary: false,
@@ -700,6 +707,9 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                   focusNode: sastojakFokus[index],
                                   obscureText: false,
                                   kapitulacija: TextCapitalization.sentences,
+                                  textInputFormater: <TextInputFormatter>[
+                                    // FilteringTextInputFormatter.allow(RegExp(r'^[.,;\"()\[\]{}a-zA-Z0-9]*$')),
+                                  ],
                                   onFieldSubmitted: (_) {
                                     if (index + 1 < sastojakFokus.length) {
                                       FocusScope.of(context).requestFocus(sastojakFokus[index + 1]);
@@ -710,18 +720,16 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                   validator: (value) {
                                     if (nazivNode.hasFocus || opisNode.hasFocus || brOsobaNode.hasFocus || vrPripremeNode.hasFocus) {
                                       return null;
-                                    }
-
-                                    if (value!.trim().isEmpty) {
+                                    } else if (value!.trim().isEmpty || value == '') {
                                       return 'Molimo Vas da unesete polje';
-                                    } else if (!RegExp(r'^[a-zA-Z0-9\S ]+$').hasMatch(value)) {
-                                      return 'Polje nije validano';
+                                    } else if (!RegExp(r'^[.,;:!?\"()\[\]{}<>@#$%^&*_+=/\\|`~a-zA-Z0-9]*$').hasMatch(value)) {
+                                      return 'Polje nije validno';
                                     } else if (value.length > 150) {
                                       return 'Polje mora biti kraće';
                                     }
                                   },
                                   onSaved: (value) {
-                                    sastojci.add(value!);
+                                    sastojci.add(value!.trim());
                                   },
                                 ),
                                 GestureDetector(
@@ -786,7 +794,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                             'Koraci',
                             style: Theme.of(context).textTheme.headline2,
                           ),
-                          SizedBox(height: 15),
+                          const SizedBox(height: 15),
                           ListView.separated(
                             shrinkWrap: true,
                             primary: false,
@@ -836,14 +844,16 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                     }
                                     if (value!.trim().isEmpty) {
                                       return 'Molimo Vas da unesete polje';
-                                    } else if (!RegExp(r'^[a-zA-Z0-9\S]+$').hasMatch(value)) {
-                                      return 'Polje nije validano';
+                                    } else if (value!.trim().isEmpty || value == '') {
+                                      return 'Molimo Vas da unesete polje';
+                                    } else if (!RegExp(r'^[.,;:!?\"()\[\]{}<>@#$%^&*_+=/\\|`~a-zA-Z0-9]*$').hasMatch(value)) {
+                                      return 'Polje nije validno';
                                     } else if (value.length > 300) {
                                       return 'Polje mora biti kraće';
                                     }
                                   },
                                   onSaved: (value) {
-                                    koraci.add(value!);
+                                    koraci.add(value!.trim());
                                   },
                                   sirina: 0.65,
                                   borderRadijus: 10,

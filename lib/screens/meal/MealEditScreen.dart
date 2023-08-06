@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -438,7 +439,7 @@ class _MealEditScreenState extends State<MealEditScreen> {
                                 validator: (value) {
                                   if (opisNode.hasFocus || brOsobaNode.hasFocus || vrPripremeNode.hasFocus) {
                                     return null;
-                                  } else if (!RegExp(r'^[a-zA-Z0-9\S]+$').hasMatch(value!)) {
+                                  } else if (!RegExp(r'^[a-zA-Z0-9 ]+$').hasMatch(value!)) {
                                     return 'Taj naziv nije validan';
                                   } else if (value!.isEmpty || value.trim().isEmpty) {
                                     return 'Molimo Vas da unesete naziv recepta';
@@ -472,7 +473,7 @@ class _MealEditScreenState extends State<MealEditScreen> {
                                 validator: (value) {
                                   if (nazivNode.hasFocus || brOsobaNode.hasFocus || vrPripremeNode.hasFocus) {
                                     return null;
-                                  } else if (!RegExp(r'^[a-zA-Z0-9\S]+$').hasMatch(value!)) {
+                                  } else if (!RegExp(r'^[a-zA-Z0-9 ]+$').hasMatch(value!)) {
                                     return 'Taj opis nije validan';
                                   } else if (value.isEmpty || value.trim().isEmpty) {
                                     return 'Molimo Vas da unesete opis jela';
@@ -503,6 +504,9 @@ class _MealEditScreenState extends State<MealEditScreen> {
                                     kapitulacija: TextCapitalization.sentences,
                                     errorStyle: Theme.of(context).textTheme.headline5!.copyWith(color: Colors.red),
                                     onChanged: (_) => _form.currentState!.validate(),
+                                    textInputFormater: <TextInputFormatter>[
+                                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                                    ],
                                     validator: (value) {
                                       if (nazivNode.hasFocus || opisNode.hasFocus || vrPripremeNode.hasFocus) {
                                         return null;
@@ -534,6 +538,9 @@ class _MealEditScreenState extends State<MealEditScreen> {
                                     hintTextSize: medijakveri.size.width * 0.035,
                                     errorStyle: Theme.of(context).textTheme.headline5!.copyWith(color: Colors.red),
                                     onChanged: (_) => _form.currentState!.validate(),
+                                    textInputFormater: <TextInputFormatter>[
+                                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                                    ],
                                     validator: (value) {
                                       if (nazivNode.hasFocus || opisNode.hasFocus || brOsobaNode.hasFocus) {
                                         return null;
@@ -671,18 +678,16 @@ class _MealEditScreenState extends State<MealEditScreen> {
                                       validator: (value) {
                                         if (nazivNode.hasFocus || opisNode.hasFocus || brOsobaNode.hasFocus || vrPripremeNode.hasFocus) {
                                           return null;
-                                        }
-
-                                        if (value!.trim().isEmpty) {
+                                        } else if (value!.trim().isEmpty || value == '') {
                                           return 'Molimo Vas da unesete polje';
-                                        } else if (!RegExp(r'^[a-zA-Z0-9\S]+$').hasMatch(value)) {
-                                          return 'Polje nije validano';
+                                        } else if (!RegExp(r'^[.,;:!?\"()\[\]{}<>@#$%^&*_+=/\\|`~a-zA-Z0-9]*$').hasMatch(value)) {
+                                          return 'Polje nije validno';
                                         } else if (value.length > 150) {
                                           return 'Polje mora biti kraće';
                                         }
                                       },
                                       onSaved: (value) {
-                                        sastojci.add(value!);
+                                        sastojci.add(value!.trim());
                                       },
                                     ),
                                     GestureDetector(
@@ -797,14 +802,16 @@ class _MealEditScreenState extends State<MealEditScreen> {
                                         }
                                         if (value!.trim().isEmpty) {
                                           return 'Molimo Vas da unesete polje';
-                                        } else if (!RegExp(r'^[a-zA-Z0-9\S]+$').hasMatch(value)) {
-                                          return 'Polje nije validano';
+                                        } else if (value!.trim().isEmpty || value == '') {
+                                          return 'Molimo Vas da unesete polje';
+                                        } else if (!RegExp(r'^[.,;:!?\"()\[\]{}<>@#$%^&*_+=/\\|`~a-zA-Z0-9]*$').hasMatch(value)) {
+                                          return 'Polje nije validno';
                                         } else if (value.length > 300) {
                                           return 'Polje mora biti kraće';
                                         }
                                       },
                                       onSaved: (value) {
-                                        koraci.add(value!);
+                                        koraci.add(value!.trim());
                                       },
                                       sirina: 0.65,
                                       borderRadijus: 10,
