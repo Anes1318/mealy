@@ -134,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           }
                         },
                         onSaved: (value) {
-                          _authData['email'] = value!;
+                          _authData['email'] = value!.trim();
                         },
                         hintText: 'E-mail',
                       ),
@@ -164,7 +164,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                 return 'Molimo Vas da unesete šifru';
                               }
                             },
-                            onFieldSubmitted: (_) => _login(),
+                            onFieldSubmitted: (_) {
+                              FocusManager.instance.primaryFocus?.unfocus();
+                              FocusScope.of(context).unfocus();
+
+                              emailNode.unfocus();
+                              sifraNode.unfocus();
+                              _login();
+                            },
                             onSaved: (value) {
                               _authData['sifra'] = value!;
                             },
@@ -198,7 +205,14 @@ class _LoginScreenState extends State<LoginScreen> {
                               isFullWidth: true,
                               borderRadius: 20,
                               visina: 18,
-                              funkcija: () => _login(),
+                              funkcija: () {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                                FocusScope.of(context).unfocus();
+
+                                emailNode.unfocus();
+                                sifraNode.unfocus();
+                                _login();
+                              },
                               buttonText: 'Prijavite se',
                               backgroundColor: Theme.of(context).colorScheme.secondary,
                               textColor: Theme.of(context).primaryColor,
@@ -222,7 +236,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Navigator.pushReplacement(
                     context,
                     PageRouteBuilder(
-                      transitionDuration: const Duration(milliseconds: 150),
+                      transitionDuration: const Duration(milliseconds: 120),
                       transitionsBuilder: (context, animation, secondaryAnimation, child) {
                         return SlideTransition(
                           position: Tween<Offset>(

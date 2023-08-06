@@ -27,6 +27,7 @@ class InputField extends StatelessWidget {
   final double? hintTextSize;
   final TextStyle? errorStyle;
   final TextCapitalization? kapitulacija;
+  final List<TextInputFormatter>? textInputFormater;
   const InputField({
     required this.medijakveri,
     this.label,
@@ -53,6 +54,7 @@ class InputField extends StatelessWidget {
     this.kapitulacija,
     this.isFixedWidth,
     this.fixedWidth,
+    this.textInputFormater,
   });
 
   @override
@@ -83,6 +85,7 @@ class InputField extends StatelessWidget {
             onChanged: onChanged,
             validator: validator,
             onSaved: onSaved,
+            inputFormatters: textInputFormater,
             onFieldSubmitted: onFieldSubmitted,
             initialValue: initalValue,
             textCapitalization: kapitulacija ?? TextCapitalization.none,

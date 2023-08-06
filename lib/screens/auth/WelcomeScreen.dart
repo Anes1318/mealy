@@ -65,11 +65,11 @@ class WelcomeScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         PageRouteBuilder(
-                          transitionDuration: const Duration(milliseconds: 200),
+                          transitionDuration: const Duration(milliseconds: 120),
                           transitionsBuilder: (context, animation, secondaryAnimation, child) {
                             return SlideTransition(
                               position: Tween<Offset>(
-                                begin: const Offset(0.7, 0),
+                                begin: const Offset(1, 0),
                                 end: Offset.zero,
                               ).animate(animation),
                               child: child,
@@ -93,11 +93,11 @@ class WelcomeScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         PageRouteBuilder(
-                          transitionDuration: const Duration(milliseconds: 200),
+                          transitionDuration: const Duration(milliseconds: 120),
                           transitionsBuilder: (context, animation, secondaryAnimation, child) {
                             return SlideTransition(
                               position: Tween<Offset>(
-                                begin: const Offset(0.7, 0),
+                                begin: const Offset(1, 0),
                                 end: Offset.zero,
                               ).animate(animation),
                               child: child,

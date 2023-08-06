@@ -331,7 +331,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             }
                           },
                           onSaved: (value) {
-                            _authData['email'] = value!;
+                            _authData['email'] = value!.trim();
                           },
                         ),
                         Container(
@@ -366,7 +366,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     return 'Molimo Vas unesite šifru';
                                   } else if (value.length < 5) {
                                     return 'Šifra mora imati više od 4 karaktera';
-                                  } else if (value.length < 50) {
+                                  } else if (value.length > 50) {
                                     return 'Šifra mora imati manje od 50 karaktera';
                                   } else if (!RegExp(r'^[a-zA-Z\S]+$').hasMatch(value)) {
                                     return 'Šifra nije validna';
@@ -472,8 +472,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 isFullWidth: true,
                                 borderRadius: 20,
                                 visina: 18,
-                                funkcija: () => {
-                                  _register(),
+                                funkcija: () {
+                                  FocusManager.instance.primaryFocus?.unfocus();
+                                  FocusScope.of(context).unfocus();
+
+                                  imeNode.unfocus();
+                                  prezimeNode.unfocus();
+                                  emailNode.unfocus();
+                                  pass1Node.unfocus();
+                                  pass2Node.unfocus();
+                                  _register();
                                 },
                                 buttonText: 'Registrujte se',
                                 backgroundColor: Theme.of(context).colorScheme.secondary,
@@ -489,7 +497,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       Navigator.pushReplacement(
                         context,
                         PageRouteBuilder(
-                          transitionDuration: const Duration(milliseconds: 150),
+                          transitionDuration: const Duration(milliseconds: 120),
                           transitionsBuilder: (context, animation, secondaryAnimation, child) {
                             return SlideTransition(
                               position: Tween<Offset>(

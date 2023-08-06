@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -439,7 +440,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                 return null;
                               } else if (value!.trim().isEmpty || value == '') {
                                 return 'Molimo Vas da unesete naziv recepta';
-                              } else if (!RegExp(r'^[a-zA-Z0-9\S]+$').hasMatch(value)) {
+                              } else if (!RegExp(r'^[a-zA-Z0-9\S ]+$').hasMatch(value)) {
                                 return 'Taj naziv nije validan';
                               } else if (value.length < 2) {
                                 return 'Naziv recepta mora biti duži';
@@ -472,7 +473,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                 return null;
                               } else if (value!.trim().isEmpty) {
                                 return 'Molimo Vas da unesete opis jela';
-                              } else if (!RegExp(r'^[a-zA-Z0-9\S]+$').hasMatch(value)) {
+                              } else if (!RegExp(r'^[a-zA-Z0-9\S ]+$').hasMatch(value)) {
                                 return 'Taj opis nije validan';
                               } else if (value.length < 2) {
                                 return 'Opis jela mora biti duži';
@@ -500,6 +501,12 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                 kapitulacija: TextCapitalization.sentences,
                                 errorStyle: Theme.of(context).textTheme.headline5!.copyWith(color: Colors.red),
                                 onChanged: (_) => _form.currentState!.validate(),
+                                textInputFormater: <TextInputFormatter>[
+                                  // for below version 2 use this
+                                  FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                                  // for version 2 and greater youcan also use this
+                                  FilteringTextInputFormatter.digitsOnly
+                                ],
                                 validator: (value) {
                                   if (nazivNode.hasFocus || opisNode.hasFocus || vrPripremeNode.hasFocus) {
                                     return null;
@@ -516,7 +523,8 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                 },
                                 borderRadijus: 10,
                                 isFixedWidth: true,
-                                fixedWidth: 168,
+                                // fixedWidth: 168,
+                                fixedWidth: medijakveri.size.width * 0.41,
                               ),
                               InputField(
                                 focusNode: vrPripremeNode,
@@ -531,6 +539,12 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                 hintTextSize: medijakveri.size.width * 0.035,
                                 errorStyle: Theme.of(context).textTheme.headline5!.copyWith(color: Colors.red),
                                 onChanged: (_) => _form.currentState!.validate(),
+                                textInputFormater: <TextInputFormatter>[
+                                  // for below version 2 use this
+                                  FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                                  // for version 2 and greater youcan also use this
+                                  FilteringTextInputFormatter.digitsOnly
+                                ],
                                 validator: (value) {
                                   if (nazivNode.hasFocus || opisNode.hasFocus || brOsobaNode.hasFocus) {
                                     return null;
@@ -547,7 +561,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                 },
                                 borderRadijus: 10,
                                 isFixedWidth: true,
-                                fixedWidth: 168,
+                                fixedWidth: medijakveri.size.width * 0.41,
                               ),
                             ],
                           ),
@@ -581,17 +595,20 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                       tezinaValidator = false;
                                     });
                                   },
-                                  child: Row(
-                                    children: [
-                                      SvgPicture.asset(tezina == Tezina.lako ? 'assets/icons/LakoSelected.svg' : 'assets/icons/LakoUnselected.svg'),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        'Lako',
-                                        style: Theme.of(context).textTheme.headline5!.copyWith(
-                                              color: tezina == Tezina.lako ? Theme.of(context).colorScheme.tertiary : Theme.of(context).colorScheme.primary,
-                                            ),
-                                      ),
-                                    ],
+                                  child: Container(
+                                    color: Colors.transparent,
+                                    child: Row(
+                                      children: [
+                                        SvgPicture.asset(tezina == Tezina.lako ? 'assets/icons/LakoSelected.svg' : 'assets/icons/LakoUnselected.svg'),
+                                        const SizedBox(width: 5),
+                                        Text(
+                                          'Lako',
+                                          style: Theme.of(context).textTheme.headline5!.copyWith(
+                                                color: tezina == Tezina.lako ? Theme.of(context).colorScheme.tertiary : Theme.of(context).colorScheme.primary,
+                                              ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                                 GestureDetector(
@@ -601,17 +618,20 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                       tezinaValidator = false;
                                     });
                                   },
-                                  child: Row(
-                                    children: [
-                                      SvgPicture.asset(tezina == Tezina.umjereno ? 'assets/icons/UmjerenoSelected.svg' : 'assets/icons/UmjerenoUnselected.svg'),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        'Umjereno',
-                                        style: Theme.of(context).textTheme.headline5!.copyWith(
-                                              color: tezina == Tezina.umjereno ? Theme.of(context).colorScheme.tertiary : Theme.of(context).colorScheme.primary,
-                                            ),
-                                      ),
-                                    ],
+                                  child: Container(
+                                    color: Colors.transparent,
+                                    child: Row(
+                                      children: [
+                                        SvgPicture.asset(tezina == Tezina.umjereno ? 'assets/icons/UmjerenoSelected.svg' : 'assets/icons/UmjerenoUnselected.svg'),
+                                        const SizedBox(width: 5),
+                                        Text(
+                                          'Umjereno',
+                                          style: Theme.of(context).textTheme.headline5!.copyWith(
+                                                color: tezina == Tezina.umjereno ? Theme.of(context).colorScheme.tertiary : Theme.of(context).colorScheme.primary,
+                                              ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                                 GestureDetector(
@@ -621,17 +641,20 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                       tezinaValidator = false;
                                     });
                                   },
-                                  child: Row(
-                                    children: [
-                                      SvgPicture.asset(tezina == Tezina.tesko ? 'assets/icons/TeskoSelected.svg' : 'assets/icons/TeskoUnselected.svg'),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        'Teško',
-                                        style: Theme.of(context).textTheme.headline5!.copyWith(
-                                              color: tezina == Tezina.tesko ? Theme.of(context).colorScheme.tertiary : Theme.of(context).colorScheme.primary,
-                                            ),
-                                      ),
-                                    ],
+                                  child: Container(
+                                    color: Colors.transparent,
+                                    child: Row(
+                                      children: [
+                                        SvgPicture.asset(tezina == Tezina.tesko ? 'assets/icons/TeskoSelected.svg' : 'assets/icons/TeskoUnselected.svg'),
+                                        const SizedBox(width: 5),
+                                        Text(
+                                          'Teško',
+                                          style: Theme.of(context).textTheme.headline5!.copyWith(
+                                                color: tezina == Tezina.tesko ? Theme.of(context).colorScheme.tertiary : Theme.of(context).colorScheme.primary,
+                                              ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ],
@@ -691,7 +714,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
 
                                     if (value!.trim().isEmpty) {
                                       return 'Molimo Vas da unesete polje';
-                                    } else if (!RegExp(r'^[a-zA-Z0-9\S]+$').hasMatch(value)) {
+                                    } else if (!RegExp(r'^[a-zA-Z0-9\S ]+$').hasMatch(value)) {
                                       return 'Polje nije validano';
                                     } else if (value.length > 150) {
                                       return 'Polje mora biti kraće';
