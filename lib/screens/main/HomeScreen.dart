@@ -1,8 +1,6 @@
-import 'dart:io';
+// ignore_for_file: deprecated_member_use, sized_box_for_whitespace
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
@@ -15,10 +13,9 @@ import 'package:mealy/components/MealCard.dart';
 import 'package:multiple_search_selection/multiple_search_selection.dart';
 import 'package:provider/provider.dart';
 
-import '../../components/metode.dart';
 import '../../models/availableTagovi.dart';
-import '../../models/tezina.dart';
 import '../../providers/MealProvider.dart';
+import 'SearchScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -29,6 +26,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   final form = GlobalKey<FormState>();
+
+  final searchController = TextEditingController();
 
   Stream<QuerySnapshot<Map<String, dynamic>>>? meals;
 
@@ -55,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => showFilteri());
+    WidgetsBinding.instance.addPostFrameCallback((_) => showFilters());
     WidgetsBinding.instance.addPostFrameCallback((_) => showFilterLoading());
     _controller = AnimationController(
       vsync: this,
@@ -67,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       end: const Offset(0, 0.2),
     ).animate(CurvedAnimation(
       parent: _controller!,
-      curve: Curves.linear, // You can choose other curves for different effects
+      curve: Curves.easeOut, // You can choose other curves for different effects
     ));
   }
 
@@ -81,33 +80,37 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     'ocjenaOd': '',
     'ocjenaDo': '',
   };
-
+  String searchString = '';
   List<String> tagovi = [];
-  List<Tezina> filterTezina = [];
-  List<String> tagoviReset = [];
+  List<String> filterTezina = [];
   String brOsobaErrorMessage = '';
   String vrPripremeErrorMessage = '';
   String ocjenaErrorMessage = '';
 
-  void submitFilters() {
+  bool submitFilters() {
     if (!form.currentState!.validate()) {
-      return;
+      return false;
     }
     form.currentState!.save();
     //
     //
     // BROJ OSOBA
+
+    if (filterData['brOsobaOd'] == '' && filterData['brOsobaDo'] == '' && filterData['vrPripremeOd'] == '' && filterData['vrPripremeDo'] == '' && filterData['ocjenaOd'] == '' && filterData['ocjenaDo'] == '' && filterTezina.isEmpty && tagovi.isEmpty) {
+      return false;
+    }
     if (filterData['brOsobaOd'] != '') {
       if (int.parse(filterData['brOsobaOd']) < 1 || int.parse(filterData['brOsobaOd']) > 20) {
-        brOsobaErrorMessage = 'Broj osoba ne može biti manji od 0 ili veći od 20';
+        brOsobaErrorMessage = 'Broj osoba ne može biti manji od 1 ili veći od 20';
         entry!.markNeedsBuild();
-        return;
+        return false;
       }
+
       if (filterData['brOsobaDo'] != '') {
         if (int.parse(filterData['brOsobaOd']) > int.parse(filterData['brOsobaDo'])) {
           brOsobaErrorMessage = 'Najmanji broj osoba ne može biti veći od najvećeg';
           entry!.markNeedsBuild();
-          return;
+          return false;
         }
       }
       brOsobaErrorMessage = '';
@@ -115,9 +118,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     }
     if (filterData['brOsobaDo'] != '') {
       if (int.parse(filterData['brOsobaDo']) < 1 || int.parse(filterData['brOsobaDo']) > 20) {
-        brOsobaErrorMessage = 'Broj osoba ne može biti manji od 0 ili veći od 20';
+        brOsobaErrorMessage = 'Broj osoba ne može biti manji od 1 ili veći od 20';
         entry!.markNeedsBuild();
-        return;
+        return false;
       }
       brOsobaErrorMessage = '';
       entry!.markNeedsBuild();
@@ -127,15 +130,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     // VRIJEME PRIPREME
     if (filterData['vrPripremeOd'] != '') {
       if (int.parse(filterData['vrPripremeOd']) < 1 || int.parse(filterData['vrPripremeOd']) > 999) {
-        vrPripremeErrorMessage = 'Vrijeme pripreme ne može biti manje od 0 ili veće od 999';
+        vrPripremeErrorMessage = 'Vrijeme pripreme ne može biti manje od 1 ili veće od 999';
         entry!.markNeedsBuild();
-        return;
+        return false;
       }
       if (filterData['vrPripremeDo'] != '') {
         if (int.parse(filterData['vrPripremeOd']) > int.parse(filterData['vrPripremeDo'])) {
           vrPripremeErrorMessage = 'Najmanje vrijeme pripreme ne može biti veće od najvećeg';
           entry!.markNeedsBuild();
-          return;
+          return false;
         }
       }
       vrPripremeErrorMessage = '';
@@ -143,9 +146,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     }
     if (filterData['vrPripremeDo'] != '') {
       if (int.parse(filterData['vrPripremeDo']) < 1 || int.parse(filterData['vrPripremeDo']) > 999) {
-        vrPripremeErrorMessage = 'Vrijeme pripreme ne može biti manje od 0 ili veće od 999';
+        vrPripremeErrorMessage = 'Vrijeme pripreme ne može biti manje od 1 ili veće od 999';
         entry!.markNeedsBuild();
-        return;
+        return false;
       }
       vrPripremeErrorMessage = '';
       entry!.markNeedsBuild();
@@ -154,32 +157,32 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     //
     // OCJENA
     if (filterData['ocjenaOd'] != '') {
-      if (double.parse(filterData['ocjenaOd']) < 1 || double.parse(filterData['ocjenaOd']) > 5) {
+      if (double.parse(filterData['ocjenaOd']) < 0 || double.parse(filterData['ocjenaOd']) > 5) {
         ocjenaErrorMessage = 'Ocjena ne može biti manja od 0 ili veća od 5';
         entry!.markNeedsBuild();
-        return;
+        return false;
       }
       if (filterData['ocjenaDo'] != '') {
         if (double.parse(filterData['ocjenaOd']) > double.parse(filterData['ocjenaDo'])) {
           ocjenaErrorMessage = 'Najmanja ocjena ne može biti veća od najveće';
           entry!.markNeedsBuild();
-          return;
+          return false;
         }
       }
       ocjenaErrorMessage = '';
       entry!.markNeedsBuild();
     }
     if (filterData['ocjenaDo'] != '') {
-      if (double.parse(filterData['ocjenaDo']) < 1 || double.parse(filterData['ocjenaDo']) > 5) {
+      if (double.parse(filterData['ocjenaDo']) < 0 || double.parse(filterData['ocjenaDo']) > 5) {
         ocjenaErrorMessage = 'Ocjena ne može biti manja od 0 ili veća od 5';
         entry!.markNeedsBuild();
-        return;
+        return false;
       }
       ocjenaErrorMessage = '';
       entry!.markNeedsBuild();
     }
 
-    print(filterData);
+    return true;
   }
 
   // FILTER LOADING
@@ -196,7 +199,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             bottom: 0,
             child: GestureDetector(
               onTap: () {
-                _controller!.reverse().whenComplete(() => hideFilteri());
+                _controller!.reverse().whenComplete(() => hideFilters());
               },
               child: Container(
                 color: Colors.black.withOpacity(.3),
@@ -222,7 +225,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   OverlayState? overlay;
   OverlayEntry? entry;
 
-  void showFilteri() {
+  void showFilters() {
     overlay = Overlay.of(context);
 
     entry = OverlayEntry(
@@ -235,7 +238,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               bottom: 0,
               child: GestureDetector(
                 onTap: () {
-                  _controller!.reverse().whenComplete(() => hideFilteri());
+                  _controller!.reverse().whenComplete(() => hideFilters());
                 },
                 child: Container(
                   color: Colors.black.withOpacity(.3),
@@ -257,7 +260,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         DismissDirection.down: 0.5,
                       },
                       onDismissed: (value) {
-                        hideFilteri();
+                        hideFilters();
                         _controller!.reverse();
                       },
                       child: ClipRRect(
@@ -269,7 +272,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           node: _focusScopeNode,
                           child: Scaffold(
                             resizeToAvoidBottomInset: true,
-                            key: const Key('Filter'),
+                            key: const Key('skafoldKey'),
                             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                             body: GestureDetector(
                               onTap: () => _focusScopeNode.unfocus(),
@@ -298,11 +301,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                             form.currentState!.reset();
                                             filterTezina.clear();
                                             tagovi.clear();
-                                            tagoviReset = [];
+
                                             brOsobaErrorMessage = '';
                                             vrPripremeErrorMessage = '';
                                             ocjenaErrorMessage = '';
-                                            hideFilteri();
+                                            hideFilters();
                                             showFilterLoading();
                                             overlayLoading!.insert(entryLoading!);
 
@@ -310,7 +313,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                               const Duration(milliseconds: 200),
                                             );
                                             hideFilterLoading();
-                                            showFilteri();
+                                            showFilters();
                                             overlay!.insert(entry!);
                                           },
                                           child: Icon(
@@ -325,7 +328,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                         ),
                                         GestureDetector(
                                           onTap: () {
-                                            _controller!.reverse().whenComplete(() => hideFilteri());
+                                            _controller!.reverse().whenComplete(() => hideFilters());
                                           },
                                           child: Icon(
                                             Iconsax.close_square,
@@ -361,7 +364,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                         textInputFormater: <TextInputFormatter>[
                                                           FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                                                         ],
-                                                        validator: (value) {},
+                                                        validator: (value) {
+                                                          return null;
+                                                        },
                                                         onSaved: (value) {
                                                           filterData['brOsobaOd'] = value;
                                                         },
@@ -381,7 +386,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                         textInputFormater: <TextInputFormatter>[
                                                           FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                                                         ],
-                                                        validator: (value) {},
+                                                        validator: (value) {
+                                                          return null;
+                                                        },
                                                         onSaved: (value) {
                                                           filterData['brOsobaDo'] = value;
                                                         },
@@ -432,11 +439,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                       children: [
                                                         GestureDetector(
                                                           onTap: () {
-                                                            if (!filterTezina.contains(Tezina.lako)) {
-                                                              filterTezina.add(Tezina.lako);
+                                                            if (!filterTezina.contains('Lako')) {
+                                                              filterTezina.add('Lako');
                                                               entry!.markNeedsBuild();
                                                             } else {
-                                                              filterTezina.remove(Tezina.lako);
+                                                              filterTezina.remove('Lako');
                                                               entry!.markNeedsBuild();
                                                             }
                                                           },
@@ -444,11 +451,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                             color: Colors.transparent,
                                                             child: Row(
                                                               children: [
-                                                                SvgPicture.asset(filterTezina.contains(Tezina.lako) ? 'assets/icons/LakoSelected.svg' : 'assets/icons/LakoUnselected.svg'),
+                                                                SvgPicture.asset(filterTezina.contains('Lako') ? 'assets/icons/LakoSelected.svg' : 'assets/icons/LakoUnselected.svg'),
                                                                 const SizedBox(width: 5),
                                                                 Text(
                                                                   'Lako',
-                                                                  style: Theme.of(context).textTheme.headline5!.copyWith(color: filterTezina.contains(Tezina.lako) ? Theme.of(context).colorScheme.tertiary : Theme.of(context).colorScheme.primary),
+                                                                  style: Theme.of(context).textTheme.headline5!.copyWith(color: filterTezina.contains('Lako') ? Theme.of(context).colorScheme.tertiary : Theme.of(context).colorScheme.primary),
                                                                 ),
                                                               ],
                                                             ),
@@ -456,11 +463,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                         ),
                                                         GestureDetector(
                                                           onTap: () {
-                                                            if (!filterTezina.contains(Tezina.umjereno)) {
-                                                              filterTezina.add(Tezina.umjereno);
+                                                            if (!filterTezina.contains('Umjereno')) {
+                                                              filterTezina.add('Umjereno');
                                                               entry!.markNeedsBuild();
                                                             } else {
-                                                              filterTezina.remove(Tezina.umjereno);
+                                                              filterTezina.remove('Umjereno');
                                                               entry!.markNeedsBuild();
                                                             }
                                                           },
@@ -468,11 +475,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                             color: Colors.transparent,
                                                             child: Row(
                                                               children: [
-                                                                SvgPicture.asset(filterTezina.contains(Tezina.umjereno) ? 'assets/icons/UmjerenoSelected.svg' : 'assets/icons/UmjerenoUnselected.svg'),
+                                                                SvgPicture.asset(filterTezina.contains('Umjereno') ? 'assets/icons/UmjerenoSelected.svg' : 'assets/icons/UmjerenoUnselected.svg'),
                                                                 const SizedBox(width: 5),
                                                                 Text(
                                                                   'Umjereno',
-                                                                  style: Theme.of(context).textTheme.headline5!.copyWith(color: filterTezina.contains(Tezina.umjereno) ? Theme.of(context).colorScheme.tertiary : Theme.of(context).colorScheme.primary),
+                                                                  style: Theme.of(context).textTheme.headline5!.copyWith(color: filterTezina.contains('Umjereno') ? Theme.of(context).colorScheme.tertiary : Theme.of(context).colorScheme.primary),
                                                                 ),
                                                               ],
                                                             ),
@@ -480,11 +487,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                         ),
                                                         GestureDetector(
                                                           onTap: () {
-                                                            if (!filterTezina.contains(Tezina.tesko)) {
-                                                              filterTezina.add(Tezina.tesko);
+                                                            if (!filterTezina.contains('Tesko')) {
+                                                              filterTezina.add('Tesko');
                                                               entry!.markNeedsBuild();
                                                             } else {
-                                                              filterTezina.remove(Tezina.tesko);
+                                                              filterTezina.remove('Tesko');
                                                               entry!.markNeedsBuild();
                                                             }
                                                           },
@@ -492,11 +499,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                             color: Colors.transparent,
                                                             child: Row(
                                                               children: [
-                                                                SvgPicture.asset(filterTezina.contains(Tezina.tesko) ? 'assets/icons/TeskoSelected.svg' : 'assets/icons/TeskoUnselected.svg'),
+                                                                SvgPicture.asset(filterTezina.contains('Tesko') ? 'assets/icons/TeskoSelected.svg' : 'assets/icons/TeskoUnselected.svg'),
                                                                 const SizedBox(width: 5),
                                                                 Text(
                                                                   'Teško',
-                                                                  style: Theme.of(context).textTheme.headline5!.copyWith(color: filterTezina.contains(Tezina.tesko) ? Theme.of(context).colorScheme.tertiary : Theme.of(context).colorScheme.primary),
+                                                                  style: Theme.of(context).textTheme.headline5!.copyWith(color: filterTezina.contains('Tesko') ? Theme.of(context).colorScheme.tertiary : Theme.of(context).colorScheme.primary),
                                                                 ),
                                                               ],
                                                             ),
@@ -531,7 +538,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                         textInputFormater: <TextInputFormatter>[
                                                           FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                                                         ],
-                                                        validator: (value) {},
+                                                        validator: (value) {
+                                                          return null;
+                                                        },
                                                         onSaved: (value) {
                                                           filterData['vrPripremeOd'] = value;
                                                         },
@@ -551,7 +560,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                         textInputFormater: <TextInputFormatter>[
                                                           FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                                                         ],
-                                                        validator: (value) {},
+                                                        validator: (value) {
+                                                          return null;
+                                                        },
                                                         onSaved: (value) {
                                                           filterData['vrPripremeDo'] = value;
                                                         },
@@ -605,7 +616,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                         textInputFormater: <TextInputFormatter>[
                                                           FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
                                                         ],
-                                                        validator: (value) {},
+                                                        validator: (value) {
+                                                          return null;
+                                                        },
                                                         onSaved: (value) {
                                                           filterData['ocjenaOd'] = value;
                                                         },
@@ -625,7 +638,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                         textInputFormater: <TextInputFormatter>[
                                                           FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
                                                         ],
-                                                        validator: (value) {},
+                                                        validator: (value) {
+                                                          return null;
+                                                        },
                                                         onSaved: (value) {
                                                           filterData['ocjenaDo'] = value;
                                                         },
@@ -676,7 +691,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                         return tag;
                                                       },
                                                       maxSelectedItems: 5,
-                                                      initialPickedItems: tagoviReset,
                                                       textFieldFocus: tagNode,
                                                       clearSearchFieldOnSelect: true,
                                                       searchFieldTextStyle: Theme.of(context).textTheme.headline4,
@@ -805,6 +819,47 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                             isBorder: false,
                                             funkcija: () {
                                               submitFilters();
+                                              if (submitFilters()) {
+                                                _controller!.reverse().whenComplete(() => hideFilters());
+                                              }
+                                            },
+                                            isFullWidth: true,
+                                          ),
+                                          const SizedBox(height: 20),
+                                          Button(
+                                            buttonText: 'Pretraga po filterima',
+                                            borderRadius: 20,
+                                            visina: 18,
+                                            backgroundColor: Theme.of(context).colorScheme.secondary,
+                                            isBorder: true,
+                                            textColor: Theme.of(context).colorScheme.primary,
+                                            funkcija: () {
+                                              submitFilters();
+                                              if (!submitFilters()) {
+                                                return;
+                                              }
+                                              hideFilters();
+                                              Navigator.push(
+                                                context,
+                                                PageRouteBuilder(
+                                                  transitionDuration: const Duration(milliseconds: 120),
+                                                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                                    return SlideTransition(
+                                                      position: Tween<Offset>(
+                                                        begin: const Offset(1, 0),
+                                                        end: Offset.zero,
+                                                      ).animate(animation),
+                                                      child: child,
+                                                    );
+                                                  },
+                                                  pageBuilder: (context, animation, duration) => SearchScreen(
+                                                    searchString: null,
+                                                    filterData: filterData,
+                                                    tagovi: tagovi,
+                                                    tezina: filterTezina,
+                                                  ),
+                                                ),
+                                              );
                                             },
                                             isFullWidth: true,
                                           ),
@@ -827,7 +882,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  void hideFilteri() {
+  void hideFilters() {
     entry!.remove();
     entry = null;
   }
@@ -837,6 +892,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     final medijakveri = MediaQuery.of(context);
 
     return GestureDetector(
+      onTap: () {
+        FocusManager.instance.primaryFocus!.unfocus();
+      },
       child: SingleChildScrollView(
         child: Column(
           children: [
@@ -849,6 +907,37 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   child: Container(
                     width: medijakveri.size.width * 0.7,
                     child: TextFormField(
+                      controller: searchController,
+                      onChanged: (value) {
+                        searchString = value.trim();
+                      },
+                      onFieldSubmitted: (_) {
+                        if (searchString == '') {
+                          return;
+                        }
+
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            transitionDuration: const Duration(milliseconds: 120),
+                            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                              return SlideTransition(
+                                position: Tween<Offset>(
+                                  begin: const Offset(1, 0),
+                                  end: Offset.zero,
+                                ).animate(animation),
+                                child: child,
+                              );
+                            },
+                            pageBuilder: (context, animation, duration) => SearchScreen(
+                              searchString: searchString,
+                              filterData: filterData,
+                              tagovi: tagovi,
+                              tezina: filterTezina,
+                            ),
+                          ),
+                        );
+                      },
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                         hintText: 'Potražite tag ili namirnicu...',
@@ -865,7 +954,36 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           borderSide: const BorderSide(color: Colors.white),
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        suffixIcon: const Icon(Iconsax.search_normal),
+                        suffixIcon: GestureDetector(
+                          onTap: () {
+                            if (searchString == '') {
+                              return;
+                            }
+
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                transitionDuration: const Duration(milliseconds: 120),
+                                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                  return SlideTransition(
+                                    position: Tween<Offset>(
+                                      begin: const Offset(1, 0),
+                                      end: Offset.zero,
+                                    ).animate(animation),
+                                    child: child,
+                                  );
+                                },
+                                pageBuilder: (context, animation, duration) => SearchScreen(
+                                  searchString: searchString,
+                                  filterData: filterData,
+                                  tagovi: tagovi,
+                                  tezina: filterTezina,
+                                ),
+                              ),
+                            );
+                          },
+                          child: const Icon(Iconsax.search_normal),
+                        ),
                       ),
                     ),
                   ),
@@ -873,17 +991,21 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 GestureDetector(
                   onTap: () async {
                     if (isFilter == false) {
+                      FocusManager.instance.primaryFocus!.unfocus();
                       brOsobaErrorMessage = '';
                       vrPripremeErrorMessage = '';
                       ocjenaErrorMessage = '';
-                      showFilteri();
+
+                      filterTezina.clear();
+                      tagovi.clear();
+                      showFilters();
                       _controller!.addListener(() {
                         overlay!.setState(() {});
                       });
                       _controller!.forward();
                       overlay!.insert(entry!);
                       await Future.delayed(
-                        Duration(milliseconds: 500),
+                        const Duration(milliseconds: 500),
                       );
                     }
                   },
@@ -948,6 +1070,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 return Container(
                   height: medijakveri.size.height * 0.66,
                   child: ListView.separated(
+                      primary: false,
                       shrinkWrap: true,
                       padding: const EdgeInsets.symmetric(vertical: 0),
                       separatorBuilder: ((context, index) => const SizedBox(height: 15)),

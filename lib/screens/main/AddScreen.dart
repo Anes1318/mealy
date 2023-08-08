@@ -722,7 +722,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                       return null;
                                     } else if (value!.trim().isEmpty || value == '') {
                                       return 'Molimo Vas da unesete polje';
-                                    } else if (!RegExp(r'^[.,;:!?\"()\[\]{}<>@#$%^&*_+=/\\|`~a-zA-Z0-9]*$').hasMatch(value)) {
+                                    } else if (!RegExp(r'^[.,;:!?\"()\[\]{}<>@#$%^&*_+=/\\|`~a-zA-Z0-9 ]*$').hasMatch(value)) {
                                       return 'Polje nije validno';
                                     } else if (value.length > 150) {
                                       return 'Polje mora biti kraće';
@@ -846,7 +846,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                       return 'Molimo Vas da unesete polje';
                                     } else if (value!.trim().isEmpty || value == '') {
                                       return 'Molimo Vas da unesete polje';
-                                    } else if (!RegExp(r'^[.,;:!?\"()\[\]{}<>@#$%^&*_+=/\\|`~a-zA-Z0-9]*$').hasMatch(value)) {
+                                    } else if (!RegExp(r'^[.,;:!?\"()\[\]{}<>@#$%^&*_+=/\\|`~a-zA-Z0-9 ]*$').hasMatch(value)) {
                                       return 'Polje nije validno';
                                     } else if (value.length > 300) {
                                       return 'Polje mora biti kraće';

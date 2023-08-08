@@ -379,11 +379,20 @@ class _MealViewScreenState extends State<MealViewScreen> {
                       children: [
                         const SizedBox(height: 20),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
                               'Ocijenite ovaj recept',
                               style: Theme.of(context).textTheme.headline3,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                ref!.removeRateMeal(context, widget.receptId);
+                              },
+                              child: Text(
+                                'Uklonite ocjenu',
+                                style: Theme.of(context).textTheme.headline4,
+                              ),
                             ),
                           ],
                         ),

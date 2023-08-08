@@ -12,6 +12,7 @@ class MealProvider with ChangeNotifier {
   Stream<QuerySnapshot<Map<String, dynamic>>>? _meals;
   DocumentSnapshot<Map<String, dynamic>>? _singleMeal;
   DocumentSnapshot<Map<String, dynamic>>? _user;
+
   bool? _isInternet = true;
 
   void setIsInternet(value) {
@@ -133,6 +134,85 @@ class MealProvider with ChangeNotifier {
               SnackBar(
                 content: Text(
                   'Vaša ocjena je zabilježena.',
+                  style: Theme.of(context).textTheme.headline4,
+                ),
+                duration: const Duration(milliseconds: 1500),
+                behavior: SnackBarBehavior.floating,
+                backgroundColor: Theme.of(context).colorScheme.secondary,
+                elevation: 4,
+              ),
+            );
+            notifyListeners();
+          });
+        } catch (e) {
+          Navigator.pop(context);
+
+          Metode.showErrorDialog(
+            isJednoPoredDrugog: false,
+            context: context,
+            naslov: 'Došlo je do greške',
+            button1Text: 'Zatvori',
+            button1Fun: () {
+              Navigator.pop(context);
+            },
+            isButton2: false,
+          );
+        }
+      },
+    );
+    notifyListeners();
+  }
+
+  void removeRateMeal(context, mealId) {
+    Metode.showErrorDialog(
+      isJednoPoredDrugog: true,
+      context: context,
+      naslov: 'Da li ste sigurni da želite da uklonite Vašu ocjenu?',
+      button1Text: 'Otkaži',
+      isButton1Icon: true,
+      button1Icon: Icon(
+        Iconsax.close_circle,
+        color: Theme.of(context).colorScheme.primary,
+      ),
+      button1Fun: () {
+        Navigator.pop(context);
+      },
+      isButton2: true,
+      button2Text: 'Potvrdi',
+      isButton2Icon: true,
+      button2Icon: Icon(
+        Iconsax.tick_circle,
+        color: Theme.of(context).colorScheme.primary,
+      ),
+      button2Fun: () async {
+        try {
+          await InternetAddress.lookup('google.com');
+        } catch (error) {
+          Navigator.pop(context);
+
+          Metode.showErrorDialog(
+            isJednoPoredDrugog: false,
+            message: "Došlo je do greške sa internetom. Provjerite svoju konekciju.",
+            context: context,
+            naslov: 'Greška',
+            button1Text: 'Zatvori',
+            button1Fun: () => Navigator.pop(context),
+            isButton2: false,
+          );
+          return;
+        }
+        try {
+          FirebaseFirestore.instance.collection('recepti').doc(mealId).update(
+            {
+              'ratings.${FirebaseAuth.instance.currentUser!.uid}': FieldValue.delete(),
+            },
+          ).then((value) {
+            Navigator.pop(context);
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Vaša ocjena je uklonjena.',
                   style: Theme.of(context).textTheme.headline4,
                 ),
                 duration: const Duration(milliseconds: 1500),
