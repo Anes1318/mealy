@@ -15,6 +15,7 @@ class SearchScreen extends StatefulWidget {
   final Map<String, dynamic>? filterData;
   final List<String>? tagovi;
   final List<String>? tezina;
+  final bool isFav;
 
   SearchScreen({
     super.key,
@@ -22,6 +23,7 @@ class SearchScreen extends StatefulWidget {
     this.filterData,
     this.tagovi,
     this.tezina,
+    required this.isFav,
   });
 
   @override
@@ -99,7 +101,6 @@ class _SearchScreenState extends State<SearchScreen> {
                       ),
                     );
                   }
-
                   final receptDocs = snapshot.data!.docs;
                   receptDocs.sort((a, b) {
                     if (DateTime.parse(a.data()['createdAt']).isAfter(DateTime.parse(b.data()['createdAt']))) {
@@ -108,6 +109,17 @@ class _SearchScreenState extends State<SearchScreen> {
                       return 1;
                     }
                   });
+                  List<dynamic> favRecepti = [];
+
+                  if (widget.isFav) {
+                    receptDocs.forEach((element) {
+                      List<dynamic> listaUsera = (element.data()['favorites'].keys.map((item) => item as String)?.toList());
+                      if (listaUsera.contains(FirebaseAuth.instance.currentUser!.uid)) {
+                        favRecepti.add(element);
+                      }
+                    });
+                  }
+
                   if (!isInternet!) {
                     return Container(
                       height: (medijakveri.size.height - medijakveri.padding.top) * 0.66,
@@ -127,88 +139,181 @@ class _SearchScreenState extends State<SearchScreen> {
                   //
                   // FILTRIRANJE
                   List<dynamic> searchedMeals = [];
+                  if (widget.isFav) {
+                    favRecepti.forEach((element) {
+                      if (searchedMeals.contains(element)) {
+                        return;
+                      }
+                      List<String> sastojciList = [];
+                      for (var sastojak in element['sastojci']) {
+                        sastojciList.add(sastojak!.toLowerCase());
+                      }
 
-                  receptDocs.forEach((element) {
-                    if (searchedMeals.contains(element)) {
-                      return;
-                    }
-
-                    if (widget.searchString != null && widget.searchString != '') {
-                      if (!element.data()['naziv'].contains(widget.searchString)) {
-                        // print('Failed SearchString');
-                        return;
-                      }
-                    }
-                    if (widget.filterData!['brOsobaOd'] != '') {
-                      if (int.parse(element.data()['brOsoba']) < int.parse(widget.filterData!['brOsobaOd'])) {
-                        // print('Failed Osoba od');
-                        return;
-                      }
-                    }
-                    if (widget.filterData!['brOsobaDo'] != '') {
-                      if (int.parse(element.data()['brOsoba']) > int.parse(widget.filterData!['brOsobaDo'])) {
-                        // print('Failed Osoba do');
-                        return;
-                      }
-                    }
-
-                    if (widget.tezina!.isNotEmpty) {
-                      if (!widget.tezina!.contains(element.data()['tezina'])) {
-                        // print('Failed tezina');
-                        return;
-                      }
-                    }
-
-                    if (widget.filterData!['vrPripremeOd'] != '') {
-                      if (int.parse(element.data()['vrPripreme']) < int.parse(widget.filterData!['vrPripremeOd'])) {
-                        // print('Failed vrijeme pripreme od');
-                        return;
-                      }
-                    }
-                    if (widget.filterData!['vrPripremeDo'] != '') {
-                      if (int.parse(element.data()['vrPripreme']) > int.parse(widget.filterData!['vrPripremeDo'])) {
-                        // print('Failed vrijeme pripreme do');
-                        return;
-                      }
-                    }
-                    double rating = 0;
-                    if (element.data()['ratings'].values.isNotEmpty) {
-                      for (var item in element.data()['ratings'].values) {
-                        rating += item;
-                      }
-                    }
-                    rating /= element.data()['ratings'].length;
-
-                    if (widget.filterData!['ocjenaOd'] != '') {
-                      if (rating < int.parse(widget.filterData!['ocjenaOd'])) {
-                        print('Failed ocjena od');
-                        return;
-                      }
-                    }
-                    if (widget.filterData!['ocjenaDo'] != '') {
-                      if (rating > int.parse(widget.filterData!['ocjenaDo'])) {
-                        print('Failed ocjena do');
-                        return;
-                      }
-                    }
-                    if (widget.tagovi!.isNotEmpty) {
-                      // print('WIDGET TAGOVI ${widget.tagovi}');
-                      // print('ELEMENT TAGOVI ${element.data()['tagovi']}');
-                      List<String> nadjeniTagovi = [];
-
-                      for (var i = 0; i < element.data()['tagovi'].length; i++) {
-                        if (widget.tagovi!.contains(element.data()['tagovi'][i])) {
-                          nadjeniTagovi.add(element.data()['tagovi'][i]);
+                      if (widget.searchString != null && widget.searchString != '') {
+                        if (!element['naziv']!.toLowerCase().contains(widget.searchString!.toLowerCase()) && !sastojciList.contains(widget.searchString!.toLowerCase())) {
+                          // print('Failed SearchString');
+                          return;
                         }
                       }
-                      if (nadjeniTagovi.isEmpty) {
-                        // print('NISMO NASLI NI JEDAN');
+                      if (widget.filterData!['brOsobaOd'] != '') {
+                        if (int.parse(element['brOsoba']) < int.parse(widget.filterData!['brOsobaOd'])) {
+                          // print('Failed Osoba od');
+                          return;
+                        }
+                      }
+                      if (widget.filterData!['brOsobaDo'] != '') {
+                        if (int.parse(element['brOsoba']) > int.parse(widget.filterData!['brOsobaDo'])) {
+                          // print('Failed Osoba do');
+                          return;
+                        }
+                      }
+
+                      if (widget.tezina!.isNotEmpty) {
+                        if (!widget.tezina!.contains(element['tezina'])) {
+                          // print('Failed tezina');
+                          return;
+                        }
+                      }
+
+                      if (widget.filterData!['vrPripremeOd'] != '') {
+                        if (int.parse(element['vrPripreme']) < int.parse(widget.filterData!['vrPripremeOd'])) {
+                          // print('Failed vrijeme pripreme od');
+                          return;
+                        }
+                      }
+                      if (widget.filterData!['vrPripremeDo'] != '') {
+                        if (int.parse(element['vrPripreme']) > int.parse(widget.filterData!['vrPripremeDo'])) {
+                          // print('Failed vrijeme pripreme do');
+                          return;
+                        }
+                      }
+                      double rating = 0;
+                      if (element['ratings'].values.isNotEmpty) {
+                        for (var item in element['ratings'].values) {
+                          rating += item;
+                        }
+                      }
+                      rating /= element['ratings'].length;
+
+                      if (widget.filterData!['ocjenaOd'] != '') {
+                        if (rating < int.parse(widget.filterData!['ocjenaOd'])) {
+                          print('Failed ocjena od');
+                          return;
+                        }
+                      }
+                      if (widget.filterData!['ocjenaDo'] != '') {
+                        if (rating > int.parse(widget.filterData!['ocjenaDo'])) {
+                          print('Failed ocjena do');
+                          return;
+                        }
+                      }
+                      if (widget.tagovi!.isNotEmpty) {
+                        // print('WIDGET TAGOVI ${widget.tagovi}');
+                        // print('ELEMENT TAGOVI ${element['tagovi']}');
+                        List<String> nadjeniTagovi = [];
+
+                        for (var i = 0; i < element['tagovi'].length; i++) {
+                          if (widget.tagovi!.contains(element['tagovi'][i])) {
+                            nadjeniTagovi.add(element['tagovi'][i]);
+                          }
+                        }
+                        if (nadjeniTagovi.isEmpty) {
+                          // print('NISMO NASLI NI JEDAN');
+                          return;
+                        }
+                      }
+
+                      // print('PROSO');
+                      searchedMeals.add(element);
+                    });
+                  } else {
+                    receptDocs.forEach((element) {
+                      if (searchedMeals.contains(element)) {
                         return;
                       }
-                    }
-                    // print('PROSO');
-                    searchedMeals.add(element);
-                  });
+                      List<String> sastojciList = [];
+                      for (var sastojak in element.data()['sastojci']) {
+                        sastojciList.add(sastojak!.toLowerCase());
+                      }
+
+                      if (widget.searchString != null && widget.searchString != '') {
+                        if (!element.data()['naziv']!.toLowerCase().contains(widget.searchString!.toLowerCase()) && !sastojciList.contains(widget.searchString!.toLowerCase())) {
+                          // print('Failed SearchString');
+                          return;
+                        }
+                      }
+                      if (widget.filterData!['brOsobaOd'] != '') {
+                        if (int.parse(element.data()['brOsoba']) < int.parse(widget.filterData!['brOsobaOd'])) {
+                          // print('Failed Osoba od');
+                          return;
+                        }
+                      }
+                      if (widget.filterData!['brOsobaDo'] != '') {
+                        if (int.parse(element.data()['brOsoba']) > int.parse(widget.filterData!['brOsobaDo'])) {
+                          // print('Failed Osoba do');
+                          return;
+                        }
+                      }
+
+                      if (widget.tezina!.isNotEmpty) {
+                        if (!widget.tezina!.contains(element.data()['tezina'])) {
+                          // print('Failed tezina');
+                          return;
+                        }
+                      }
+
+                      if (widget.filterData!['vrPripremeOd'] != '') {
+                        if (int.parse(element.data()['vrPripreme']) < int.parse(widget.filterData!['vrPripremeOd'])) {
+                          // print('Failed vrijeme pripreme od');
+                          return;
+                        }
+                      }
+                      if (widget.filterData!['vrPripremeDo'] != '') {
+                        if (int.parse(element.data()['vrPripreme']) > int.parse(widget.filterData!['vrPripremeDo'])) {
+                          // print('Failed vrijeme pripreme do');
+                          return;
+                        }
+                      }
+                      double rating = 0;
+                      if (element.data()['ratings'].values.isNotEmpty) {
+                        for (var item in element.data()['ratings'].values) {
+                          rating += item;
+                        }
+                      }
+                      rating /= element.data()['ratings'].length;
+
+                      if (widget.filterData!['ocjenaOd'] != '') {
+                        if (rating < int.parse(widget.filterData!['ocjenaOd'])) {
+                          print('Failed ocjena od');
+                          return;
+                        }
+                      }
+                      if (widget.filterData!['ocjenaDo'] != '') {
+                        if (rating > int.parse(widget.filterData!['ocjenaDo'])) {
+                          print('Failed ocjena do');
+                          return;
+                        }
+                      }
+                      if (widget.tagovi!.isNotEmpty) {
+                        // print('WIDGET TAGOVI ${widget.tagovi}');
+                        // print('ELEMENT TAGOVI ${element.data()['tagovi']}');
+                        List<String> nadjeniTagovi = [];
+
+                        for (var i = 0; i < element.data()['tagovi'].length; i++) {
+                          if (widget.tagovi!.contains(element.data()['tagovi'][i])) {
+                            nadjeniTagovi.add(element.data()['tagovi'][i]);
+                          }
+                        }
+                        if (nadjeniTagovi.isEmpty) {
+                          // print('NISMO NASLI NI JEDAN');
+                          return;
+                        }
+                      }
+
+                      // print('PROSO');
+                      searchedMeals.add(element);
+                    });
+                  }
 
                   searchedMeals.sort((a, b) {
                     if (DateTime.parse(a['favorites'].values.toString().replaceAll(RegExp(r'[()]'), '')).isAfter(DateTime.parse(b['favorites'].values.toString().replaceAll(RegExp(r'[()]'), '')))) {

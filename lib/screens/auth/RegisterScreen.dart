@@ -14,6 +14,7 @@ import 'package:mealy/screens/auth/LoginScreen.dart';
 import 'package:mealy/components/Button.dart';
 import 'package:mealy/components/InputField.dart';
 import 'package:mealy/components/metode.dart';
+import 'package:mealy/screens/auth/WelcomeScreen.dart';
 
 class RegisterScreen extends StatefulWidget {
   static const String routeName = '/RegisterScreen';
@@ -501,18 +502,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           transitionsBuilder: (context, animation, secondaryAnimation, child) {
                             return SlideTransition(
                               position: Tween<Offset>(
-                                begin: const Offset(1, 0),
+                                begin: const Offset(-1, 0),
                                 end: Offset.zero,
                               ).animate(animation),
                               child: child,
                             );
                           },
-                          pageBuilder: (context, animation, duration) => LoginScreen(),
+                          pageBuilder: (context, animation, duration) => WelcomeScreen(),
                         ),
                       );
                     },
                     child: Text(
-                      'Već imate nalog?',
+                      'Nazad na početnu',
                       style: Theme.of(context).textTheme.headline4,
                     ),
                   ),

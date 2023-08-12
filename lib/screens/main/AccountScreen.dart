@@ -107,7 +107,7 @@ class _AccountScreenState extends State<AccountScreen> {
                               height: 75,
                               width: 75,
                             )
-                          : FirebaseAuth.instance.currentUser!.photoURL == null
+                          : FirebaseAuth.instance.currentUser!.photoURL == '' || FirebaseAuth.instance.currentUser!.photoURL == null
                               ? SvgPicture.asset(
                                   'assets/icons/Torta.svg',
                                   height: 75,

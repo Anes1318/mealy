@@ -776,6 +776,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
 
                                   sastojakInput.add(TextEditingController());
                                   sastojakFokus.add(FocusNode());
+                                  sastojakFokus[sastojakFokus.length - 1].requestFocus();
                                 });
                               },
                               child: Icon(
@@ -901,6 +902,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                   }
                                   korakInput.add(TextEditingController());
                                   korakFokus.add(FocusNode());
+                                  korakFokus[korakFokus.length - 1].requestFocus();
                                 });
                               },
                               child: Icon(

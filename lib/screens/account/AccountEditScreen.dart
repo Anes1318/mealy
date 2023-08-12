@@ -11,6 +11,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mealy/components/InputField.dart';
 import 'package:provider/provider.dart';
 
+import '../../components/Button.dart';
 import '../../components/metode.dart';
 import '../../providers/MealProvider.dart';
 
@@ -26,7 +27,7 @@ class AccountEditScreen extends StatefulWidget {
 class _AccountEditScreenState extends State<AccountEditScreen> {
   final _form = GlobalKey<FormState>();
   bool isLoading = false;
-
+  bool uklonioSliku = false;
   Map<String, String> _authData = {
     'ime': '',
     'prezime': '',
@@ -73,6 +74,7 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
     }
     setState(() {
       _storedImage = File(croppedImg.path);
+      uklonioSliku = false;
     });
   }
 
@@ -137,9 +139,19 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
         );
       }
 
-      if (_storedImage != null) {
+      if (uklonioSliku == true) {
+        await FirebaseAuth.instance.currentUser!.updatePhotoURL(null);
+        await FirebaseStorage.instance.ref().child('userImages').child('${FirebaseAuth.instance.currentUser!.uid}.jpg').delete().then((value) async {
+          await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).update(
+            {
+              'imageUrl': '',
+            },
+          );
+        });
+      } else if (_storedImage != null) {
         await FirebaseStorage.instance.ref().child('userImages').child('${FirebaseAuth.instance.currentUser!.uid}.jpg').putFile(_storedImage!).then((value) async {
           imageUrl = await value.ref.getDownloadURL();
+          await FirebaseAuth.instance.currentUser!.updatePhotoURL(imageUrl);
           await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).update(
             {
               'imageUrl': imageUrl,
@@ -151,6 +163,7 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
       setState(() {
         isLoading = false;
       });
+
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -169,6 +182,7 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
       setState(() {
         isLoading = false;
       });
+      print(error);
 
       Metode.showErrorDialog(
         isJednoPoredDrugog: false,
@@ -253,8 +267,6 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
                                   prezimeNode.unfocus;
                                   emailNode.unfocus;
 
-                                  // TODO: treba da napravis da se user opet loginira jer je ovo senzitivna operacija, vidi kako je napravljeno na diskord npr pa vidi sta ces da ucinis
-
                                   updateUserInfo();
                                 },
                                 child: Icon(
@@ -282,7 +294,7 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
                       isButton1Icon: true,
                       button1Icon: Icon(
                         Icons.camera_alt,
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                       isButton2: true,
                       button2Text: 'Galerija',
@@ -294,7 +306,7 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
                       isButton2Icon: true,
                       button2Icon: Icon(
                         Icons.photo,
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     );
                   },
@@ -303,33 +315,57 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
                     height: medijakveri.size.width * 0.4,
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.secondary,
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(30),
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
                       child: Center(
-                          child: FirebaseAuth.instance.currentUser!.photoURL == ''
-                              ? Text(
-                                  'Dodajte sliku',
-                                  style: Theme.of(context).textTheme.headline2,
-                                )
-                              : ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: _storedImage == null
-                                      ? Image.network(
-                                          '${FirebaseAuth.instance.currentUser!.photoURL}',
-                                          fit: BoxFit.cover,
-                                          width: medijakveri.size.width * 0.4,
-                                          height: medijakveri.size.width * 0.4,
-                                        )
-                                      : Image.file(
-                                          _storedImage!,
-                                          fit: BoxFit.fill,
-                                        ),
-                                )),
+                        child: (FirebaseAuth.instance.currentUser!.photoURL == '' || FirebaseAuth.instance.currentUser!.photoURL == null || uklonioSliku == true) && _storedImage == null
+                            ? Text(
+                                'Dodajte sliku',
+                                style: Theme.of(context).textTheme.headline2,
+                              )
+                            : ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: _storedImage == null
+                                    ? Image.network(
+                                        '${FirebaseAuth.instance.currentUser!.photoURL}',
+                                        fit: BoxFit.cover,
+                                        width: medijakveri.size.width * 0.4,
+                                        height: medijakveri.size.width * 0.4,
+                                      )
+                                    : Image.file(
+                                        _storedImage!,
+                                        fit: BoxFit.fill,
+                                        width: medijakveri.size.width * 0.4,
+                                        height: medijakveri.size.width * 0.4,
+                                      ),
+                              ),
+                      ),
                     ),
                   ),
                 ),
+                if ((_storedImage != null || (FirebaseAuth.instance.currentUser!.photoURL != '' && FirebaseAuth.instance.currentUser!.photoURL != null)) && uklonioSliku == false) const SizedBox(height: 10),
+                if ((_storedImage != null || (FirebaseAuth.instance.currentUser!.photoURL != '' && FirebaseAuth.instance.currentUser!.photoURL != null)) && uklonioSliku == false)
+                  Center(
+                    child: Button(
+                      isFullWidth: false,
+                      buttonText: 'Uklonite sliku',
+                      borderRadius: 5,
+                      visina: 5,
+                      sirina: 10,
+                      fontsize: 16,
+                      backgroundColor: Theme.of(context).colorScheme.tertiary,
+                      isBorder: false,
+                      funkcija: () {
+                        setState(() {
+                          _storedImage = null;
+                          uklonioSliku = true;
+                          print(uklonioSliku);
+                        });
+                      },
+                    ),
+                  ),
                 const SizedBox(height: 20),
                 Form(
                   key: _form,
