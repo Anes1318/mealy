@@ -122,7 +122,9 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
                     backgroundColor: Theme.of(context).colorScheme.secondary,
                     textColor: Theme.of(context).colorScheme.primary,
                     isBorder: true,
-                    funkcija: () {},
+                    funkcija: () {
+                      // FirebaseAuth.instance.currentUser!.updatePassword(newPassword);
+                    },
                     isFullWidth: true,
                   ),
                   StreamBuilder(
@@ -234,7 +236,7 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
                                     });
                                     Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
                                   });
-                                  // TODO: TESTIRAJJJ
+                                  // TODO: TESTIRAJJJ.
                                 } catch (e) {
                                   print(e);
                                   Metode.showErrorDialog(

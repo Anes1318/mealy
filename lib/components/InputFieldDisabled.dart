@@ -53,6 +53,5 @@ class InputFieldDisabled extends StatelessWidget {
         ],
       ),
     );
-    ;
   }
 }

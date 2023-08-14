@@ -35,7 +35,7 @@ class MealViewScreen extends StatefulWidget {
   final List<dynamic> koraci;
   final Map<String, dynamic> favorites;
   final List<dynamic> tagovi;
-  bool? isAutorClick;
+  final bool? isAutorClick;
 
   MealViewScreen({
     required this.autorId,
@@ -103,7 +103,7 @@ class _MealViewScreenState extends State<MealViewScreen> {
       setState(() {});
     });
     try {
-      final internetTest = await InternetAddress.lookup('google.com');
+      await InternetAddress.lookup('google.com');
       isInternet = true;
     } catch (error) {
       isInternet = false;
@@ -116,7 +116,7 @@ class _MealViewScreenState extends State<MealViewScreen> {
 
     void favMeal() async {
       try {
-        final internetTest = await InternetAddress.lookup('google.com');
+        await InternetAddress.lookup('google.com');
       } catch (error) {
         Metode.showErrorDialog(
           isJednoPoredDrugog: false,

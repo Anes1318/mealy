@@ -33,6 +33,9 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
   int _selectedIndex = 0;
 
   void _selectPage(int index) async {
+    if (index == _selectedIndex) {
+      return;
+    }
     setState(() {
       FocusManager.instance.primaryFocus?.unfocus();
 
@@ -42,9 +45,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
       await InternetAddress.lookup('google.com').then((value) {
         Provider.of<MealProvider>(context, listen: false).setIsInternet(true);
       });
-     
     } catch (error) {
-      
       Provider.of<MealProvider>(context, listen: false).setIsInternet(false);
     }
   }
