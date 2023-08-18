@@ -97,115 +97,78 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final medijakveri = MediaQuery.of(context);
-    return Scaffold(
-      body: SafeArea(
-        child: Container(
-          margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.07),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.01),
-              Text(
-                'Prijavite se',
-                style: Theme.of(context).textTheme.headline1,
-              ),
-              Form(
-                key: _form,
-                child: Container(
-                  child: Column(
-                    children: [
-                      InputField(
-                        isLabel: true,
-                        isMargin: true,
-                        visina: 18,
-                        borderRadijus: 10,
-                        medijakveri: medijakveri,
-                        label: 'Email',
-                        focusNode: emailNode,
-                        inputAction: TextInputAction.next,
-                        inputType: TextInputType.emailAddress,
-                        obscureText: false,
-                        onChanged: (_) => _form.currentState!.validate(),
-                        validator: (value) {
-                          if (sifraNode.hasFocus) {
-                            return null;
-                          } else if (value!.isEmpty) {
-                            return 'Molimo Vas da unesete email adresu';
-                          }
-                        },
-                        onSaved: (value) {
-                          _authData['email'] = value!.trim();
-                        },
-                        hintText: 'E-mail',
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            margin: EdgeInsets.only(
-                              bottom: 8,
-                              left: medijakveri.size.width * 0.02,
-                            ),
-                            child: Text(
-                              'Šifra',
-                              style: Theme.of(context).textTheme.headline4,
-                            ),
-                          ),
-                          TextFormField(
-                            keyboardType: TextInputType.text,
-                            textInputAction: TextInputAction.done,
-                            obscureText: isPassHidden,
-                            focusNode: sifraNode,
-                            onChanged: (_) => _form.currentState!.validate(),
-                            validator: (value) {
-                              if (!sifraNode.hasFocus) {
-                                return null;
-                              } else if (value!.isEmpty) {
-                                return 'Molimo Vas da unesete šifru';
-                              }
-                            },
-                            onFieldSubmitted: (_) {
-                              FocusManager.instance.primaryFocus?.unfocus();
-                              FocusScope.of(context).unfocus();
-
-                              emailNode.unfocus();
-                              sifraNode.unfocus();
-                              _login();
-                            },
-                            onSaved: (value) {
-                              _authData['sifra'] = value!;
-                            },
-                            decoration: InputDecoration(
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
-                              hintText: 'Šifra',
-                              filled: true,
-                              fillColor: Colors.white,
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(color: Colors.white),
-                                borderRadius: BorderRadius.circular(10),
+    return GestureDetector(
+      onTap: () {
+        FocusManager.instance.primaryFocus!.unfocus();
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: Container(
+            margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.07),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.01),
+                Text(
+                  'Prijavite se',
+                  style: Theme.of(context).textTheme.headline1,
+                ),
+                Form(
+                  key: _form,
+                  child: Container(
+                    child: Column(
+                      children: [
+                        InputField(
+                          isLabel: true,
+                          isMargin: true,
+                          visina: 18,
+                          borderRadijus: 10,
+                          medijakveri: medijakveri,
+                          label: 'Email',
+                          focusNode: emailNode,
+                          inputAction: TextInputAction.next,
+                          inputType: TextInputType.emailAddress,
+                          obscureText: false,
+                          onChanged: (_) => _form.currentState!.validate(),
+                          validator: (value) {
+                            if (sifraNode.hasFocus) {
+                              return null;
+                            } else if (value!.isEmpty) {
+                              return 'Molimo Vas da unesete email adresu';
+                            }
+                          },
+                          onSaved: (value) {
+                            _authData['email'] = value!.trim();
+                          },
+                          hintText: 'E-mail',
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              margin: EdgeInsets.only(
+                                bottom: 8,
+                                left: medijakveri.size.width * 0.02,
                               ),
-                              border: OutlineInputBorder(
-                                borderSide: const BorderSide(color: Colors.white),
-                                borderRadius: BorderRadius.circular(10),
+                              child: Text(
+                                'Šifra',
+                                style: Theme.of(context).textTheme.headline4,
                               ),
-                              suffixIcon: sifraNode.hasFocus
-                                  ? IconButton(
-                                      onPressed: () => changePassVisibility(),
-                                      icon: isPassHidden ? Icon(Iconsax.eye) : Icon(Iconsax.eye_slash),
-                                    )
-                                  : null,
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 60),
-                      isLoading
-                          ? const CircularProgressIndicator()
-                          : Button(
-                              isFullWidth: true,
-                              borderRadius: 20,
-                              visina: 18,
-                              funkcija: () {
+                            TextFormField(
+                              keyboardType: TextInputType.text,
+                              textInputAction: TextInputAction.done,
+                              obscureText: isPassHidden,
+                              focusNode: sifraNode,
+                              onChanged: (_) => _form.currentState!.validate(),
+                              validator: (value) {
+                                if (!sifraNode.hasFocus) {
+                                  return null;
+                                } else if (value!.isEmpty) {
+                                  return 'Molimo Vas da unesete šifru';
+                                }
+                              },
+                              onFieldSubmitted: (_) {
                                 FocusManager.instance.primaryFocus?.unfocus();
                                 FocusScope.of(context).unfocus();
 
@@ -213,49 +176,91 @@ class _LoginScreenState extends State<LoginScreen> {
                                 sifraNode.unfocus();
                                 _login();
                               },
-                              buttonText: 'Prijavite se',
-                              backgroundColor: Theme.of(context).colorScheme.secondary,
-                              textColor: Theme.of(context).primaryColor,
-                              isBorder: true,
+                              onSaved: (value) {
+                                _authData['sifra'] = value!;
+                              },
+                              decoration: InputDecoration(
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+                                hintText: 'Šifra',
+                                filled: true,
+                                fillColor: Colors.white,
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(color: Colors.white),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                border: OutlineInputBorder(
+                                  borderSide: const BorderSide(color: Colors.white),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                suffixIcon: sifraNode.hasFocus
+                                    ? IconButton(
+                                        onPressed: () => changePassVisibility(),
+                                        icon: isPassHidden ? Icon(Iconsax.eye) : Icon(Iconsax.eye_slash),
+                                      )
+                                    : null,
+                              ),
                             ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, ForgotPassScreen.routeName);
-                        },
-                        child: Text(
-                          'Zaboravili ste šifru?',
-                          style: Theme.of(context).textTheme.headline4,
+                          ],
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 60),
+                        isLoading
+                            ? const CircularProgressIndicator()
+                            : Button(
+                                isFullWidth: true,
+                                borderRadius: 20,
+                                visina: 18,
+                                funkcija: () {
+                                  FocusManager.instance.primaryFocus?.unfocus();
+                                  FocusScope.of(context).unfocus();
+
+                                  emailNode.unfocus();
+                                  sifraNode.unfocus();
+                                  _login();
+                                },
+                                buttonText: 'Prijavite se',
+                                backgroundColor: Theme.of(context).colorScheme.secondary,
+                                textColor: Theme.of(context).primaryColor,
+                                isBorder: true,
+                              ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, ForgotPassScreen.routeName);
+                          },
+                          child: Text(
+                            'Zaboravili ste šifru?',
+                            style: Theme.of(context).textTheme.headline4,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    PageRouteBuilder(
-                      transitionDuration: const Duration(milliseconds: 120),
-                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                        return SlideTransition(
-                          position: Tween<Offset>(
-                            begin: const Offset(-1, 0),
-                            end: Offset.zero,
-                          ).animate(animation),
-                          child: child,
-                        );
-                      },
-                      pageBuilder: (context, animation, duration) => RegisterScreen(),
-                    ),
-                  );
-                },
-                child: Text(
-                  'Nemate nalog?',
-                  style: Theme.of(context).textTheme.headline4,
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      PageRouteBuilder(
+                        transitionDuration: const Duration(milliseconds: 120),
+                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                          return SlideTransition(
+                            position: Tween<Offset>(
+                              begin: const Offset(-1, 0),
+                              end: Offset.zero,
+                            ).animate(animation),
+                            child: child,
+                          );
+                        },
+                        pageBuilder: (context, animation, duration) => RegisterScreen(),
+                      ),
+                    );
+                  },
+                  child: Text(
+                    'Nemate nalog?',
+                    style: Theme.of(context).textTheme.headline4,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

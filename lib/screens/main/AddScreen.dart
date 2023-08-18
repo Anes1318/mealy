@@ -13,10 +13,13 @@ import 'package:multiple_search_selection/multiple_search_selection.dart';
 import 'package:mealy/screens/main/BottomNavigationBarScreen.dart';
 // components
 import 'package:mealy/components/InputField.dart';
+import 'package:provider/provider.dart';
 import '../../models/availableTagovi.dart';
 import '../../models/tezina.dart';
 import 'package:mealy/components/Button.dart';
 import 'package:mealy/components/metode.dart';
+
+import '../../providers/MealProvider.dart';
 
 class AddScreen extends StatefulWidget {
   AddScreen({
@@ -1065,8 +1068,9 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                 style: Theme.of(context).textTheme.headline5!.copyWith(color: Colors.red),
                               ),
                             ),
-                          // SizedBox(height: widget.tastaturaHeight!),
+
                           const SizedBox(height: 60),
+                          SizedBox(height: EdgeInsets.fromViewPadding(WidgetsBinding.instance.window.viewInsets, WidgetsBinding.instance.window.devicePixelRatio).bottom),
                         ],
                       ),
                     ),

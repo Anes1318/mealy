@@ -12,6 +12,7 @@ class MealProvider with ChangeNotifier {
   Stream<QuerySnapshot<Map<String, dynamic>>>? _meals;
   DocumentSnapshot<Map<String, dynamic>>? _singleMeal;
   DocumentSnapshot<Map<String, dynamic>>? _user;
+  double? tastaturaHeight = 0;
 
   bool? _isInternet = true;
 
