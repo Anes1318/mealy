@@ -1037,16 +1037,15 @@ class _FavoriteScreenState extends State<FavoriteScreen> with TickerProviderStat
             StreamBuilder(
               stream: meals,
               builder: ((context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
+                final receptDocs = snapshot.data!.docs;
+                if (snapshot.connectionState == ConnectionState.none) {
                   return Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.66,
+                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.69,
                     child: const Center(
                       child: CircularProgressIndicator(),
                     ),
                   );
                 }
-
-                final receptDocs = snapshot.data!.docs;
                 receptDocs.sort((a, b) {
                   if (DateTime.parse(a.data()['createdAt']).isAfter(DateTime.parse(b.data()['createdAt']))) {
                     return 0;
@@ -1057,7 +1056,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> with TickerProviderStat
                 List<dynamic> favRecepti = [];
                 if (!isInternet!) {
                   return Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.66,
+                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.69,
                     child: Center(
                       child: Text(
                         'Nema internet konekcije',
@@ -1082,7 +1081,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> with TickerProviderStat
                 });
                 if (favRecepti.isEmpty) {
                   return Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.66,
+                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.69,
                     child: Center(
                       child: Text(
                         'Nema omiljenih recepata',
@@ -1093,7 +1092,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> with TickerProviderStat
                 }
 
                 return Container(
-                  height: (medijakveri.size.height - medijakveri.padding.top) * 0.66,
+                  height: (medijakveri.size.height - medijakveri.padding.top) * 0.69,
                   child: ListView.separated(
                       padding: EdgeInsets.zero,
                       separatorBuilder: ((context, index) => const SizedBox(height: 15)),

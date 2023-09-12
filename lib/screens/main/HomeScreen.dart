@@ -1037,17 +1037,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             StreamBuilder(
               stream: meals,
               builder: ((context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.66,
-                    child: const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
-                }
                 if (snapshot.connectionState == ConnectionState.none) {
                   return Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.66,
+                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.69,
                     child: const Center(
                       child: CircularProgressIndicator(),
                     ),
@@ -1057,7 +1049,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 final receptDocs = snapshot.data!.docs;
                 if (!isInternet!) {
                   return Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.66,
+                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.69,
                     child: Center(
                       child: Text(
                         'Nema internet konekcije',
@@ -1068,7 +1060,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 }
                 if (receptDocs.isEmpty) {
                   return Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.66,
+                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.69,
                     child: Center(
                       child: Text(
                         'Nema recepata',
@@ -1086,7 +1078,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 });
                 try {
                   return Container(
-                    height: medijakveri.size.height * 0.66,
+                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.69,
                     child: ListView.separated(
                         primary: false,
                         shrinkWrap: true,
