@@ -358,6 +358,11 @@ class _MealEditScreenState extends State<MealEditScreen> {
                                       _takeImage(true);
                                       Navigator.pop(context);
                                     },
+                                    isButton1Icon: true,
+                                    button1Icon: Icon(
+                                      Icons.camera_alt,
+                                      color: Theme.of(context).colorScheme.primary,
+                                    ),
                                     isButton2: true,
                                     button2Text: 'Galerija',
                                     button2Fun: () {
@@ -365,6 +370,11 @@ class _MealEditScreenState extends State<MealEditScreen> {
 
                                       Navigator.pop(context);
                                     },
+                                    isButton2Icon: true,
+                                    button2Icon: Icon(
+                                      Icons.photo,
+                                      color: Theme.of(context).colorScheme.primary,
+                                    ),
                                   );
                                 },
                                 child: Container(
