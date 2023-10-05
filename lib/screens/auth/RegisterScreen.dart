@@ -171,6 +171,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       body: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
           child: SafeArea(
             child: Container(
               margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.07),

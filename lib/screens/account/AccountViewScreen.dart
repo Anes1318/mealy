@@ -42,6 +42,7 @@ class _AccountViewScreenState extends State<AccountViewScreen> {
     final medijakveri = MediaQuery.of(context);
     return Scaffold(
       body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         child: Container(
           margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.07),
           child: Column(
@@ -131,6 +132,7 @@ class _AccountViewScreenState extends State<AccountViewScreen> {
                       return Container(
                         height: (medijakveri.size.height - medijakveri.padding.top) * 0.68,
                         child: ListView.separated(
+                            physics: const BouncingScrollPhysics(),
                             padding: EdgeInsets.zero,
                             separatorBuilder: ((context, index) => const SizedBox(height: 15)),
                             itemCount: ownRecepti.length,

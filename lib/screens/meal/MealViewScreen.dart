@@ -254,6 +254,7 @@ class _MealViewScreenState extends State<MealViewScreen> {
         ),
       ),
       body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         child: Column(
           children: [
             Container(
@@ -479,6 +480,7 @@ class _MealViewScreenState extends State<MealViewScreen> {
                         Container(
                           height: 30,
                           child: ListView.separated(
+                            physics: const BouncingScrollPhysics(),
                             separatorBuilder: (context, index) => const SizedBox(width: 10),
                             padding: EdgeInsets.zero,
                             scrollDirection: Axis.horizontal,
@@ -556,6 +558,7 @@ class _MealViewScreenState extends State<MealViewScreen> {
                         ),
                         const SizedBox(height: 10),
                         ListView.separated(
+                          physics: const BouncingScrollPhysics(),
                           separatorBuilder: (context, index) => const SizedBox(height: 10),
                           padding: EdgeInsets.zero,
                           shrinkWrap: true, // zauzima min content prostor
@@ -608,6 +611,7 @@ class _MealViewScreenState extends State<MealViewScreen> {
                           ),
                           const SizedBox(height: 10),
                           ListView.separated(
+                            physics: const BouncingScrollPhysics(),
                             separatorBuilder: (context, index) => const SizedBox(height: 10),
                             padding: EdgeInsets.zero,
                             shrinkWrap: true, // zauzima min content prostor

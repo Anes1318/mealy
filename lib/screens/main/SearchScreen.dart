@@ -316,7 +316,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   }
 
                   searchedMeals.sort((a, b) {
-                    if (DateTime.parse(a['favorites'].values.toString().replaceAll(RegExp(r'[()]'), '')).isAfter(DateTime.parse(b['favorites'].values.toString().replaceAll(RegExp(r'[()]'), '')))) {
+                    if (DateTime.parse(a.data()['createdAt']).isAfter(DateTime.parse(b.data()['createdAt']))) {
                       return 0;
                     } else {
                       return 1;
@@ -327,8 +327,8 @@ class _SearchScreenState extends State<SearchScreen> {
                       height: (medijakveri.size.height - medijakveri.padding.top) * 0.758,
                       child: Center(
                         child: Text(
-                          'Nema recepata za unijete filtere.',
-                          style: Theme.of(context).textTheme.headline2,
+                          widget.searchString != null && widget.searchString != '' ? 'Nema recepata za unijetu pretragu.' : 'Nema recepata za unijete filtere.',
+                          style: Theme.of(context).textTheme.headline3,
                         ),
                       ),
                     );
@@ -337,6 +337,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   return Container(
                     height: medijakveri.size.height * 0.758,
                     child: ListView.separated(
+                        physics: const BouncingScrollPhysics(),
                         padding: EdgeInsets.zero,
                         separatorBuilder: ((context, index) => const SizedBox(height: 15)),
                         itemCount: searchedMeals.length,

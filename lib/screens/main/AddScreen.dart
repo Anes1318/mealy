@@ -276,6 +276,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
     final medijakveri = MediaQuery.of(context);
 
     return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: Column(
@@ -334,6 +335,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
             SizedBox(
               height: (medijakveri.size.height - medijakveri.padding.top) * 0.80,
               child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
                 child: Column(
                   children: [
                     const SizedBox(height: 20),
@@ -446,7 +448,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                 return null;
                               } else if (value!.trim().isEmpty || value == '') {
                                 return 'Molimo Vas da unesete naziv recepta';
-                              } else if (!RegExp(r'^[a-zA-Z0-9 ]+$').hasMatch(value)) {
+                              } else if (!RegExp(r'^[.,;:!?\"()\[\]{}<>@#$%^&*_+=/\\|`~a-zA-Z0-9 ]*$').hasMatch(value)) {
                                 return 'Taj naziv nije validan';
                               } else if (value.length < 2) {
                                 return 'Naziv recepta mora biti duži';
@@ -482,7 +484,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                 return null;
                               } else if (value!.trim().isEmpty) {
                                 return 'Molimo Vas da unesete opis jela';
-                              } else if (!RegExp(r'^[a-zA-Z0-9 ]+$').hasMatch(value)) {
+                              } else if (!RegExp(r'^[.,;:!?\"()\[\]{}<>@#$%^&*_+=/\\|`~a-zA-Z0-9 ]*$').hasMatch(value)) {
                                 return 'Taj opis nije validan';
                               } else if (value.length < 2) {
                                 return 'Opis jela mora biti duži';
@@ -689,6 +691,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                           ),
                           const SizedBox(height: 15),
                           ListView.separated(
+                            physics: const BouncingScrollPhysics(),
                             shrinkWrap: true,
                             primary: false,
                             padding: EdgeInsets.zero,
@@ -710,9 +713,6 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                   focusNode: sastojakFokus[index],
                                   obscureText: false,
                                   kapitulacija: TextCapitalization.sentences,
-                                  textInputFormater: <TextInputFormatter>[
-                                    // FilteringTextInputFormatter.allow(RegExp(r'^[.,;\"()\[\]{}a-zA-Z0-9]*$')),
-                                  ],
                                   onFieldSubmitted: (_) {
                                     if (index + 1 < sastojakFokus.length) {
                                       FocusScope.of(context).requestFocus(sastojakFokus[index + 1]);
@@ -800,6 +800,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                           ),
                           const SizedBox(height: 15),
                           ListView.separated(
+                            physics: const BouncingScrollPhysics(),
                             shrinkWrap: true,
                             primary: false,
                             padding: EdgeInsets.zero,

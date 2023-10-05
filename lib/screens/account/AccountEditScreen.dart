@@ -221,6 +221,7 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
         body: Container(
           margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.07),
           child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
             child: Column(
               children: [
                 SafeArea(

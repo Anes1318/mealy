@@ -279,6 +279,7 @@ class _MealEditScreenState extends State<MealEditScreen> {
 
     return Scaffold(
       body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         child: GestureDetector(
           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
           child: Container(
@@ -339,6 +340,7 @@ class _MealEditScreenState extends State<MealEditScreen> {
                 SizedBox(
                   height: (medijakveri.size.height - medijakveri.padding.top) * 0.91,
                   child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
                     child: Column(
                       children: [
                         const SizedBox(height: 20),
@@ -656,8 +658,9 @@ class _MealEditScreenState extends State<MealEditScreen> {
                                 'Sastojci',
                                 style: Theme.of(context).textTheme.headline2,
                               ),
-                              SizedBox(height: 15),
+                              const SizedBox(height: 15),
                               ListView.separated(
+                                physics: const BouncingScrollPhysics(),
                                 shrinkWrap: true,
                                 primary: false,
                                 padding: EdgeInsets.zero,
@@ -690,7 +693,7 @@ class _MealEditScreenState extends State<MealEditScreen> {
                                           return null;
                                         } else if (value!.trim().isEmpty || value == '') {
                                           return 'Molimo Vas da unesete polje';
-                                        } else if (!RegExp(r'^[.,;:!?\"()\[\]{}<>@#$%^&*_+=/\\|`~a-zA-Z0-9]*$').hasMatch(value)) {
+                                        } else if (!RegExp(r'^[.,;:!?\"()\[\]{}<>@#$%^&*_+=/\\|`~a-zA-Z0-9 ]*$').hasMatch(value)) {
                                           return 'Polje nije validno';
                                         } else if (value.length > 150) {
                                           return 'Polje mora biti kraće';
@@ -744,6 +747,7 @@ class _MealEditScreenState extends State<MealEditScreen> {
 
                                       sastojakInput.add(TextEditingController());
                                       sastojakFokus.add(FocusNode());
+                                      sastojakFokus[sastojakFokus.length - 1].requestFocus();
                                     });
                                   },
                                   child: Icon(
@@ -764,6 +768,7 @@ class _MealEditScreenState extends State<MealEditScreen> {
                               ),
                               const SizedBox(height: 15),
                               ListView.separated(
+                                physics: const BouncingScrollPhysics(),
                                 shrinkWrap: true,
                                 primary: false,
                                 padding: EdgeInsets.zero,
@@ -814,7 +819,7 @@ class _MealEditScreenState extends State<MealEditScreen> {
                                           return 'Molimo Vas da unesete polje';
                                         } else if (value!.trim().isEmpty || value == '') {
                                           return 'Molimo Vas da unesete polje';
-                                        } else if (!RegExp(r'^[.,;:!?\"()\[\]{}<>@#$%^&*_+=/\\|`~a-zA-Z0-9]*$').hasMatch(value)) {
+                                        } else if (!RegExp(r'^[.,;:!?\"()\[\]{}<>@#$%^&*_+=/\\|`~a-zA-Z0-9 ]*$').hasMatch(value)) {
                                           return 'Polje nije validno';
                                         } else if (value.length > 300) {
                                           return 'Polje mora biti kraće';
@@ -869,6 +874,7 @@ class _MealEditScreenState extends State<MealEditScreen> {
                                       }
                                       korakInput.add(TextEditingController());
                                       korakFokus.add(FocusNode());
+                                      korakFokus[korakFokus.length - 1].requestFocus();
                                     });
                                   },
                                   child: Icon(
@@ -1031,6 +1037,7 @@ class _MealEditScreenState extends State<MealEditScreen> {
                                 ),
 
                               const SizedBox(height: 60),
+                              SizedBox(height: medijakveri.viewInsets.bottom),
                             ],
                           ),
                         ),
