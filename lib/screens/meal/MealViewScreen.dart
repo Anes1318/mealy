@@ -386,15 +386,16 @@ class _MealViewScreenState extends State<MealViewScreen> {
                               'Ocijenite ovaj recept',
                               style: Theme.of(context).textTheme.headline3,
                             ),
-                            GestureDetector(
-                              onTap: () {
-                                ref!.removeRateMeal(context, widget.receptId);
-                              },
-                              child: Text(
-                                'Uklonite ocjenu',
-                                style: Theme.of(context).textTheme.headline4,
+                            if (userRating != 0)
+                              GestureDetector(
+                                onTap: () {
+                                  ref!.removeRateMeal(context, widget.receptId);
+                                },
+                                child: Text(
+                                  'Uklonite ocjenu',
+                                  style: Theme.of(context).textTheme.headline4,
+                                ),
                               ),
-                            ),
                           ],
                         ),
                         const SizedBox(height: 15),

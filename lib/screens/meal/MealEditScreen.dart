@@ -190,7 +190,7 @@ class _MealEditScreenState extends State<MealEditScreen> {
         'ratings': widget.ratings,
       }, SetOptions(merge: true)).then((value) async {
         if (_storedImage != null) {
-          await FirebaseStorage.instance.ref().child(widget.receptId).delete();
+          await FirebaseStorage.instance.ref().child('receptImages').child('${widget.receptId}.jpg').delete();
           final uploadedImage = await FirebaseStorage.instance.ref().child('receptImages').child('${widget.receptId}.jpg').putFile(_storedImage!).then((value) async {
             value.ref.name;
             final imageUrl = await value.ref.getDownloadURL();
@@ -220,6 +220,7 @@ class _MealEditScreenState extends State<MealEditScreen> {
         Navigator.pushReplacementNamed(context, BottomNavigationBarScreen.routeName);
       });
     } catch (error) {
+      print(error);
       setState(() {
         isLoading = false;
       });
@@ -451,10 +452,10 @@ class _MealEditScreenState extends State<MealEditScreen> {
                                 validator: (value) {
                                   if (opisNode.hasFocus || brOsobaNode.hasFocus || vrPripremeNode.hasFocus) {
                                     return null;
-                                  } else if (!RegExp(r'^[a-zA-Z0-9 ]+$').hasMatch(value!)) {
-                                    return 'Taj naziv nije validan';
-                                  } else if (value!.isEmpty || value.trim().isEmpty) {
+                                  } else if (value!.trim().isEmpty || value == '') {
                                     return 'Molimo Vas da unesete naziv recepta';
+                                  } else if (!RegExp(r'^[.,;:!?\"()\[\]{}<>@#$%^&*_+=/\\|`~a-zA-Z0-9 ]*$').hasMatch(value)) {
+                                    return 'Taj naziv nije validan';
                                   } else if (value.length < 2) {
                                     return 'Naziv recepta mora biti duži';
                                   } else if (value.length > 45) {
@@ -485,10 +486,10 @@ class _MealEditScreenState extends State<MealEditScreen> {
                                 validator: (value) {
                                   if (nazivNode.hasFocus || brOsobaNode.hasFocus || vrPripremeNode.hasFocus) {
                                     return null;
-                                  } else if (!RegExp(r'^[a-zA-Z0-9 ]+$').hasMatch(value!)) {
-                                    return 'Taj opis nije validan';
-                                  } else if (value.isEmpty || value.trim().isEmpty) {
+                                  } else if (value!.trim().isEmpty) {
                                     return 'Molimo Vas da unesete opis jela';
+                                  } else if (!RegExp(r'^[.,;:!?\"()\[\]{}<>@#$%^&*_+=/\\|`~a-zA-Z0-9 ]*$').hasMatch(value)) {
+                                    return 'Taj opis nije validan';
                                   } else if (value.length < 2) {
                                     return 'Opis jela mora biti duži';
                                   } else if (value.length > 250) {
