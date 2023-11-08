@@ -38,6 +38,7 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
   final imeNode = FocusNode();
   final prezimeNode = FocusNode();
   final emailNode = FocusNode();
+  final sifraNode = FocusNode();
 
   @override
   void initState() {
@@ -50,6 +51,16 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
     });
     emailNode.addListener(() {
       setState(() {});
+    });
+    sifraNode.addListener(() {
+      setState(() {});
+    });
+  }
+
+  bool isPassHidden = true;
+  void changePassVisibility() {
+    setState(() {
+      isPassHidden = !isPassHidden;
     });
   }
 
@@ -83,106 +94,73 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
       return;
     }
     _form.currentState!.save();
+    String imageUrl = '';
 
     try {
-      String imageUrl = '';
-
       setState(() {
         isLoading = true;
       });
+      await FirebaseAuth.instance.signInWithEmailAndPassword(email: FirebaseAuth.instance.currentUser!.email!, password: _authData['sifra']!).then((value) async {
+        if (FirebaseAuth.instance.currentUser!.displayName != '${_authData['ime']} ${_authData['prezime']}') {
+          await FirebaseAuth.instance.currentUser!.updateDisplayName('${_authData['ime']} ${_authData['prezime']}');
+          await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).update(
+            {
+              'userName': '${_authData['ime']} ${_authData['prezime']}',
+            },
+          );
+        }
+        if (FirebaseAuth.instance.currentUser!.email != _authData['email']!) {
+          await FirebaseAuth.instance.currentUser!.updateEmail(_authData['email']!);
+          await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).update(
+            {
+              'email': FirebaseAuth.instance.currentUser!.email,
+            },
+          );
+        }
 
-      try {
-        FirebaseAuth.instance.signInWithEmailAndPassword(email: FirebaseAuth.instance.currentUser!.email!, password: _authData['sifra']!);
-      } on FirebaseAuthException catch (error) {
+        if (uklonioSliku == true) {
+          await FirebaseAuth.instance.currentUser!.updatePhotoURL(null);
+          await FirebaseStorage.instance.ref().child('userImages').child('${FirebaseAuth.instance.currentUser!.uid}.jpg').delete().then((value) async {
+            await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).update(
+              {
+                'imageUrl': '',
+              },
+            );
+          });
+        } else if (_storedImage != null) {
+          await FirebaseStorage.instance.ref().child('userImages').child('${FirebaseAuth.instance.currentUser!.uid}.jpg').putFile(_storedImage!).then((value) async {
+            imageUrl = await value.ref.getDownloadURL();
+            await FirebaseAuth.instance.currentUser!.updatePhotoURL(imageUrl);
+            await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).update(
+              {
+                'imageUrl': imageUrl,
+              },
+            );
+          });
+        }
         setState(() {
           isLoading = false;
         });
-
-        Metode.showErrorDialog(
-          isJednoPoredDrugog: false,
-          message: Metode.getMessageFromErrorCode(error),
-          context: context,
-          naslov: 'Greška',
-          button1Text: 'Zatvori',
-          button1Fun: () => Navigator.pop(context),
-          isButton2: false,
-        );
-      } catch (error) {
-        setState(() {
-          isLoading = false;
-        });
-
-        Metode.showErrorDialog(
-          isJednoPoredDrugog: false,
-          message: 'Došlo je do greške',
-          context: context,
-          naslov: 'Greška',
-          button1Text: 'Zatvori',
-          button1Fun: () => Navigator.pop(context),
-          isButton2: false,
-        );
-      }
-      if (FirebaseAuth.instance.currentUser!.displayName != '${_authData['ime']} ${_authData['prezime']}') {
-        await FirebaseAuth.instance.currentUser!.updateDisplayName('${_authData['ime']} ${_authData['prezime']}');
-        await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).update(
-          {
-            'userName': '${_authData['ime']} ${_authData['prezime']}',
-          },
-        );
-      }
-      if (FirebaseAuth.instance.currentUser!.email != _authData['email']!) {
-        await FirebaseAuth.instance.currentUser!.updateEmail(_authData['email']!);
-        await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).update(
-          {
-            'email': FirebaseAuth.instance.currentUser!.email,
-          },
-        );
-      }
-
-      if (uklonioSliku == true) {
-        await FirebaseAuth.instance.currentUser!.updatePhotoURL(null);
-        await FirebaseStorage.instance.ref().child('userImages').child('${FirebaseAuth.instance.currentUser!.uid}.jpg').delete().then((value) async {
-          await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).update(
-            {
-              'imageUrl': '',
-            },
-          );
-        });
-      } else if (_storedImage != null) {
-        await FirebaseStorage.instance.ref().child('userImages').child('${FirebaseAuth.instance.currentUser!.uid}.jpg').putFile(_storedImage!).then((value) async {
-          imageUrl = await value.ref.getDownloadURL();
-          await FirebaseAuth.instance.currentUser!.updatePhotoURL(imageUrl);
-          await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).update(
-            {
-              'imageUrl': imageUrl,
-            },
-          );
-        });
-      }
-
-      setState(() {
-        isLoading = false;
-      });
-
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Uspješno ste uredili svoj nalog',
-            style: Theme.of(context).textTheme.headline4,
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Uspješno ste uredili svoj nalog',
+              style: Theme.of(context).textTheme.headline4,
+            ),
+            duration: const Duration(milliseconds: 1500),
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Theme.of(context).colorScheme.secondary,
+            elevation: 4,
           ),
-          duration: const Duration(milliseconds: 1500),
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: Theme.of(context).colorScheme.secondary,
-          elevation: 4,
-        ),
-      );
-      Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+        );
+
+        Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+      });
     } on FirebaseAuthException catch (error) {
       setState(() {
         isLoading = false;
       });
-      print(error);
 
       Metode.showErrorDialog(
         isJednoPoredDrugog: false,
@@ -362,7 +340,6 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
                         setState(() {
                           _storedImage = null;
                           uklonioSliku = true;
-                          print(uklonioSliku);
                         });
                       },
                     ),
@@ -463,6 +440,65 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
                         onSaved: (value) {
                           _authData['email'] = value!;
                         },
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(
+                              bottom: 8,
+                              left: medijakveri.size.width * 0.02,
+                            ),
+                            child: Text(
+                              'Šifra',
+                              style: Theme.of(context).textTheme.headline4,
+                            ),
+                          ),
+                          TextFormField(
+                            keyboardType: TextInputType.text,
+                            textInputAction: TextInputAction.done,
+                            obscureText: isPassHidden,
+                            focusNode: sifraNode,
+                            onChanged: (_) => _form.currentState!.validate(),
+                            validator: (value) {
+                              if (imeNode.hasFocus || prezimeNode.hasFocus || emailNode.hasFocus) {
+                                return null;
+                              } else if (value!.isEmpty) {
+                                return 'Molimo Vas da unesete šifru';
+                              }
+                            },
+                            onFieldSubmitted: (_) {
+                              FocusManager.instance.primaryFocus?.unfocus();
+                              FocusScope.of(context).unfocus();
+
+                              emailNode.unfocus();
+                              sifraNode.unfocus();
+                            },
+                            onSaved: (value) {
+                              _authData['sifra'] = value!;
+                            },
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+                              hintText: 'Šifra',
+                              filled: true,
+                              fillColor: Colors.white,
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(color: Colors.white),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              border: OutlineInputBorder(
+                                borderSide: const BorderSide(color: Colors.white),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              suffixIcon: sifraNode.hasFocus
+                                  ? IconButton(
+                                      onPressed: () => changePassVisibility(),
+                                      icon: isPassHidden ? Icon(Iconsax.eye) : Icon(Iconsax.eye_slash),
+                                    )
+                                  : null,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),

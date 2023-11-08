@@ -14,6 +14,7 @@ class Metode {
 
   static void showErrorDialog({
     String? message,
+    Widget? sifra,
     required BuildContext context,
     required String naslov,
     required String button1Text,
@@ -53,7 +54,9 @@ class Metode {
                     textAlign: TextAlign.center,
                   ),
                 )
-              : null,
+              : sifra != null
+                  ? sifra
+                  : null,
           actions: [
             isJednoPoredDrugog == true
                 ? Row(
