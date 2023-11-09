@@ -162,7 +162,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               focusNode: sifraNode,
                               onChanged: (_) => _form.currentState!.validate(),
                               validator: (value) {
-                                if (!sifraNode.hasFocus) {
+                                if (emailNode.hasFocus) {
                                   return null;
                                 } else if (value!.isEmpty) {
                                   return 'Molimo Vas da unesete šifru';

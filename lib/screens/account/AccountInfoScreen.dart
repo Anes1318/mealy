@@ -14,6 +14,7 @@ import 'package:provider/provider.dart';
 
 import '../../components/metode.dart';
 import '../../providers/MealProvider.dart';
+import 'AccountDeleteScreen.dart';
 
 class AccountInfoScreen extends StatefulWidget {
   static const String routeName = '/AccountInfoScreen';
@@ -179,79 +180,21 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
                           isFullWidth: true,
                           isBorder: false,
                           funkcija: () async {
-                            Metode.showErrorDialog(
-                              context: context,
-                              naslov: 'Da li ste sigurni da želite da obrišete svoj nalog?',
-                              button1Text: 'Ne',
-                              isButton1Icon: true,
-                              button1Icon: Icon(
-                                Iconsax.close_circle,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                              button1Fun: () {
-                                Navigator.pop(context);
-                              },
-                              isButton2: true,
-                              button2Text: 'Da',
-                              isButton2Icon: true,
-                              button2Icon: Icon(
-                                Iconsax.tick_circle,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                              button2Fun: () async {
-                                try {
-                                  await InternetAddress.lookup('google.com');
-                                } catch (error) {
-                                  Navigator.pop(context);
-
-                                  Metode.showErrorDialog(
-                                    isJednoPoredDrugog: false,
-                                    message: "Došlo je do greške sa internetom. Provjerite svoju konekciju.",
-                                    context: context,
-                                    naslov: 'Greška',
-                                    button1Text: 'Zatvori',
-                                    button1Fun: () => Navigator.pop(context),
-                                    isButton2: false,
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                transitionDuration: const Duration(milliseconds: 150),
+                                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                  return SlideTransition(
+                                    position: Tween<Offset>(
+                                      begin: const Offset(1, 0),
+                                      end: Offset.zero,
+                                    ).animate(animation),
+                                    child: child,
                                   );
-                                  return;
-                                }
-
-                                try {
-                                  setState(() {
-                                    isLoading = true;
-                                  });
-                                  if (ownReceptiIds.isNotEmpty) {
-                                    ownReceptiIds.forEach((element) async {
-                                      await FirebaseFirestore.instance.collection('recepti').doc(element).delete();
-                                      await FirebaseStorage.instance.ref().child('receptImages').child('${element}.jpg').delete();
-                                    });
-                                  }
-                                  await FirebaseStorage.instance.ref().child('userImages').child('${FirebaseAuth.instance.currentUser!.uid}.jpg').delete();
-
-                                  await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).delete();
-
-                                  await FirebaseAuth.instance.currentUser!.delete().then((value) {
-                                    setState(() {
-                                      isLoading = false;
-                                    });
-                                    Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
-                                  });
-                                  // TODO: TESTIRAJJJ.
-                                } catch (e) {
-                                  print(e);
-                                  Metode.showErrorDialog(
-                                    isJednoPoredDrugog: false,
-                                    context: context,
-                                    naslov: 'Došlo je do greške',
-                                    button1Text: 'Zatvori',
-                                    button1Fun: () {
-                                      Navigator.pop(context);
-                                    },
-                                    isButton2: false,
-                                  );
-                                }
-                              },
-                              isJednoPoredDrugog: true,
+                                },
+                                pageBuilder: (context, animation, duration) => const AccountDeleteScreen(),
+                              ),
                             );
                           },
                         ),
