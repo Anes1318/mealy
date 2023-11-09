@@ -454,7 +454,7 @@ class _MealEditScreenState extends State<MealEditScreen> {
                                     return null;
                                   } else if (value!.trim().isEmpty || value == '') {
                                     return 'Molimo Vas da unesete naziv recepta';
-                                  } else if (!RegExp(r'^[.,;:!?\"()\[\]{}<>@#$%^&*_+=/\\|`~a-zA-Z0-9 ]*$').hasMatch(value)) {
+                                  } else if (!RegExp(r'^[.,;:!?\"()\[\]{}<>@#$%^&*_+=/\\|`~a-zA-Z0-9\S ]+$').hasMatch(value)) {
                                     return 'Taj naziv nije validan';
                                   } else if (value.length < 2) {
                                     return 'Naziv recepta mora biti duži';
@@ -488,11 +488,11 @@ class _MealEditScreenState extends State<MealEditScreen> {
                                     return null;
                                   } else if (value!.trim().isEmpty) {
                                     return 'Molimo Vas da unesete opis jela';
-                                  } else if (!RegExp(r'^[.,;:!?\"()\[\]{}<>@#$%^&*_+=/\\|`~a-zA-Z0-9 ]*$').hasMatch(value)) {
+                                  } else if (!RegExp(r'^[.,;:!?\"()\[\]{}<>@#$%^&*_+=/\\|`~a-zA-Z0-9\S ]+$').hasMatch(value)) {
                                     return 'Taj opis nije validan';
                                   } else if (value.length < 2) {
                                     return 'Opis jela mora biti duži';
-                                  } else if (value.length > 250) {
+                                  } else if (value.length > 450) {
                                     return 'Opis jela mora biti kraći';
                                   }
                                 },
@@ -694,7 +694,7 @@ class _MealEditScreenState extends State<MealEditScreen> {
                                           return null;
                                         } else if (value!.trim().isEmpty || value == '') {
                                           return 'Molimo Vas da unesete polje';
-                                        } else if (!RegExp(r'^[.,;:!?\"()\[\]{}<>@#$%^&*_+=/\\|`~a-zA-Z0-9 ]*$').hasMatch(value)) {
+                                        } else if (!RegExp(r'^[.,;:!?\"()\[\]{}<>@#$%^&*_+=/\\|`~a-zA-Z0-9\S ]*$').hasMatch(value)) {
                                           return 'Polje nije validno';
                                         } else if (value.length > 150) {
                                           return 'Polje mora biti kraće';
@@ -820,7 +820,7 @@ class _MealEditScreenState extends State<MealEditScreen> {
                                           return 'Molimo Vas da unesete polje';
                                         } else if (value!.trim().isEmpty || value == '') {
                                           return 'Molimo Vas da unesete polje';
-                                        } else if (!RegExp(r'^[.,;:!?\"()\[\]{}<>@#$%^&*_+=/\\|`~a-zA-Z0-9 ]*$').hasMatch(value)) {
+                                        } else if (!RegExp(r'^[.,;:!?\"()\[\]{}<>@#$%^&*_+=/\\|`~a-zA-Z0-9\S ]*$').hasMatch(value)) {
                                           return 'Polje nije validno';
                                         } else if (value.length > 300) {
                                           return 'Polje mora biti kraće';

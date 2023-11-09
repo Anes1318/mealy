@@ -41,4 +41,6 @@ List<String> availableTagovi = [
   "Kafa",
   "Sendvič",
   "Koktel",
+  "Tijesto",
+  "Tjestenina",
 ];
