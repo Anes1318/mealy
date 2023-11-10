@@ -416,7 +416,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               TextFormField(
                                 focusNode: pass2Node,
                                 keyboardType: TextInputType.text,
-                                textInputAction: TextInputAction.next,
+                                textInputAction: TextInputAction.done,
                                 obscureText: isPassHidden2,
                                 onChanged: (_) => _form.currentState!.validate(),
                                 validator: (value) {

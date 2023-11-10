@@ -1,26 +1,23 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:mealy/components/CustomAppbar.dart';
 import 'package:provider/provider.dart';
 
 import '../../components/Button.dart';
 import '../../components/metode.dart';
 import '../../providers/MealProvider.dart';
 
-class AccountDeleteScreen extends StatefulWidget {
-  static const String routeName = '/AccountDeleteScreen';
-  const AccountDeleteScreen({super.key});
+class AccountChangePassScreen extends StatefulWidget {
+  static const String routeName = '/AccountChangePassScreen';
+  const AccountChangePassScreen({super.key});
 
   @override
-  State<AccountDeleteScreen> createState() => _AccountDeleteScreenState();
+  State<AccountChangePassScreen> createState() => _AccountChangePassScreenState();
 }
 
-class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
+class _AccountChangePassScreenState extends State<AccountChangePassScreen> {
   final _form = GlobalKey<FormState>();
 
   final sifraNode = FocusNode();
@@ -47,15 +44,12 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
     });
   }
 
-  Stream<QuerySnapshot<Map<String, dynamic>>>? meals;
   bool? isInternet;
   List<dynamic> ownReceptiIds = [];
   void didChangeDependencies() async {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
 
-    Provider.of<MealProvider>(context, listen: false).readMeals();
-    meals = Provider.of<MealProvider>(context, listen: false).meals;
     isInternet = Provider.of<MealProvider>(context).getIsInternet;
   }
 
@@ -88,7 +82,7 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
                       ),
                       child: FittedBox(
                         child: Text(
-                          'Obrišite nalog',
+                          'Promijenite šifru',
                           style: Theme.of(context).textTheme.headline2,
                         ),
                       ),
@@ -122,47 +116,6 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
                     style: Theme.of(context).textTheme.headline2,
                   ),
                   const SizedBox(height: 30),
-                  StreamBuilder(
-                    stream: meals,
-                    builder: ((context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const SizedBox(height: 0);
-                      }
-                      if (snapshot.connectionState == ConnectionState.none) {
-                        return const SizedBox(height: 0);
-                      }
-
-                      if (!isInternet!) {
-                        return const SizedBox(height: 0);
-                      }
-                      final receptDocs = snapshot.data!.docs;
-                      if (receptDocs.isEmpty) {
-                        return const SizedBox(height: 0);
-                      }
-                      receptDocs.sort((a, b) {
-                        if (DateTime.parse(a.data()['createdAt']).isAfter(DateTime.parse(b.data()['createdAt']))) {
-                          return 0;
-                        } else {
-                          return 1;
-                        }
-                      });
-
-                      receptDocs.sort((a, b) {
-                        if (DateTime.parse(a.data()['createdAt']).isAfter(DateTime.parse(b.data()['createdAt']))) {
-                          return 0;
-                        } else {
-                          return 1;
-                        }
-                      });
-
-                      receptDocs.forEach((element) {
-                        if (element['userId'] == FirebaseAuth.instance.currentUser!.uid) {
-                          ownReceptiIds.add(element.id);
-                        }
-                      });
-                      return const SizedBox(height: 0);
-                    }),
-                  ),
                   Form(
                     key: _form,
                     child: Column(
@@ -284,26 +237,7 @@ class _AccountDeleteScreenState extends State<AccountDeleteScreen> {
                               setState(() {
                                 isLoading = true;
                               });
-                              await FirebaseAuth.instance.signInWithEmailAndPassword(email: FirebaseAuth.instance.currentUser!.email!, password: _authData['sifra']!).then((value) async {
-                                if (ownReceptiIds.isNotEmpty) {
-                                  ownReceptiIds.forEach((element) async {
-                                    await FirebaseFirestore.instance.collection('recepti').doc(element).delete();
-                                    await FirebaseStorage.instance.ref().child('receptImages').child('${element}.jpg').delete();
-                                  });
-                                }
-                                try {
-                                  await FirebaseStorage.instance.ref().child('userImages').child('${FirebaseAuth.instance.currentUser!.uid}.jpg').delete();
-                                } catch (e) {}
-
-                                await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).delete();
-
-                                await FirebaseAuth.instance.currentUser!.delete().then((value) {
-                                  setState(() {
-                                    isLoading = false;
-                                  });
-                                  Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
-                                });
-                              });
+                              // change pass code
 
                               // TODO: TESTIRAJJJ.
                             } on FirebaseAuthException catch (error) {

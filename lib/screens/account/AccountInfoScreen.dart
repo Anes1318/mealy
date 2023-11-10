@@ -14,6 +14,7 @@ import 'package:provider/provider.dart';
 
 import '../../components/metode.dart';
 import '../../providers/MealProvider.dart';
+import 'AccountChangePassScreen.dart';
 import 'AccountDeleteScreen.dart';
 
 class AccountInfoScreen extends StatefulWidget {
@@ -26,6 +27,7 @@ class AccountInfoScreen extends StatefulWidget {
 
 class _AccountInfoScreenState extends State<AccountInfoScreen> {
   bool isLoading = false;
+  bool isPassLoading = false;
 
   Stream<QuerySnapshot<Map<String, dynamic>>>? meals;
   bool? isInternet;
@@ -116,18 +118,134 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
               Column(
                 children: [
                   const SizedBox(height: 10),
-                  Button(
-                    buttonText: 'Promijenite šifru',
-                    borderRadius: 20,
-                    visina: 18,
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                    textColor: Theme.of(context).colorScheme.primary,
-                    isBorder: true,
-                    funkcija: () {
-                      // FirebaseAuth.instance.currentUser!.updatePassword(newPassword);
-                    },
-                    isFullWidth: true,
-                  ),
+                  isPassLoading
+                      ? CircularProgressIndicator()
+                      : Button(
+                          buttonText: 'Promijenite šifru',
+                          borderRadius: 20,
+                          visina: 18,
+                          backgroundColor: Theme.of(context).colorScheme.secondary,
+                          textColor: Theme.of(context).colorScheme.primary,
+                          isBorder: true,
+                          funkcija: () async {
+                            Metode.showErrorDialog(
+                              context: context,
+                              naslov: 'Da li ste sigurni da želite da promijenite šifru?',
+                              button1Text: 'Ne',
+                              isButton1Icon: true,
+                              button1Icon: Icon(
+                                Iconsax.close_circle,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              button1Fun: () {
+                                Navigator.pop(context);
+                              },
+                              isButton2: true,
+                              button2Text: 'Da',
+                              isButton2Icon: true,
+                              button2Icon: Icon(
+                                Iconsax.tick_circle,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              button2Fun: () async {
+                                try {
+                                  await InternetAddress.lookup('google.com');
+                                } catch (error) {
+                                  Navigator.pop(context);
+
+                                  Metode.showErrorDialog(
+                                    isJednoPoredDrugog: false,
+                                    message: "Došlo je do greške sa internetom. Provjerite svoju konekciju.",
+                                    context: context,
+                                    naslov: 'Greška',
+                                    button1Text: 'Zatvori',
+                                    button1Fun: () => Navigator.pop(context),
+                                    isButton2: false,
+                                  );
+                                  return;
+                                }
+
+                                try {
+                                  setState(() {
+                                    isPassLoading = true;
+                                  });
+                                  Navigator.pop(context);
+                                  await FirebaseAuth.instance
+                                      .sendPasswordResetEmail(
+                                    email: FirebaseAuth.instance.currentUser!.email!,
+                                  )
+                                      .then((value) {
+                                    setState(() {
+                                      isPassLoading = false;
+                                    });
+
+                                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'Zahtjev za reset je uspješno poslat na Vaš email.',
+                                          style: Theme.of(context).textTheme.headline4,
+                                        ),
+                                        duration: const Duration(milliseconds: 1500),
+                                        behavior: SnackBarBehavior.floating,
+                                        backgroundColor: Theme.of(context).colorScheme.secondary,
+                                        elevation: 4,
+                                      ),
+                                    );
+                                  });
+                                } on FirebaseAuthException catch (error) {
+                                  setState(() {
+                                    isPassLoading = false;
+                                  });
+                                  Navigator.pop(context);
+                                  Metode.showErrorDialog(
+                                    isJednoPoredDrugog: false,
+                                    message: Metode.getMessageFromErrorCode(error),
+                                    context: context,
+                                    naslov: 'Greška',
+                                    button1Text: 'Zatvori',
+                                    button1Fun: () => Navigator.pop(context),
+                                    isButton2: false,
+                                  );
+                                } catch (error) {
+                                  setState(() {
+                                    isPassLoading = false;
+                                  });
+                                  Navigator.pop(context);
+
+                                  Metode.showErrorDialog(
+                                    isJednoPoredDrugog: false,
+                                    message: 'Došlo je do greške',
+                                    context: context,
+                                    naslov: 'Greška',
+                                    button1Text: 'Zatvori',
+                                    button1Fun: () => Navigator.pop(context),
+                                    isButton2: false,
+                                  );
+                                }
+                              },
+                              isJednoPoredDrugog: true,
+                            );
+                            // await FirebaseAuth.instance.sendPasswordResetEmail(email: "anocoka@gmail.com");
+                            // Navigator.push(
+                            //   context,
+                            //   PageRouteBuilder(
+                            //     transitionDuration: const Duration(milliseconds: 150),
+                            //     transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                            //       return SlideTransition(
+                            //         position: Tween<Offset>(
+                            //           begin: const Offset(1, 0),
+                            //           end: Offset.zero,
+                            //         ).animate(animation),
+                            //         child: child,
+                            //       );
+                            //     },
+                            //     pageBuilder: (context, animation, duration) => const AccountChangePassScreen(),
+                            //   ),
+                            // );
+                          },
+                          isFullWidth: true,
+                        ),
                   StreamBuilder(
                     stream: meals,
                     builder: ((context, snapshot) {
