@@ -297,7 +297,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> with TickerProviderStat
                                   color: Theme.of(context).scaffoldBackgroundColor,
                                 ),
                                 child: ListView(
-                                  // physics: const BouncingScrollPhysics(),
+                                  //
                                   // shrinkWrap: true,
                                   primary: false,
                                   children: [
@@ -1040,7 +1040,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> with TickerProviderStat
               final receptDocs = snapshot.data!.docs;
               if (snapshot.connectionState == ConnectionState.none) {
                 return Container(
-                  height: (medijakveri.size.height - medijakveri.padding.top) * 0.689,
+                  height: (medijakveri.size.height - medijakveri.padding.top) * 0.68,
                   child: const Center(
                     child: CircularProgressIndicator(),
                   ),
@@ -1056,7 +1056,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> with TickerProviderStat
               List<dynamic> favRecepti = [];
               if (!isInternet!) {
                 return Container(
-                  height: (medijakveri.size.height - medijakveri.padding.top) * 0.689,
+                  height: (medijakveri.size.height - medijakveri.padding.top) * 0.68,
                   child: Center(
                     child: Text(
                       'Nema internet konekcije',
@@ -1081,7 +1081,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> with TickerProviderStat
               });
               if (favRecepti.isEmpty) {
                 return Container(
-                  height: (medijakveri.size.height - medijakveri.padding.top) * 0.689,
+                  height: (medijakveri.size.height - medijakveri.padding.top) * 0.68,
                   child: Center(
                     child: Text(
                       'Nema omiljenih recepata',
@@ -1092,9 +1092,8 @@ class _FavoriteScreenState extends State<FavoriteScreen> with TickerProviderStat
               }
 
               return Container(
-                height: (medijakveri.size.height - medijakveri.padding.top) * 0.689,
+                height: (medijakveri.size.height - medijakveri.padding.top) * 0.68,
                 child: ListView.separated(
-                    physics: const BouncingScrollPhysics(),
                     padding: EdgeInsets.zero,
                     separatorBuilder: ((context, index) => const SizedBox(height: 15)),
                     itemCount: favRecepti.length,

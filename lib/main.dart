@@ -26,6 +26,7 @@ Future main() async {
     webRecaptchaSiteKey: 'recaptcha-v3-site-key',
     androidProvider: AndroidProvider.debug,
   );
+  Paint.enableDithering = true;
   Future.delayed(const Duration(milliseconds: 500), () {
     runApp(const MyApp());
   });

@@ -276,7 +276,6 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
     final medijakveri = MediaQuery.of(context);
 
     return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: Column(
@@ -335,7 +334,6 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
             SizedBox(
               height: (medijakveri.size.height - medijakveri.padding.top) * 0.80,
               child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
                 child: Column(
                   children: [
                     const SizedBox(height: 20),
@@ -695,7 +693,6 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                           ),
                           const SizedBox(height: 15),
                           ListView.separated(
-                            physics: const BouncingScrollPhysics(),
                             shrinkWrap: true,
                             primary: false,
                             padding: EdgeInsets.zero,
@@ -804,7 +801,6 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                           ),
                           const SizedBox(height: 15),
                           ListView.separated(
-                            physics: const BouncingScrollPhysics(),
                             shrinkWrap: true,
                             primary: false,
                             padding: EdgeInsets.zero,

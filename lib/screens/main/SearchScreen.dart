@@ -337,7 +337,6 @@ class _SearchScreenState extends State<SearchScreen> {
                   return Container(
                     height: medijakveri.size.height * 0.758,
                     child: ListView.separated(
-                        physics: const BouncingScrollPhysics(),
                         padding: EdgeInsets.zero,
                         separatorBuilder: ((context, index) => const SizedBox(height: 15)),
                         itemCount: searchedMeals.length,

@@ -280,7 +280,6 @@ class _MealEditScreenState extends State<MealEditScreen> {
 
     return Scaffold(
       body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
         child: GestureDetector(
           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
           child: Container(
@@ -341,7 +340,6 @@ class _MealEditScreenState extends State<MealEditScreen> {
                 SizedBox(
                   height: (medijakveri.size.height - medijakveri.padding.top) * 0.91,
                   child: SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
                     child: Column(
                       children: [
                         const SizedBox(height: 20),
@@ -661,7 +659,6 @@ class _MealEditScreenState extends State<MealEditScreen> {
                               ),
                               const SizedBox(height: 15),
                               ListView.separated(
-                                physics: const BouncingScrollPhysics(),
                                 shrinkWrap: true,
                                 primary: false,
                                 padding: EdgeInsets.zero,
@@ -769,7 +766,6 @@ class _MealEditScreenState extends State<MealEditScreen> {
                               ),
                               const SizedBox(height: 15),
                               ListView.separated(
-                                physics: const BouncingScrollPhysics(),
                                 shrinkWrap: true,
                                 primary: false,
                                 padding: EdgeInsets.zero,
