@@ -37,6 +37,8 @@ List<String> availableTagovi = [
   "Tradicionalno",
   "Prilog",
   "Sos",
+  "Pecivo",
+  "Namaz",
   "Predjelo",
   "Voćno",
   "Sladoled",

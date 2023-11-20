@@ -478,7 +478,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                             obscureText: false,
                             kapitulacija: TextCapitalization.sentences,
                             borderRadijus: 10,
-                            brMaxLinija: 4,
+                            brMaxLinija: 5,
                             brMinLinija: 4,
                             onChanged: (_) => _form.currentState!.validate(),
                             validator: (value) {
@@ -486,7 +486,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                 return null;
                               } else if (value!.trim().isEmpty) {
                                 return 'Molimo Vas da unesete opis jela';
-                              } else if (!RegExp(r'^[.,;:!?\"()\[\]{}<>@#$%^&*_+=/\\|`~a-zA-Z0-9\S ]+$').hasMatch(value)) {
+                              } else if (!RegExp(r'^[.,;:!?\"()\[\]{}<>@#$%^&*_+=/\\|`~a-zA-Z0-9\S \n]+$').hasMatch(value)) {
                                 return 'Taj opis nije validan';
                               } else if (value.length < 2) {
                                 return 'Opis jela mora biti duži';
@@ -828,7 +828,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                 InputField(
                                   controller: korakInput[index],
                                   focusNode: korakFokus[index],
-                                  brMaxLinija: 3,
+                                  brMaxLinija: 5,
                                   isMargin: false,
                                   medijakveri: medijakveri,
                                   hintText: "Korak",

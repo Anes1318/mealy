@@ -175,7 +175,7 @@ class _ForgotPassScreenState extends State<ForgotPassScreen> {
                     Navigator.pop(context);
                   },
                   child: Text(
-                    'Nazad na login',
+                    'Nazad na prijavu',
                     style: Theme.of(context).textTheme.headline4,
                   ),
                 ),
