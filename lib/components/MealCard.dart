@@ -168,16 +168,18 @@ class _MealCardState extends State<MealCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        width: widget.medijakveri.size.width * 0.5, // da bi row uzeo sto vise mesta i razdvojio naziv i srce
+                        width: widget.medijakveri.size.width * 0.53, // da bi row uzeo sto vise mesta i razdvojio naziv i srce
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Container(
-                              constraints: BoxConstraints(maxWidth: widget.medijakveri.size.width * 0.43),
+                              constraints: BoxConstraints(maxWidth: widget.medijakveri.size.width * 0.47),
                               child: FittedBox(
                                 child: Text(
                                   widget.naziv,
-                                  style: Theme.of(context).textTheme.headline3,
+                                  style: Theme.of(context).textTheme.headline3!.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                 ),
                               ),
                             ),

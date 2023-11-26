@@ -906,225 +906,234 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       onTap: () {
         FocusManager.instance.primaryFocus!.unfocus();
       },
-      child: Column(
-        children: [
-          CustomAppBar(pageTitle: 'Početna', isCenter: false),
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                width: medijakveri.size.width * 0.7,
-                child: TextFormField(
-                  controller: searchController,
-                  onChanged: (value) {
-                    searchString = value.trim();
-                  },
-                  onFieldSubmitted: (_) {
-                    if (searchString == '') {
-                      return;
-                    }
-                    FocusManager.instance.primaryFocus!.unfocus();
-                    Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        transitionDuration: const Duration(milliseconds: 120),
-                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                          return SlideTransition(
-                            position: Tween<Offset>(
-                              begin: const Offset(1, 0),
-                              end: Offset.zero,
-                            ).animate(animation),
-                            child: child,
-                          );
-                        },
-                        pageBuilder: (context, animation, duration) => SearchScreen(
-                          searchString: searchString,
-                          filterData: filterData,
-                          tagovi: tagovi,
-                          tezina: filterTezina,
-                          isFav: false,
-                        ),
-                      ),
-                    );
-                  },
-                  decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                    hintText: 'Potražite tag ili namirnicu...',
-                    hintStyle: Theme.of(context).textTheme.headline4?.copyWith(
-                          color: Colors.grey,
-                        ),
-                    filled: true,
-                    fillColor: Colors.white,
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    border: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    suffixIcon: GestureDetector(
-                      onTap: () {
-                        if (searchString == '') {
-                          return;
-                        }
-                        FocusManager.instance.primaryFocus!.unfocus();
-                        Navigator.push(
-                          context,
-                          PageRouteBuilder(
-                            transitionDuration: const Duration(milliseconds: 120),
-                            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                              return SlideTransition(
-                                position: Tween<Offset>(
-                                  begin: const Offset(1, 0),
-                                  end: Offset.zero,
-                                ).animate(animation),
-                                child: child,
-                              );
-                            },
-                            pageBuilder: (context, animation, duration) => SearchScreen(
-                              searchString: searchString,
-                              filterData: filterData,
-                              tagovi: tagovi,
-                              tezina: filterTezina,
-                              isFav: false,
-                            ),
+      child: WillPopScope(
+        onWillPop: () async {
+          if (entry != null) {
+            _controller!.reverse().whenComplete(() => hideFilters());
+          }
+
+          return false;
+        },
+        child: Column(
+          children: [
+            CustomAppBar(pageTitle: 'Početna', isCenter: false),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  width: medijakveri.size.width * 0.7,
+                  child: TextFormField(
+                    controller: searchController,
+                    onChanged: (value) {
+                      searchString = value.trim();
+                    },
+                    onFieldSubmitted: (_) {
+                      if (searchString == '') {
+                        return;
+                      }
+                      FocusManager.instance.primaryFocus!.unfocus();
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          transitionDuration: const Duration(milliseconds: 120),
+                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                            return SlideTransition(
+                              position: Tween<Offset>(
+                                begin: const Offset(1, 0),
+                                end: Offset.zero,
+                              ).animate(animation),
+                              child: child,
+                            );
+                          },
+                          pageBuilder: (context, animation, duration) => SearchScreen(
+                            searchString: searchString,
+                            filterData: filterData,
+                            tagovi: tagovi,
+                            tezina: filterTezina,
+                            isFav: false,
                           ),
-                        );
-                      },
-                      child: const Icon(Iconsax.search_normal),
-                    ),
-                  ),
-                ),
-              ),
-              GestureDetector(
-                onTap: () async {
-                  if (isFilter == false) {
-                    FocusManager.instance.primaryFocus!.unfocus();
-                    brOsobaErrorMessage = '';
-                    vrPripremeErrorMessage = '';
-                    ocjenaErrorMessage = '';
-
-                    filterTezina.clear();
-                    tagovi.clear();
-                    showFilters();
-                    _controller!.addListener(() {
-                      overlay!.setState(() {});
-                    });
-                    _controller!.forward();
-                    overlay!.insert(entry!);
-                    await Future.delayed(
-                      const Duration(milliseconds: 500),
-                    );
-                  }
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Icon(
-                    Iconsax.filter_square,
-                    color: Theme.of(context).primaryColor,
-                    size: 30,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          StreamBuilder(
-            stream: meals,
-            builder: ((context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.none) {
-                return Container(
-                  height: (medijakveri.size.height - medijakveri.padding.top) * 0.68,
-                  child: const Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                );
-              }
-
-              final receptDocs = snapshot.data!.docs;
-              if (!isInternet!) {
-                return Container(
-                  height: (medijakveri.size.height - medijakveri.padding.top) * 0.68,
-                  child: Center(
-                    child: Text(
-                      'Nema internet konekcije',
-                      style: Theme.of(context).textTheme.headline2,
-                    ),
-                  ),
-                );
-              }
-              if (receptDocs.isEmpty) {
-                return Container(
-                  height: (medijakveri.size.height - medijakveri.padding.top) * 0.68,
-                  child: Center(
-                    child: Text(
-                      'Nema recepata',
-                      style: Theme.of(context).textTheme.headline2,
-                    ),
-                  ),
-                );
-              }
-              receptDocs.sort((a, b) {
-                if (DateTime.parse(a.data()['createdAt']).isAfter(DateTime.parse(b.data()['createdAt']))) {
-                  return 0;
-                } else {
-                  return 1;
-                }
-              });
-              try {
-                return Container(
-                  height: (medijakveri.size.height - medijakveri.padding.top) * 0.68,
-                  child: ListView.separated(
-                    primary: false,
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.symmetric(vertical: 0),
-                    separatorBuilder: ((context, index) => const SizedBox(height: 15)),
-                    itemCount: receptDocs.length,
-                    itemBuilder: (context, index) {
-                      return MealCard(
-                        medijakveri: medijakveri,
-                        receptId: receptDocs[index].id,
-                        autorId: receptDocs[index].data()['userId'],
-                        naziv: receptDocs[index].data()['naziv'],
-                        opis: receptDocs[index].data()['opis'],
-                        brOsoba: receptDocs[index].data()['brOsoba'],
-                        vrPripreme: receptDocs[index].data()['vrPripreme'],
-                        tezina: receptDocs[index].data()['tezina'],
-                        imageUrl: receptDocs[index].data()['imageUrl'],
-                        createdAt: receptDocs[index].data()['createdAt'],
-                        ratings: receptDocs[index].data()['ratings'],
-                        sastojci: receptDocs[index].data()['sastojci'],
-                        koraci: receptDocs[index].data()['koraci'],
-                        favorites: receptDocs[index].data()['favorites'],
-                        tagovi: receptDocs[index].data()['tagovi'],
+                        ),
                       );
                     },
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                      hintText: 'Potražite tag ili namirnicu...',
+                      hintStyle: Theme.of(context).textTheme.headline4?.copyWith(
+                            color: Colors.grey,
+                          ),
+                      filled: true,
+                      fillColor: Colors.white,
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      border: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      suffixIcon: GestureDetector(
+                        onTap: () {
+                          if (searchString == '') {
+                            return;
+                          }
+                          FocusManager.instance.primaryFocus!.unfocus();
+                          Navigator.push(
+                            context,
+                            PageRouteBuilder(
+                              transitionDuration: const Duration(milliseconds: 120),
+                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                return SlideTransition(
+                                  position: Tween<Offset>(
+                                    begin: const Offset(1, 0),
+                                    end: Offset.zero,
+                                  ).animate(animation),
+                                  child: child,
+                                );
+                              },
+                              pageBuilder: (context, animation, duration) => SearchScreen(
+                                searchString: searchString,
+                                filterData: filterData,
+                                tagovi: tagovi,
+                                tezina: filterTezina,
+                                isFav: false,
+                              ),
+                            ),
+                          );
+                        },
+                        child: const Icon(Iconsax.search_normal),
+                      ),
+                    ),
                   ),
-                );
-              } catch (e) {
-                return Container(
-                  height: (medijakveri.size.height - medijakveri.padding.top) * 0.66,
-                  child: const Center(
-                    child: CircularProgressIndicator(),
+                ),
+                GestureDetector(
+                  onTap: () async {
+                    if (isFilter == false) {
+                      FocusManager.instance.primaryFocus!.unfocus();
+                      brOsobaErrorMessage = '';
+                      vrPripremeErrorMessage = '';
+                      ocjenaErrorMessage = '';
+
+                      filterTezina.clear();
+                      tagovi.clear();
+                      showFilters();
+                      _controller!.addListener(() {
+                        overlay!.setState(() {});
+                      });
+                      _controller!.forward();
+                      overlay!.insert(entry!);
+                      await Future.delayed(
+                        const Duration(milliseconds: 500),
+                      );
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Icon(
+                      Iconsax.filter_square,
+                      color: Theme.of(context).primaryColor,
+                      size: 30,
+                    ),
                   ),
-                );
-              }
-            }),
-          ),
-          // AnimatedContainer(
-          //   duration: Duration(milliseconds: 500),
-          //   width: container,
-          //   decoration: BoxDecoration(
-          //     color: Colors.blue,
-          //   ),
-          // ),
-        ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            StreamBuilder(
+              stream: meals,
+              builder: ((context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.none) {
+                  return Container(
+                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.68,
+                    child: const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                }
+
+                final receptDocs = snapshot.data!.docs;
+                if (!isInternet!) {
+                  return Container(
+                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.68,
+                    child: Center(
+                      child: Text(
+                        'Nema internet konekcije',
+                        style: Theme.of(context).textTheme.headline2,
+                      ),
+                    ),
+                  );
+                }
+                if (receptDocs.isEmpty) {
+                  return Container(
+                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.68,
+                    child: Center(
+                      child: Text(
+                        'Nema recepata',
+                        style: Theme.of(context).textTheme.headline2,
+                      ),
+                    ),
+                  );
+                }
+                receptDocs.sort((a, b) {
+                  if (DateTime.parse(a.data()['createdAt']).isAfter(DateTime.parse(b.data()['createdAt']))) {
+                    return 0;
+                  } else {
+                    return 1;
+                  }
+                });
+                try {
+                  return Container(
+                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.68,
+                    child: ListView.separated(
+                      primary: false,
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.symmetric(vertical: 0),
+                      separatorBuilder: ((context, index) => const SizedBox(height: 15)),
+                      itemCount: receptDocs.length,
+                      itemBuilder: (context, index) {
+                        return MealCard(
+                          medijakveri: medijakveri,
+                          receptId: receptDocs[index].id,
+                          autorId: receptDocs[index].data()['userId'],
+                          naziv: receptDocs[index].data()['naziv'],
+                          opis: receptDocs[index].data()['opis'],
+                          brOsoba: receptDocs[index].data()['brOsoba'],
+                          vrPripreme: receptDocs[index].data()['vrPripreme'],
+                          tezina: receptDocs[index].data()['tezina'],
+                          imageUrl: receptDocs[index].data()['imageUrl'],
+                          createdAt: receptDocs[index].data()['createdAt'],
+                          ratings: receptDocs[index].data()['ratings'],
+                          sastojci: receptDocs[index].data()['sastojci'],
+                          koraci: receptDocs[index].data()['koraci'],
+                          favorites: receptDocs[index].data()['favorites'],
+                          tagovi: receptDocs[index].data()['tagovi'],
+                        );
+                      },
+                    ),
+                  );
+                } catch (e) {
+                  return Container(
+                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.66,
+                    child: const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                }
+              }),
+            ),
+            // AnimatedContainer(
+            //   duration: Duration(milliseconds: 500),
+            //   width: container,
+            //   decoration: BoxDecoration(
+            //     color: Colors.blue,
+            //   ),
+            // ),
+          ],
+        ),
       ),
     );
   }
