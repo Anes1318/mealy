@@ -67,7 +67,8 @@ class _AccountScreenState extends State<AccountScreen> {
             );
           },
         ),
-        const SizedBox(height: 10),
+        // const SizedBox(height: 10),
+        SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.013),
         GestureDetector(
           onTap: () {
             if (isInternet!) {
@@ -154,7 +155,7 @@ class _AccountScreenState extends State<AccountScreen> {
             ),
           ),
         ),
-        const SizedBox(height: 20),
+        SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.025),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -168,7 +169,7 @@ class _AccountScreenState extends State<AccountScreen> {
               builder: ((context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.57,
+                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.55,
                     child: const Center(
                       child: CircularProgressIndicator(),
                     ),
@@ -193,7 +194,7 @@ class _AccountScreenState extends State<AccountScreen> {
 
                 if (ownRecepti.isEmpty || meals == null) {
                   return Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.57,
+                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.55,
                     child: Center(
                       child: Text(
                         'Nema recepata',
@@ -204,10 +205,10 @@ class _AccountScreenState extends State<AccountScreen> {
                 }
 
                 return Container(
-                  height: (medijakveri.size.height - medijakveri.padding.top) * 0.57,
+                  height: (medijakveri.size.height - medijakveri.padding.top) * 0.55,
                   child: ListView.separated(
                       padding: EdgeInsets.zero,
-                      separatorBuilder: ((context, index) => const SizedBox(height: 15)),
+                      separatorBuilder: ((context, index) => const SizedBox(height: 10)),
                       itemCount: ownRecepti.length,
                       itemBuilder: (context, index) {
                         int userRating = 0;

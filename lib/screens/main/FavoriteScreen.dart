@@ -915,7 +915,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> with TickerProviderStat
         child: Column(
           children: [
             CustomAppBar(pageTitle: 'Omiljeni', isCenter: false),
-            const SizedBox(height: 20),
+            SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.025),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -1041,14 +1041,14 @@ class _FavoriteScreenState extends State<FavoriteScreen> with TickerProviderStat
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.025),
             StreamBuilder(
               stream: meals,
               builder: ((context, snapshot) {
                 final receptDocs = snapshot.data!.docs;
                 if (snapshot.connectionState == ConnectionState.none) {
                   return Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.68,
+                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.668,
                     child: const Center(
                       child: CircularProgressIndicator(),
                     ),
@@ -1064,7 +1064,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> with TickerProviderStat
                 List<dynamic> favRecepti = [];
                 if (!isInternet!) {
                   return Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.68,
+                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.668,
                     child: Center(
                       child: Text(
                         'Nema internet konekcije',
@@ -1089,7 +1089,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> with TickerProviderStat
                 });
                 if (favRecepti.isEmpty) {
                   return Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.68,
+                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.668,
                     child: Center(
                       child: Text(
                         'Nema omiljenih recepata',
@@ -1100,34 +1100,35 @@ class _FavoriteScreenState extends State<FavoriteScreen> with TickerProviderStat
                 }
 
                 return Container(
-                  height: (medijakveri.size.height - medijakveri.padding.top) * 0.68,
+                  height: (medijakveri.size.height - medijakveri.padding.top) * 0.668,
                   child: ListView.separated(
-                      padding: EdgeInsets.zero,
-                      separatorBuilder: ((context, index) => const SizedBox(height: 15)),
-                      itemCount: favRecepti.length,
-                      itemBuilder: (context, index) {
-                        int userRating = 0;
-                        if (receptDocs[index].data()['ratings'][FirebaseAuth.instance.currentUser!.uid] != null) {
-                          userRating = receptDocs[index].data()['ratings'][FirebaseAuth.instance.currentUser!.uid];
-                        }
-                        return MealCard(
-                          medijakveri: medijakveri,
-                          receptId: favRecepti[index].id,
-                          autorId: favRecepti[index].data()['userId'],
-                          naziv: favRecepti[index].data()['naziv'],
-                          opis: favRecepti[index].data()['opis'],
-                          brOsoba: favRecepti[index].data()['brOsoba'],
-                          vrPripreme: favRecepti[index].data()['vrPripreme'],
-                          tezina: favRecepti[index].data()['tezina'],
-                          imageUrl: favRecepti[index].data()['imageUrl'],
-                          createdAt: receptDocs[index].data()['createdAt'],
-                          ratings: favRecepti[index].data()['ratings'],
-                          sastojci: favRecepti[index].data()['sastojci'],
-                          koraci: favRecepti[index].data()['koraci'],
-                          favorites: favRecepti[index].data()['favorites'],
-                          tagovi: favRecepti[index].data()['tagovi'],
-                        );
-                      }),
+                    padding: EdgeInsets.zero,
+                    separatorBuilder: ((context, index) => const SizedBox(height: 10)),
+                    itemCount: favRecepti.length,
+                    itemBuilder: (context, index) {
+                      int userRating = 0;
+                      if (receptDocs[index].data()['ratings'][FirebaseAuth.instance.currentUser!.uid] != null) {
+                        userRating = receptDocs[index].data()['ratings'][FirebaseAuth.instance.currentUser!.uid];
+                      }
+                      return MealCard(
+                        medijakveri: medijakveri,
+                        receptId: favRecepti[index].id,
+                        autorId: favRecepti[index].data()['userId'],
+                        naziv: favRecepti[index].data()['naziv'],
+                        opis: favRecepti[index].data()['opis'],
+                        brOsoba: favRecepti[index].data()['brOsoba'],
+                        vrPripreme: favRecepti[index].data()['vrPripreme'],
+                        tezina: favRecepti[index].data()['tezina'],
+                        imageUrl: favRecepti[index].data()['imageUrl'],
+                        createdAt: receptDocs[index].data()['createdAt'],
+                        ratings: favRecepti[index].data()['ratings'],
+                        sastojci: favRecepti[index].data()['sastojci'],
+                        koraci: favRecepti[index].data()['koraci'],
+                        favorites: favRecepti[index].data()['favorites'],
+                        tagovi: favRecepti[index].data()['tagovi'],
+                      );
+                    },
+                  ),
                 );
               }),
             ),

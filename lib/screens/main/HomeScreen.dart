@@ -917,7 +917,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         child: Column(
           children: [
             CustomAppBar(pageTitle: 'Početna', isCenter: false),
-            const SizedBox(height: 20),
+            SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.025),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -1042,13 +1042,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.025),
+
             StreamBuilder(
               stream: meals,
               builder: ((context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.none) {
                   return Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.68,
+                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.668,
                     child: const Center(
                       child: CircularProgressIndicator(),
                     ),
@@ -1058,7 +1059,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 final receptDocs = snapshot.data!.docs;
                 if (!isInternet!) {
                   return Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.68,
+                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.668,
                     child: Center(
                       child: Text(
                         'Nema internet konekcije',
@@ -1069,7 +1070,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 }
                 if (receptDocs.isEmpty) {
                   return Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.68,
+                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.668,
                     child: Center(
                       child: Text(
                         'Nema recepata',
@@ -1087,12 +1088,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 });
                 try {
                   return Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.68,
+                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.668,
                     child: ListView.separated(
                       primary: false,
                       shrinkWrap: true,
                       padding: const EdgeInsets.symmetric(vertical: 0),
-                      separatorBuilder: ((context, index) => const SizedBox(height: 15)),
+                      separatorBuilder: ((context, index) => const SizedBox(height: 10)),
                       itemCount: receptDocs.length,
                       itemBuilder: (context, index) {
                         return MealCard(
@@ -1117,7 +1118,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   );
                 } catch (e) {
                   return Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.66,
+                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.668,
                     child: const Center(
                       child: CircularProgressIndicator(),
                     ),

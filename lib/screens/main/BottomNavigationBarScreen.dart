@@ -76,7 +76,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
             ),
           ),
         ),
-        height: 88,
+        height: (medijakveri.size.height - medijakveri.padding.top) * 0.116,
         child: BottomNavigationBar(
           onTap: _selectPage,
           type: BottomNavigationBarType.fixed,

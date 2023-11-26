@@ -141,7 +141,8 @@ class _MealCardState extends State<MealCard> {
         );
       },
       child: Container(
-        height: 130,
+        height: (widget.medijakveri.size.height - widget.medijakveri.padding.top) * 0.165,
+        // height: 130,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
@@ -168,12 +169,15 @@ class _MealCardState extends State<MealCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        width: widget.medijakveri.size.width * 0.53, // da bi row uzeo sto vise mesta i razdvojio naziv i srce
+                        width: widget.medijakveri.size.width * 0.505, // da bi row uzeo sto vise mesta i razdvojio naziv i srce
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Container(
-                              constraints: BoxConstraints(maxWidth: widget.medijakveri.size.width * 0.47),
+                              constraints: BoxConstraints(
+                                maxWidth: widget.medijakveri.size.width * 0.425,
+                                maxHeight: 23,
+                              ),
                               child: FittedBox(
                                 child: Text(
                                   widget.naziv,
