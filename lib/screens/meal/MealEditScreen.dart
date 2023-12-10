@@ -913,9 +913,29 @@ class _MealEditScreenState extends State<MealEditScreen> {
                                   },
                                   initialPickedItems: tagovi,
                                   maxSelectedItems: 5,
-                                  textFieldFocus: tagNode,
                                   clearSearchFieldOnSelect: true,
-                                  searchFieldTextStyle: Theme.of(context).textTheme.headline4,
+                                  searchField: TextField(
+                                    focusNode: tagNode,
+                                    style: Theme.of(context).textTheme.headline4,
+                                    decoration: InputDecoration(
+                                      hintText: "Potražite tag",
+                                      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                      hintStyle: Theme.of(context).textTheme.headline4?.copyWith(
+                                            color: Colors.grey,
+                                          ),
+                                      filled: true,
+                                      fillColor: Colors.white,
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: tagValidator == true ? const BorderSide(color: Colors.red) : const BorderSide(color: Colors.transparent),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      border: OutlineInputBorder(
+                                        borderSide: const BorderSide(color: Colors.transparent),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                  ),
+
                                   itemsVisibility: ShowedItemsVisibility.alwaysOn,
                                   showSelectAllButton: false,
                                   pickedItemsContainerMinHeight: 40,
@@ -956,28 +976,10 @@ class _MealEditScreenState extends State<MealEditScreen> {
                                       style: Theme.of(context).textTheme.headline4,
                                     ),
                                   ),
-                                  searchFieldBoxDecoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
+
                                   showedItemsScrollbarColor: Colors.transparent,
-                                  searchFieldInputDecoration: InputDecoration(
-                                    hintText: "Upišite tag",
-                                    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                                    hintStyle: Theme.of(context).textTheme.headline4?.copyWith(
-                                          color: Colors.grey,
-                                        ),
-                                    filled: true,
-                                    fillColor: Colors.white,
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: tagValidator == true ? const BorderSide(color: Colors.red) : const BorderSide(color: Colors.transparent),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    border: OutlineInputBorder(
-                                      borderSide: const BorderSide(color: Colors.transparent),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  ),
+
+                                  // ),
                                   itemBuilder: (tag, index) => Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                                     margin: const EdgeInsets.symmetric(vertical: 3),

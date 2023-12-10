@@ -698,9 +698,28 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                         return tag;
                                                       },
                                                       maxSelectedItems: 5,
-                                                      textFieldFocus: tagNode,
+                                                      searchField: TextField(
+                                                        focusNode: tagNode,
+                                                        style: Theme.of(context).textTheme.headline4,
+                                                        decoration: InputDecoration(
+                                                          hintText: "Potražite tag",
+                                                          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                                          hintStyle: Theme.of(context).textTheme.headline4?.copyWith(
+                                                                color: Colors.grey,
+                                                              ),
+                                                          filled: true,
+                                                          fillColor: Colors.white,
+                                                          enabledBorder: OutlineInputBorder(
+                                                            borderSide: const BorderSide(color: Colors.transparent),
+                                                            borderRadius: BorderRadius.circular(10),
+                                                          ),
+                                                          border: OutlineInputBorder(
+                                                            borderSide: const BorderSide(color: Colors.transparent),
+                                                            borderRadius: BorderRadius.circular(10),
+                                                          ),
+                                                        ),
+                                                      ),
                                                       clearSearchFieldOnSelect: true,
-                                                      searchFieldTextStyle: Theme.of(context).textTheme.headline4,
                                                       itemsVisibility: ShowedItemsVisibility.alwaysOn,
                                                       showSelectAllButton: false,
                                                       pickedItemsContainerMinHeight: 40,
@@ -742,33 +761,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                         ),
                                                       ),
                                                       showItemsButton: Text('Izaberite tagove', style: Theme.of(context).textTheme.headline4),
-                                                      searchFieldBoxDecoration: BoxDecoration(
-                                                        color: Colors.white,
-                                                        borderRadius: BorderRadius.circular(20),
-                                                      ),
-                                                      searchFieldInputDecoration: InputDecoration(
-                                                        hintText: "Potražite tag",
-                                                        contentPadding: const EdgeInsets.symmetric(
-                                                          horizontal: 20,
-                                                          vertical: 10,
-                                                        ),
-                                                        hintStyle: Theme.of(context).textTheme.headline4?.copyWith(
-                                                              color: Colors.grey,
-                                                            ),
-                                                        filled: true,
-                                                        fillColor: Colors.white,
-                                                        enabledBorder: const OutlineInputBorder(
-                                                          borderSide: BorderSide(color: Colors.transparent),
-                                                        ),
-                                                        focusedBorder: OutlineInputBorder(
-                                                            borderSide: BorderSide(
-                                                          color: Theme.of(context).colorScheme.primary,
-                                                        )),
-                                                        border: OutlineInputBorder(
-                                                          borderSide: const BorderSide(color: Colors.transparent),
-                                                          borderRadius: BorderRadius.circular(10),
-                                                        ),
-                                                      ),
                                                       itemBuilder: (tag, index) => Container(
                                                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                                                         margin: const EdgeInsets.only(top: 10),
