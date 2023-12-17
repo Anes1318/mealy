@@ -37,9 +37,9 @@ class Metode {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           title: Text(
             naslov,
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.primary,
-            ),
+            style: Theme.of(context).textTheme.headline3!.copyWith(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
             textAlign: TextAlign.center,
           ),
           content: message != null

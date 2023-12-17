@@ -107,6 +107,8 @@ class _MealCardState extends State<MealCard> {
 
     return GestureDetector(
       onTap: () {
+        print(widget.imageUrl);
+        return;
         Navigator.push(
           context,
           PageRouteBuilder(
@@ -151,6 +153,7 @@ class _MealCardState extends State<MealCard> {
           margin: const EdgeInsets.only(left: 15, top: 15, bottom: 15, right: 5),
           child: Row(
             children: [
+              // widget.imageUrl == null ?
               ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: Image.network(
