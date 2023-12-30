@@ -375,6 +375,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 },
                                 decoration: InputDecoration(
                                   hintText: 'Šifra',
+                                  hintStyle: Theme.of(context).textTheme.headline4?.copyWith(
+                                        color: Colors.grey,
+                                        fontSize: 16,
+                                      ),
                                   filled: true,
                                   fillColor: Colors.white,
                                   contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
@@ -444,6 +448,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 },
                                 decoration: InputDecoration(
                                   hintText: 'Potvrdite šifru',
+                                  hintStyle: Theme.of(context).textTheme.headline4?.copyWith(
+                                        color: Colors.grey,
+                                        fontSize: 16,
+                                      ),
                                   filled: true,
                                   fillColor: Colors.white,
                                   contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),

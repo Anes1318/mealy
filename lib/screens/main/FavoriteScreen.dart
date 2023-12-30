@@ -889,6 +889,8 @@ class _FavoriteScreenState extends State<FavoriteScreen> with TickerProviderStat
     entry = null;
   }
 
+  //pocetak
+
   Widget build(BuildContext context) {
     final medijakveri = MediaQuery.of(context);
 
@@ -896,236 +898,227 @@ class _FavoriteScreenState extends State<FavoriteScreen> with TickerProviderStat
       onTap: () {
         FocusManager.instance.primaryFocus!.unfocus();
       },
-      child: WillPopScope(
-        onWillPop: () async {
-          if (entry != null) {
-            _controller!.reverse().whenComplete(() => hideFilters());
-          }
+      child: Column(
+        children: [
+          CustomAppBar(pageTitle: 'Omiljeni', isCenter: false),
+          SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.025),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                width: medijakveri.size.width * 0.7,
+                child: TextFormField(
+                  controller: searchController,
+                  onChanged: (value) {
+                    searchString = value.trim();
+                  },
+                  onFieldSubmitted: (_) {
+                    if (searchString == '') {
+                      return;
+                    }
+                    FocusManager.instance.primaryFocus!.unfocus();
 
-          return false;
-        },
-        child: Column(
-          children: [
-            CustomAppBar(pageTitle: 'Omiljeni', isCenter: false),
-            SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.025),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  width: medijakveri.size.width * 0.7,
-                  child: TextFormField(
-                    controller: searchController,
-                    onChanged: (value) {
-                      searchString = value.trim();
-                    },
-                    onFieldSubmitted: (_) {
-                      if (searchString == '') {
-                        return;
-                      }
-                      FocusManager.instance.primaryFocus!.unfocus();
-
-                      Navigator.push(
-                        context,
-                        PageRouteBuilder(
-                          transitionDuration: const Duration(milliseconds: 120),
-                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                            return SlideTransition(
-                              position: Tween<Offset>(
-                                begin: const Offset(1, 0),
-                                end: Offset.zero,
-                              ).animate(animation),
-                              child: child,
-                            );
-                          },
-                          pageBuilder: (context, animation, duration) => SearchScreen(
-                            searchString: searchString,
-                            filterData: filterData,
-                            tagovi: tagovi,
-                            tezina: filterTezina,
-                            isFav: true,
-                          ),
-                        ),
-                      );
-                    },
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                      hintText: 'Potražite tag ili namirnicu...',
-                      hintStyle: Theme.of(context).textTheme.headline4?.copyWith(
-                            color: Colors.grey,
-                          ),
-                      filled: true,
-                      fillColor: Colors.white,
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Colors.white),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      border: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Colors.white),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      suffixIcon: GestureDetector(
-                        onTap: () {
-                          if (searchString == '') {
-                            return;
-                          }
-                          FocusManager.instance.primaryFocus!.unfocus();
-                          Navigator.push(
-                            context,
-                            PageRouteBuilder(
-                              transitionDuration: const Duration(milliseconds: 120),
-                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                return SlideTransition(
-                                  position: Tween<Offset>(
-                                    begin: const Offset(1, 0),
-                                    end: Offset.zero,
-                                  ).animate(animation),
-                                  child: child,
-                                );
-                              },
-                              pageBuilder: (context, animation, duration) => SearchScreen(
-                                searchString: searchString,
-                                filterData: filterData,
-                                tagovi: tagovi,
-                                tezina: filterTezina,
-                                isFav: true,
-                              ),
-                            ),
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        transitionDuration: const Duration(milliseconds: 120),
+                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                          return SlideTransition(
+                            position: Tween<Offset>(
+                              begin: const Offset(1, 0),
+                              end: Offset.zero,
+                            ).animate(animation),
+                            child: child,
                           );
                         },
-                        child: const Icon(Iconsax.search_normal),
+                        pageBuilder: (context, animation, duration) => SearchScreen(
+                          searchString: searchString,
+                          filterData: filterData,
+                          tagovi: tagovi,
+                          tezina: filterTezina,
+                          isFav: true,
+                        ),
                       ),
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () async {
-                    if (isFilter == false) {
-                      FocusManager.instance.primaryFocus!.unfocus();
-                      brOsobaErrorMessage = '';
-                      vrPripremeErrorMessage = '';
-                      ocjenaErrorMessage = '';
-
-                      filterTezina.clear();
-                      tagovi.clear();
-                      showFilters();
-                      _controller!.addListener(() {
-                        overlay!.setState(() {});
-                      });
-                      _controller!.forward();
-                      overlay!.insert(entry!);
-                      await Future.delayed(
-                        const Duration(milliseconds: 500),
-                      );
-                    }
+                    );
                   },
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
+                  decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                    hintText: 'Potražite tag ili namirnicu...',
+                    hintStyle: Theme.of(context).textTheme.headline4?.copyWith(
+                          color: Colors.grey,
+                        ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Colors.white),
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Icon(
-                      Iconsax.filter_square,
-                      color: Theme.of(context).primaryColor,
-                      size: 30,
+                    border: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Colors.white),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    suffixIcon: GestureDetector(
+                      onTap: () {
+                        if (searchString == '') {
+                          return;
+                        }
+                        FocusManager.instance.primaryFocus!.unfocus();
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            transitionDuration: const Duration(milliseconds: 120),
+                            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                              return SlideTransition(
+                                position: Tween<Offset>(
+                                  begin: const Offset(1, 0),
+                                  end: Offset.zero,
+                                ).animate(animation),
+                                child: child,
+                              );
+                            },
+                            pageBuilder: (context, animation, duration) => SearchScreen(
+                              searchString: searchString,
+                              filterData: filterData,
+                              tagovi: tagovi,
+                              tezina: filterTezina,
+                              isFav: true,
+                            ),
+                          ),
+                        );
+                      },
+                      child: const Icon(Iconsax.search_normal),
                     ),
                   ),
                 ),
-              ],
-            ),
-            SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.025),
-            StreamBuilder(
-              stream: meals,
-              builder: ((context, snapshot) {
-                final receptDocs = snapshot.data!.docs;
-                if (snapshot.connectionState == ConnectionState.none) {
-                  return Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.668,
-                    child: const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
-                }
-                receptDocs.sort((a, b) {
-                  if (DateTime.parse(a.data()['createdAt']).isAfter(DateTime.parse(b.data()['createdAt']))) {
-                    return 0;
-                  } else {
-                    return 1;
-                  }
-                });
-                List<dynamic> favRecepti = [];
-                if (!isInternet!) {
-                  return Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.668,
-                    child: Center(
-                      child: Text(
-                        'Nema internet konekcije',
-                        style: Theme.of(context).textTheme.headline2,
-                      ),
-                    ),
-                  );
-                }
-                receptDocs.forEach((element) {
-                  List<dynamic> listaUsera = (element.data()['favorites'].keys.map((item) => item as String)?.toList());
-                  if (listaUsera.contains(FirebaseAuth.instance.currentUser!.uid)) {
-                    favRecepti.add(element);
-                  }
-                });
+              ),
+              GestureDetector(
+                onTap: () async {
+                  if (isFilter == false) {
+                    FocusManager.instance.primaryFocus!.unfocus();
+                    brOsobaErrorMessage = '';
+                    vrPripremeErrorMessage = '';
+                    ocjenaErrorMessage = '';
 
-                favRecepti.sort((a, b) {
-                  if (DateTime.parse(a['favorites'].values.toString().replaceAll(RegExp(r'[()]'), '')).isAfter(DateTime.parse(b['favorites'].values.toString().replaceAll(RegExp(r'[()]'), '')))) {
-                    return 0;
-                  } else {
-                    return 1;
+                    filterTezina.clear();
+                    tagovi.clear();
+                    showFilters();
+                    _controller!.addListener(() {
+                      overlay!.setState(() {});
+                    });
+                    _controller!.forward();
+                    overlay!.insert(entry!);
+                    await Future.delayed(
+                      const Duration(milliseconds: 500),
+                    );
                   }
-                });
-                if (favRecepti.isEmpty) {
-                  return Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.668,
-                    child: Center(
-                      child: Text(
-                        'Nema omiljenih recepata',
-                        style: Theme.of(context).textTheme.headline2,
-                      ),
-                    ),
-                  );
-                }
-
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Icon(
+                    Iconsax.filter_square,
+                    color: Theme.of(context).primaryColor,
+                    size: 30,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.025),
+          StreamBuilder(
+            stream: meals,
+            builder: ((context, snapshot) {
+              final receptDocs = snapshot.data!.docs;
+              if (snapshot.connectionState == ConnectionState.none) {
                 return Container(
-                  height: (medijakveri.size.height - medijakveri.padding.top) * 0.668,
-                  child: ListView.separated(
-                    padding: EdgeInsets.zero,
-                    separatorBuilder: ((context, index) => const SizedBox(height: 10)),
-                    itemCount: favRecepti.length,
-                    itemBuilder: (context, index) {
-                      int userRating = 0;
-                      if (receptDocs[index].data()['ratings'][FirebaseAuth.instance.currentUser!.uid] != null) {
-                        userRating = receptDocs[index].data()['ratings'][FirebaseAuth.instance.currentUser!.uid];
-                      }
-                      return MealCard(
-                        medijakveri: medijakveri,
-                        receptId: favRecepti[index].id,
-                        autorId: favRecepti[index].data()['userId'],
-                        naziv: favRecepti[index].data()['naziv'],
-                        opis: favRecepti[index].data()['opis'],
-                        brOsoba: favRecepti[index].data()['brOsoba'],
-                        vrPripreme: favRecepti[index].data()['vrPripreme'],
-                        tezina: favRecepti[index].data()['tezina'],
-                        imageUrl: favRecepti[index].data()['imageUrl'],
-                        createdAt: receptDocs[index].data()['createdAt'],
-                        ratings: favRecepti[index].data()['ratings'],
-                        sastojci: favRecepti[index].data()['sastojci'],
-                        koraci: favRecepti[index].data()['koraci'],
-                        favorites: favRecepti[index].data()['favorites'],
-                        tagovi: favRecepti[index].data()['tagovi'],
-                      );
-                    },
+                  height: (medijakveri.size.height - medijakveri.padding.top) * 0.692,
+                  child: const Center(
+                    child: CircularProgressIndicator(),
                   ),
                 );
-              }),
-            ),
-          ],
-        ),
+              }
+              receptDocs.sort((a, b) {
+                if (DateTime.parse(a.data()['createdAt']).isAfter(DateTime.parse(b.data()['createdAt']))) {
+                  return 0;
+                } else {
+                  return 1;
+                }
+              });
+              List<dynamic> favRecepti = [];
+              if (!isInternet!) {
+                return Container(
+                  height: (medijakveri.size.height - medijakveri.padding.top) * 0.692,
+                  child: Center(
+                    child: Text(
+                      'Nema internet konekcije',
+                      style: Theme.of(context).textTheme.headline2,
+                    ),
+                  ),
+                );
+              }
+              receptDocs.forEach((element) {
+                List<dynamic> listaUsera = (element.data()['favorites'].keys.map((item) => item as String)?.toList());
+                if (listaUsera.contains(FirebaseAuth.instance.currentUser!.uid)) {
+                  favRecepti.add(element);
+                }
+              });
+
+              favRecepti.sort((a, b) {
+                if (DateTime.parse(a['favorites'].values.toString().replaceAll(RegExp(r'[()]'), '')).isAfter(DateTime.parse(b['favorites'].values.toString().replaceAll(RegExp(r'[()]'), '')))) {
+                  return 0;
+                } else {
+                  return 1;
+                }
+              });
+              if (favRecepti.isEmpty) {
+                return Container(
+                  height: (medijakveri.size.height - medijakveri.padding.top) * 0.692,
+                  child: Center(
+                    child: Text(
+                      'Nema omiljenih recepata',
+                      style: Theme.of(context).textTheme.headline2,
+                    ),
+                  ),
+                );
+              }
+
+              return Container(
+                height: (medijakveri.size.height - medijakveri.padding.top) * 0.692,
+                child: ListView.separated(
+                  padding: EdgeInsets.zero,
+                  separatorBuilder: ((context, index) => const SizedBox(height: 10)),
+                  itemCount: favRecepti.length,
+                  itemBuilder: (context, index) {
+                    int userRating = 0;
+                    if (receptDocs[index].data()['ratings'][FirebaseAuth.instance.currentUser!.uid] != null) {
+                      userRating = receptDocs[index].data()['ratings'][FirebaseAuth.instance.currentUser!.uid];
+                    }
+                    return MealCard(
+                      medijakveri: medijakveri,
+                      receptId: favRecepti[index].id,
+                      autorId: favRecepti[index].data()['userId'],
+                      naziv: favRecepti[index].data()['naziv'],
+                      opis: favRecepti[index].data()['opis'],
+                      brOsoba: favRecepti[index].data()['brOsoba'],
+                      vrPripreme: favRecepti[index].data()['vrPripreme'],
+                      tezina: favRecepti[index].data()['tezina'],
+                      imageUrl: favRecepti[index].data()['imageUrl'],
+                      createdAt: receptDocs[index].data()['createdAt'],
+                      ratings: favRecepti[index].data()['ratings'],
+                      sastojci: favRecepti[index].data()['sastojci'],
+                      koraci: favRecepti[index].data()['koraci'],
+                      favorites: favRecepti[index].data()['favorites'],
+                      tagovi: favRecepti[index].data()['tagovi'],
+                    );
+                  },
+                ),
+              );
+            }),
+          ),
+        ],
       ),
     );
   }

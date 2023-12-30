@@ -67,8 +67,7 @@ class _AccountScreenState extends State<AccountScreen> {
             );
           },
         ),
-        // const SizedBox(height: 10),
-        SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.013),
+        SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.025),
         GestureDetector(
           onTap: () {
             if (isInternet!) {
@@ -91,6 +90,7 @@ class _AccountScreenState extends State<AccountScreen> {
             }
           },
           child: Container(
+            height: (medijakveri.size.height - medijakveri.padding.top) * 0.137,
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -130,6 +130,7 @@ class _AccountScreenState extends State<AccountScreen> {
 
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
                             '${FirebaseAuth.instance.currentUser!.displayName}',
@@ -159,17 +160,20 @@ class _AccountScreenState extends State<AccountScreen> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Moji recepti',
-              style: Theme.of(context).textTheme.headline2,
+            Container(
+              height: (medijakveri.size.height - medijakveri.padding.top) * 0.035,
+              child: Text(
+                'Moji recepti',
+                style: Theme.of(context).textTheme.headline2,
+              ),
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.012),
             StreamBuilder(
               stream: meals,
               builder: ((context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.55,
+                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.584,
                     child: const Center(
                       child: CircularProgressIndicator(),
                     ),
@@ -194,7 +198,7 @@ class _AccountScreenState extends State<AccountScreen> {
 
                 if (ownRecepti.isEmpty || meals == null) {
                   return Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.55,
+                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.584,
                     child: Center(
                       child: Text(
                         'Nema recepata',
@@ -205,34 +209,35 @@ class _AccountScreenState extends State<AccountScreen> {
                 }
 
                 return Container(
-                  height: (medijakveri.size.height - medijakveri.padding.top) * 0.55,
+                  height: (medijakveri.size.height - medijakveri.padding.top) * 0.584,
                   child: ListView.separated(
-                      padding: EdgeInsets.zero,
-                      separatorBuilder: ((context, index) => const SizedBox(height: 10)),
-                      itemCount: ownRecepti.length,
-                      itemBuilder: (context, index) {
-                        int userRating = 0;
-                        if (receptDocs[index].data()['ratings'][FirebaseAuth.instance.currentUser!.uid] != null) {
-                          userRating = receptDocs[index].data()['ratings'][FirebaseAuth.instance.currentUser!.uid];
-                        }
-                        return MealCard(
-                          medijakveri: medijakveri,
-                          receptId: ownRecepti[index].id,
-                          autorId: ownRecepti[index].data()['userId'],
-                          naziv: ownRecepti[index].data()['naziv'],
-                          opis: ownRecepti[index].data()['opis'],
-                          brOsoba: ownRecepti[index].data()['brOsoba'],
-                          vrPripreme: ownRecepti[index].data()['vrPripreme'],
-                          tezina: ownRecepti[index].data()['tezina'],
-                          imageUrl: ownRecepti[index].data()['imageUrl'],
-                          createdAt: receptDocs[index].data()['createdAt'],
-                          ratings: ownRecepti[index].data()['ratings'],
-                          sastojci: ownRecepti[index].data()['sastojci'],
-                          koraci: ownRecepti[index].data()['koraci'],
-                          favorites: ownRecepti[index].data()['favorites'],
-                          tagovi: ownRecepti[index].data()['tagovi'],
-                        );
-                      }),
+                    padding: EdgeInsets.zero,
+                    separatorBuilder: ((context, index) => const SizedBox(height: 10)),
+                    itemCount: ownRecepti.length,
+                    itemBuilder: (context, index) {
+                      int userRating = 0;
+                      if (receptDocs[index].data()['ratings'][FirebaseAuth.instance.currentUser!.uid] != null) {
+                        userRating = receptDocs[index].data()['ratings'][FirebaseAuth.instance.currentUser!.uid];
+                      }
+                      return MealCard(
+                        medijakveri: medijakveri,
+                        receptId: ownRecepti[index].id,
+                        autorId: ownRecepti[index].data()['userId'],
+                        naziv: ownRecepti[index].data()['naziv'],
+                        opis: ownRecepti[index].data()['opis'],
+                        brOsoba: ownRecepti[index].data()['brOsoba'],
+                        vrPripreme: ownRecepti[index].data()['vrPripreme'],
+                        tezina: ownRecepti[index].data()['tezina'],
+                        imageUrl: ownRecepti[index].data()['imageUrl'],
+                        createdAt: receptDocs[index].data()['createdAt'],
+                        ratings: ownRecepti[index].data()['ratings'],
+                        sastojci: ownRecepti[index].data()['sastojci'],
+                        koraci: ownRecepti[index].data()['koraci'],
+                        favorites: ownRecepti[index].data()['favorites'],
+                        tagovi: ownRecepti[index].data()['tagovi'],
+                      );
+                    },
+                  ),
                 );
               }),
             ),

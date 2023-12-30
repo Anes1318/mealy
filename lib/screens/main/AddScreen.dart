@@ -282,7 +282,10 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
           children: [
             SafeArea(
               child: Container(
-                padding: EdgeInsets.only(top: (medijakveri.size.height - medijakveri.padding.top) * 0.035, bottom: 10),
+                height: (medijakveri.size.height - medijakveri.padding.top) * 0.082,
+                padding: EdgeInsets.only(
+                  top: (medijakveri.size.height - medijakveri.padding.top) * 0.035,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

@@ -107,8 +107,6 @@ class _MealCardState extends State<MealCard> {
 
     return GestureDetector(
       onTap: () {
-        print(widget.imageUrl);
-        return;
         Navigator.push(
           context,
           PageRouteBuilder(

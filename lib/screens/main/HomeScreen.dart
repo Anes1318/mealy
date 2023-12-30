@@ -910,129 +910,132 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           children: [
             CustomAppBar(pageTitle: 'Početna', isCenter: false),
             SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.025),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  width: medijakveri.size.width * 0.7,
-                  child: TextFormField(
-                    controller: searchController,
-                    onChanged: (value) {
-                      searchString = value.trim();
-                    },
-                    onFieldSubmitted: (_) {
-                      if (searchString == '') {
-                        return;
-                      }
-                      FocusManager.instance.primaryFocus!.unfocus();
-                      Navigator.push(
-                        context,
-                        PageRouteBuilder(
-                          transitionDuration: const Duration(milliseconds: 120),
-                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                            return SlideTransition(
-                              position: Tween<Offset>(
-                                begin: const Offset(1, 0),
-                                end: Offset.zero,
-                              ).animate(animation),
-                              child: child,
+            Container(
+              // height: (medijakveri.size.height - medijakveri.padding.top) * 0.076,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    width: medijakveri.size.width * 0.7,
+                    child: TextFormField(
+                      controller: searchController,
+                      onChanged: (value) {
+                        searchString = value.trim();
+                      },
+                      onFieldSubmitted: (_) {
+                        if (searchString == '') {
+                          return;
+                        }
+                        FocusManager.instance.primaryFocus!.unfocus();
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            transitionDuration: const Duration(milliseconds: 120),
+                            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                              return SlideTransition(
+                                position: Tween<Offset>(
+                                  begin: const Offset(1, 0),
+                                  end: Offset.zero,
+                                ).animate(animation),
+                                child: child,
+                              );
+                            },
+                            pageBuilder: (context, animation, duration) => SearchScreen(
+                              searchString: searchString,
+                              filterData: filterData,
+                              tagovi: tagovi,
+                              tezina: filterTezina,
+                              isFav: false,
+                            ),
+                          ),
+                        );
+                      },
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                        hintText: 'Potražite tag ili namirnicu...',
+                        hintStyle: Theme.of(context).textTheme.headline4?.copyWith(
+                              color: Colors.grey,
+                            ),
+                        filled: true,
+                        fillColor: Colors.white,
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(color: Colors.white),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        border: OutlineInputBorder(
+                          borderSide: const BorderSide(color: Colors.white),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        suffixIcon: GestureDetector(
+                          onTap: () {
+                            if (searchString == '') {
+                              return;
+                            }
+                            FocusManager.instance.primaryFocus!.unfocus();
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                transitionDuration: const Duration(milliseconds: 120),
+                                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                  return SlideTransition(
+                                    position: Tween<Offset>(
+                                      begin: const Offset(1, 0),
+                                      end: Offset.zero,
+                                    ).animate(animation),
+                                    child: child,
+                                  );
+                                },
+                                pageBuilder: (context, animation, duration) => SearchScreen(
+                                  searchString: searchString,
+                                  filterData: filterData,
+                                  tagovi: tagovi,
+                                  tezina: filterTezina,
+                                  isFav: false,
+                                ),
+                              ),
                             );
                           },
-                          pageBuilder: (context, animation, duration) => SearchScreen(
-                            searchString: searchString,
-                            filterData: filterData,
-                            tagovi: tagovi,
-                            tezina: filterTezina,
-                            isFav: false,
-                          ),
+                          child: const Icon(Iconsax.search_normal),
                         ),
-                      );
-                    },
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                      hintText: 'Potražite tag ili namirnicu...',
-                      hintStyle: Theme.of(context).textTheme.headline4?.copyWith(
-                            color: Colors.grey,
-                          ),
-                      filled: true,
-                      fillColor: Colors.white,
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Colors.white),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      border: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Colors.white),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      suffixIcon: GestureDetector(
-                        onTap: () {
-                          if (searchString == '') {
-                            return;
-                          }
-                          FocusManager.instance.primaryFocus!.unfocus();
-                          Navigator.push(
-                            context,
-                            PageRouteBuilder(
-                              transitionDuration: const Duration(milliseconds: 120),
-                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                return SlideTransition(
-                                  position: Tween<Offset>(
-                                    begin: const Offset(1, 0),
-                                    end: Offset.zero,
-                                  ).animate(animation),
-                                  child: child,
-                                );
-                              },
-                              pageBuilder: (context, animation, duration) => SearchScreen(
-                                searchString: searchString,
-                                filterData: filterData,
-                                tagovi: tagovi,
-                                tezina: filterTezina,
-                                isFav: false,
-                              ),
-                            ),
-                          );
-                        },
-                        child: const Icon(Iconsax.search_normal),
                       ),
                     ),
                   ),
-                ),
-                GestureDetector(
-                  onTap: () async {
-                    if (isFilter == false) {
-                      FocusManager.instance.primaryFocus!.unfocus();
-                      brOsobaErrorMessage = '';
-                      vrPripremeErrorMessage = '';
-                      ocjenaErrorMessage = '';
+                  GestureDetector(
+                    onTap: () async {
+                      if (isFilter == false) {
+                        FocusManager.instance.primaryFocus!.unfocus();
+                        brOsobaErrorMessage = '';
+                        vrPripremeErrorMessage = '';
+                        ocjenaErrorMessage = '';
 
-                      filterTezina.clear();
-                      tagovi.clear();
-                      showFilters();
-                      _controller!.addListener(() {
-                        overlay!.setState(() {});
-                      });
-                      _controller!.forward();
-                      overlay!.insert(entry!);
-                      await Future.delayed(
-                        const Duration(milliseconds: 500),
-                      );
-                    }
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Icon(
-                      Iconsax.filter_square,
-                      color: Theme.of(context).primaryColor,
-                      size: 30,
+                        filterTezina.clear();
+                        tagovi.clear();
+                        showFilters();
+                        _controller!.addListener(() {
+                          overlay!.setState(() {});
+                        });
+                        _controller!.forward();
+                        overlay!.insert(entry!);
+                        await Future.delayed(
+                          const Duration(milliseconds: 500),
+                        );
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Icon(
+                        Iconsax.filter_square,
+                        color: Theme.of(context).primaryColor,
+                        size: 30,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.025),
 
@@ -1041,7 +1044,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               builder: ((context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.none) {
                   return Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.668,
+                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.692,
                     child: const Center(
                       child: CircularProgressIndicator(),
                     ),
@@ -1051,7 +1054,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 final receptDocs = snapshot.data!.docs;
                 if (!isInternet!) {
                   return Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.668,
+                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.692,
                     child: Center(
                       child: Text(
                         'Nema internet konekcije',
@@ -1062,7 +1065,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 }
                 if (receptDocs.isEmpty) {
                   return Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.668,
+                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.692,
                     child: Center(
                       child: Text(
                         'Nema recepata',
@@ -1080,7 +1083,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 });
                 try {
                   return Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.668,
+                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.692,
                     child: ListView.separated(
                       primary: false,
                       shrinkWrap: true,
@@ -1110,7 +1113,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   );
                 } catch (e) {
                   return Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.668,
+                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.692,
                     child: const Center(
                       child: CircularProgressIndicator(),
                     ),
