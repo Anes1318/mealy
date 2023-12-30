@@ -335,7 +335,7 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
               ),
             ),
             SizedBox(
-              height: (medijakveri.size.height - medijakveri.padding.top) * 0.80,
+              height: (medijakveri.size.height - medijakveri.padding.top) * 0.818,
               child: SingleChildScrollView(
                 child: Column(
                   children: [
