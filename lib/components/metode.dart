@@ -1,6 +1,10 @@
 import 'dart:io';
 
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
+import 'package:mealy/providers/MealProvider.dart';
+import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class Metode {
   static Future<bool> checkConnection({required context}) async {
@@ -237,6 +241,23 @@ class Metode {
       default:
         return "Došlo je do greške. Molimo Vas pokušajte kasnije.";
     }
+  }
+
+  static Future<void> createDynamicLink(String refCode) async {
+    String url = 'https://com.example.mealy?ref=$refCode';
+    final DynamicLinkParameters parameters = DynamicLinkParameters(
+      link: Uri.parse(url),
+      uriPrefix: 'https://mealy.page.link',
+      androidParameters: AndroidParameters(
+        packageName: 'com.example.mealy',
+        minimumVersion: 0,
+      ),
+    );
+    FirebaseDynamicLinks link = FirebaseDynamicLinks.instance;
+
+    final refLink = await link.buildShortLink(parameters);
+
+    Share.share(refLink.shortUrl.toString());
   }
 
   // static String? stavke(int kolicina) {

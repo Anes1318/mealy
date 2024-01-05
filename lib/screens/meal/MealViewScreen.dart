@@ -15,6 +15,7 @@ import 'package:mealy/screens/meal/MealEditScreen.dart';
 // components
 import 'package:mealy/components/metode.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../providers/MealProvider.dart';
 
@@ -61,6 +62,7 @@ class MealViewScreen extends StatefulWidget {
 
 class _MealViewScreenState extends State<MealViewScreen> {
   bool isFav = false;
+  bool isCreatingLink = false;
 
   double rating = 0;
   int userRating = 0;
@@ -158,7 +160,7 @@ class _MealViewScreenState extends State<MealViewScreen> {
                   ),
                   Container(
                     constraints: BoxConstraints(
-                      maxWidth: medijakveri.size.width * 0.65,
+                      maxWidth: medijakveri.size.width * 0.55,
                     ),
                     child: FittedBox(
                       child: Text(
@@ -167,85 +169,109 @@ class _MealViewScreenState extends State<MealViewScreen> {
                       ),
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () => favMeal(),
-                    child: widget.autorId != FirebaseAuth.instance.currentUser!.uid
-                        ? SvgPicture.asset(
-                            'assets/icons/${isFav}Heart.svg',
-                            height: 28,
-                            width: 30,
-                          )
-                        : GestureDetector(
-                            onTap: () {
-                              Metode.showErrorDialog(
-                                isJednoPoredDrugog: false,
-                                context: context,
-                                naslov: 'Koju akciju želite da izvršite?',
-                                button1Text: 'Izmijenite recept',
-                                isButton1Icon: true,
-                                button1Icon: Icon(
-                                  Iconsax.edit,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                                button1Fun: () {
-                                  Navigator.pop(context);
-                                  Navigator.push(
-                                    context,
-                                    PageRouteBuilder(
-                                      transitionDuration: const Duration(milliseconds: 150),
-                                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                        return SlideTransition(
-                                          position: Tween<Offset>(
-                                            begin: const Offset(1, 0),
-                                            end: Offset.zero,
-                                          ).animate(animation),
-                                          child: child,
-                                        );
-                                      },
-                                      pageBuilder: (context, animation, duration) => MealEditScreen(
-                                        naziv: widget.naziv,
-                                        opis: widget.opis,
-                                        brOsoba: widget.brOsoba,
-                                        vrPripreme: widget.vrPripreme,
-                                        tezina: widget.tezina,
-                                        imageUrl: widget.imageUrl,
-                                        ratings: widget.ratings,
-                                        sastojci: widget.sastojci,
-                                        koraci: widget.koraci,
-                                        autorId: widget.autorId,
-                                        receptId: widget.receptId,
-                                        favorites: widget.favorites,
-                                        tagovi: widget.tagovi,
-                                      ),
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: !isCreatingLink
+                            ? () {
+                                setState(() {
+                                  isCreatingLink = true;
+                                });
+
+                                Metode.createDynamicLink(widget.receptId).then((value) {});
+                                setState(() {
+                                  isCreatingLink = false;
+                                });
+                              }
+                            : () {},
+                        child: Icon(
+                          Iconsax.send_2,
+                          size: 30,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      GestureDetector(
+                        onTap: () => favMeal(),
+                        child: widget.autorId != FirebaseAuth.instance.currentUser!.uid
+                            ? SvgPicture.asset(
+                                'assets/icons/${isFav}Heart.svg',
+                                height: 28,
+                                width: 30,
+                              )
+                            : GestureDetector(
+                                onTap: () {
+                                  Metode.showErrorDialog(
+                                    isJednoPoredDrugog: false,
+                                    context: context,
+                                    naslov: 'Koju akciju želite da izvršite?',
+                                    button1Text: 'Izmijenite recept',
+                                    isButton1Icon: true,
+                                    button1Icon: Icon(
+                                      Iconsax.edit,
+                                      color: Theme.of(context).colorScheme.primary,
                                     ),
+                                    button1Fun: () {
+                                      Navigator.pop(context);
+                                      Navigator.push(
+                                        context,
+                                        PageRouteBuilder(
+                                          transitionDuration: const Duration(milliseconds: 150),
+                                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                            return SlideTransition(
+                                              position: Tween<Offset>(
+                                                begin: const Offset(1, 0),
+                                                end: Offset.zero,
+                                              ).animate(animation),
+                                              child: child,
+                                            );
+                                          },
+                                          pageBuilder: (context, animation, duration) => MealEditScreen(
+                                            naziv: widget.naziv,
+                                            opis: widget.opis,
+                                            brOsoba: widget.brOsoba,
+                                            vrPripreme: widget.vrPripreme,
+                                            tezina: widget.tezina,
+                                            imageUrl: widget.imageUrl,
+                                            ratings: widget.ratings,
+                                            sastojci: widget.sastojci,
+                                            koraci: widget.koraci,
+                                            autorId: widget.autorId,
+                                            receptId: widget.receptId,
+                                            favorites: widget.favorites,
+                                            tagovi: widget.tagovi,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    isButton2: true,
+                                    button2Text: 'Izbrišite recept',
+                                    isButton2Icon: true,
+                                    button2Icon: Icon(
+                                      Iconsax.trash,
+                                      color: Theme.of(context).colorScheme.primary,
+                                    ),
+                                    button2Fun: () async {
+                                      try {
+                                        await FirebaseFirestore.instance.collection('recepti').doc(widget.receptId).delete().then((value) async {
+                                          await FirebaseStorage.instance.ref().child('receptImages').child('${widget.receptId}.jpg').delete().then((value) {
+                                            Navigator.pushReplacementNamed(context, BottomNavigationBarScreen.routeName);
+                                          });
+                                        });
+                                      } catch (e) {
+                                        Navigator.pushReplacementNamed(context, BottomNavigationBarScreen.routeName);
+                                      }
+
+                                      // Navigator.pop(context);
+                                    },
                                   );
                                 },
-                                isButton2: true,
-                                button2Text: 'Izbrišite recept',
-                                isButton2Icon: true,
-                                button2Icon: Icon(
-                                  Iconsax.trash,
-                                  color: Theme.of(context).colorScheme.primary,
+                                child: SvgPicture.asset(
+                                  'assets/icons/more.svg',
                                 ),
-                                button2Fun: () async {
-                                  try {
-                                    await FirebaseFirestore.instance.collection('recepti').doc(widget.receptId).delete().then((value) async {
-                                      await FirebaseStorage.instance.ref().child('receptImages').child('${widget.receptId}.jpg').delete().then((value) {
-                                        Navigator.pushReplacementNamed(context, BottomNavigationBarScreen.routeName);
-                                      });
-                                    });
-                                  } catch (e) {
-                                    Navigator.pushReplacementNamed(context, BottomNavigationBarScreen.routeName);
-                                  }
-
-                                  // Navigator.pop(context);
-                                },
-                              );
-                            },
-                            child: SvgPicture.asset(
-                              'assets/icons/more.svg',
-                            ),
-                          ),
+                              ),
+                      ),
+                    ],
                   ),
                 ],
               ),

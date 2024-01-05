@@ -1042,7 +1042,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             StreamBuilder(
               stream: meals,
               builder: ((context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.none) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
                   return Container(
                     height: (medijakveri.size.height - medijakveri.padding.top) * 0.692,
                     child: const Center(

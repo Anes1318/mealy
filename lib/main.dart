@@ -1,8 +1,12 @@
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
+import 'package:mealy/components/RouteServices.dart';
+import 'package:mealy/components/metode.dart';
+import 'package:mealy/screens/meal/MealViewScreen.dart';
 import 'package:provider/provider.dart';
 
 // screens
@@ -14,6 +18,7 @@ import 'package:mealy/screens/main/AccountScreen.dart';
 import 'package:mealy/screens/main/BottomNavigationBarScreen.dart';
 import 'package:mealy/screens/settings/SettingsScreen.dart';
 import 'package:mealy/screens/account/AccountEditScreen.dart';
+import 'package:share_plus/share_plus.dart';
 
 // providers
 import 'providers/MealProvider.dart';
@@ -24,7 +29,6 @@ Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await FirebaseAppCheck.instance.activate(
-    webRecaptchaSiteKey: 'recaptcha-v3-site-key',
     androidProvider: AndroidProvider.debug,
   );
   SystemChrome.setPreferredOrientations(
@@ -37,8 +41,20 @@ Future main() async {
   });
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  bool isCreatingLink = false;
 
   @override
   Widget build(BuildContext context) {

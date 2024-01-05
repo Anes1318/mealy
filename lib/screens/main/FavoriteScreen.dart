@@ -1031,8 +1031,12 @@ class _FavoriteScreenState extends State<FavoriteScreen> with TickerProviderStat
           StreamBuilder(
             stream: meals,
             builder: ((context, snapshot) {
-              final receptDocs = snapshot.data!.docs;
-              if (snapshot.connectionState == ConnectionState.none) {
+              List<QueryDocumentSnapshot<Map<String, dynamic>>>? receptDocs;
+              if (snapshot.hasData) {
+                receptDocs = snapshot.data!.docs;
+              }
+
+              if (snapshot.connectionState == ConnectionState.waiting) {
                 return Container(
                   height: (medijakveri.size.height - medijakveri.padding.top) * 0.692,
                   child: const Center(
@@ -1040,13 +1044,16 @@ class _FavoriteScreenState extends State<FavoriteScreen> with TickerProviderStat
                   ),
                 );
               }
-              receptDocs.sort((a, b) {
-                if (DateTime.parse(a.data()['createdAt']).isAfter(DateTime.parse(b.data()['createdAt']))) {
-                  return 0;
-                } else {
-                  return 1;
-                }
-              });
+              if (receptDocs!.isNotEmpty) {
+                receptDocs.sort((a, b) {
+                  if (DateTime.parse(a.data()['createdAt']).isAfter(DateTime.parse(b.data()['createdAt']))) {
+                    return 0;
+                  } else {
+                    return 1;
+                  }
+                });
+              }
+
               List<dynamic> favRecepti = [];
               if (!isInternet!) {
                 return Container(
@@ -1093,7 +1100,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> with TickerProviderStat
                   itemCount: favRecepti.length,
                   itemBuilder: (context, index) {
                     int userRating = 0;
-                    if (receptDocs[index].data()['ratings'][FirebaseAuth.instance.currentUser!.uid] != null) {
+                    if (receptDocs![index].data()['ratings'][FirebaseAuth.instance.currentUser!.uid] != null) {
                       userRating = receptDocs[index].data()['ratings'][FirebaseAuth.instance.currentUser!.uid];
                     }
                     return MealCard(
@@ -1106,7 +1113,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> with TickerProviderStat
                       vrPripreme: favRecepti[index].data()['vrPripreme'],
                       tezina: favRecepti[index].data()['tezina'],
                       imageUrl: favRecepti[index].data()['imageUrl'],
-                      createdAt: receptDocs[index].data()['createdAt'],
+                      createdAt: favRecepti[index].data()['createdAt'],
                       ratings: favRecepti[index].data()['ratings'],
                       sastojci: favRecepti[index].data()['sastojci'],
                       koraci: favRecepti[index].data()['koraci'],
