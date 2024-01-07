@@ -1084,11 +1084,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 try {
                   return Container(
                     height: (medijakveri.size.height - medijakveri.padding.top) * 0.692,
-                    child: ListView.separated(
+                    child: ListView.builder(
                       primary: false,
                       shrinkWrap: true,
                       padding: const EdgeInsets.symmetric(vertical: 0),
-                      separatorBuilder: ((context, index) => const SizedBox(height: 10)),
                       itemCount: receptDocs.length,
                       itemBuilder: (context, index) {
                         return MealCard(

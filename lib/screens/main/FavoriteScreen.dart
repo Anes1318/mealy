@@ -1094,9 +1094,8 @@ class _FavoriteScreenState extends State<FavoriteScreen> with TickerProviderStat
 
               return Container(
                 height: (medijakveri.size.height - medijakveri.padding.top) * 0.692,
-                child: ListView.separated(
+                child: ListView.builder(
                   padding: EdgeInsets.zero,
-                  separatorBuilder: ((context, index) => const SizedBox(height: 10)),
                   itemCount: favRecepti.length,
                   itemBuilder: (context, index) {
                     int userRating = 0;

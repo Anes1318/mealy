@@ -142,7 +142,7 @@ class _MealCardState extends State<MealCard> {
       },
       child: Container(
         height: (widget.medijakveri.size.height - widget.medijakveri.padding.top) * 0.165,
-        // height: 130,
+        margin: const EdgeInsets.only(bottom: 15),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
@@ -151,13 +151,12 @@ class _MealCardState extends State<MealCard> {
           margin: const EdgeInsets.only(left: 15, top: 15, bottom: 15, right: 5),
           child: Row(
             children: [
-              // widget.imageUrl == null ?
               ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: Image.network(
                   widget.imageUrl,
-                  height: 100,
-                  width: 100,
+                  height: (widget.medijakveri.size.height - widget.medijakveri.padding.top) * 0.12,
+                  width: widget.medijakveri.size.width * 0.245,
                   fit: BoxFit.cover,
                 ),
               ),

@@ -248,7 +248,19 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
             sastojakInput = [TextEditingController()];
             korakFokus = [FocusNode()];
             korakInput = [TextEditingController()];
-
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Uspješno ste dodali recept.',
+                  style: Theme.of(context).textTheme.headline4,
+                ),
+                duration: const Duration(milliseconds: 1500),
+                behavior: SnackBarBehavior.floating,
+                backgroundColor: Theme.of(context).colorScheme.secondary,
+                elevation: 4,
+              ),
+            );
             Navigator.pushReplacementNamed(context, BottomNavigationBarScreen.routeName);
           });
         });
@@ -322,7 +334,6 @@ class _AddScreenState extends State<AddScreen> with SingleTickerProviderStateMix
                                 element.unfocus();
                               });
                               submitForm();
-                              // addMealTest();
                             },
                             child: Icon(
                               Iconsax.tick_circle,
