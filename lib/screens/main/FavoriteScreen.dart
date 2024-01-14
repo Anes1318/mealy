@@ -812,7 +812,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> with TickerProviderStat
                                           ),
                                           const SizedBox(height: 20),
                                           Button(
-                                            buttonText: 'Primijenite filtere',
+                                            buttonText: 'Filtriranje sa pretragom',
                                             borderRadius: 20,
                                             visina: 18,
                                             backgroundColor: Theme.of(context).colorScheme.primary,
@@ -827,7 +827,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> with TickerProviderStat
                                           ),
                                           const SizedBox(height: 20),
                                           Button(
-                                            buttonText: 'Pretraga po filterima',
+                                            buttonText: 'Filtriranje bez pretrage',
                                             borderRadius: 20,
                                             visina: 18,
                                             backgroundColor: Theme.of(context).colorScheme.secondary,

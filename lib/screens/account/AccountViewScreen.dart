@@ -130,9 +130,8 @@ class _AccountViewScreenState extends State<AccountViewScreen> {
 
                       return Container(
                         height: (medijakveri.size.height - medijakveri.padding.top) * 0.68,
-                        child: ListView.separated(
+                        child: ListView.builder(
                             padding: EdgeInsets.zero,
-                            separatorBuilder: ((context, index) => const SizedBox(height: 15)),
                             itemCount: ownRecepti.length,
                             itemBuilder: (context, index) {
                               int userRating = 0;
