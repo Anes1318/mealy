@@ -903,7 +903,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           if (entry != null) {
             _controller!.reverse().whenComplete(() => hideFilters());
           }
-
           return false;
         },
         child: Column(
@@ -927,6 +926,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           return;
                         }
                         FocusManager.instance.primaryFocus!.unfocus();
+                        searchController.clear();
                         Navigator.push(
                           context,
                           PageRouteBuilder(
@@ -952,7 +952,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       },
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                        hintText: 'Potražite tag ili namirnicu...',
+                        hintText: 'Unesite naziv ili namirnicu...',
                         hintStyle: Theme.of(context).textTheme.headline4?.copyWith(
                               color: Colors.grey,
                             ),
@@ -972,6 +972,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                               return;
                             }
                             FocusManager.instance.primaryFocus!.unfocus();
+                            searchController.clear();
+
                             Navigator.push(
                               context,
                               PageRouteBuilder(
@@ -1038,7 +1040,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               ),
             ),
             SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.025),
-
             StreamBuilder(
               stream: meals,
               builder: ((context, snapshot) {

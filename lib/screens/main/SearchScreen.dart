@@ -145,14 +145,20 @@ class _SearchScreenState extends State<SearchScreen> {
                         return;
                       }
                       List<String> sastojciList = [];
-                      for (var sastojak in element['sastojci']) {
+                      for (var sastojak in element.data()['sastojci']) {
                         sastojciList.add(sastojak!.toLowerCase());
                       }
-
                       if (widget.searchString != null && widget.searchString != '') {
-                        if (!element['naziv']!.toLowerCase().contains(widget.searchString!.toLowerCase()) && !sastojciList.contains(widget.searchString!.toLowerCase())) {
-                          // print('Failed SearchString');
-                          return;
+                        if (!element.data()['naziv']!.toLowerCase().contains(widget.searchString!.toLowerCase())) {
+                          bool imaSastojak = false;
+                          sastojciList.forEach((element) {
+                            if (element.contains(widget.searchString!.toLowerCase())) {
+                              imaSastojak = true;
+                            }
+                          });
+                          if (!imaSastojak) {
+                            return;
+                          }
                         }
                       }
                       if (widget.filterData!['brOsobaOd'] != '') {
@@ -235,13 +241,20 @@ class _SearchScreenState extends State<SearchScreen> {
                       for (var sastojak in element.data()['sastojci']) {
                         sastojciList.add(sastojak!.toLowerCase());
                       }
-
                       if (widget.searchString != null && widget.searchString != '') {
-                        if (!element.data()['naziv']!.toLowerCase().contains(widget.searchString!.toLowerCase()) && !sastojciList.contains(widget.searchString!.toLowerCase())) {
-                          // print('Failed SearchString');
-                          return;
+                        if (!element.data()['naziv']!.toLowerCase().contains(widget.searchString!.toLowerCase())) {
+                          bool imaSastojak = false;
+                          sastojciList.forEach((element) {
+                            if (element.contains(widget.searchString!.toLowerCase())) {
+                              imaSastojak = true;
+                            }
+                          });
+                          if (!imaSastojak) {
+                            return;
+                          }
                         }
                       }
+
                       if (widget.filterData!['brOsobaOd'] != '') {
                         if (int.parse(element.data()['brOsoba']) < int.parse(widget.filterData!['brOsobaOd'])) {
                           // print('Failed Osoba od');
@@ -336,9 +349,8 @@ class _SearchScreenState extends State<SearchScreen> {
 
                   return Container(
                     height: medijakveri.size.height * 0.758,
-                    child: ListView.separated(
+                    child: ListView.builder(
                         padding: EdgeInsets.zero,
-                        separatorBuilder: ((context, index) => const SizedBox(height: 15)),
                         itemCount: searchedMeals.length,
                         itemBuilder: (context, index) {
                           int userRating = 0;

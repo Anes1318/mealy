@@ -917,6 +917,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> with TickerProviderStat
                       return;
                     }
                     FocusManager.instance.primaryFocus!.unfocus();
+                    searchController.clear();
 
                     Navigator.push(
                       context,
@@ -943,7 +944,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> with TickerProviderStat
                   },
                   decoration: InputDecoration(
                     contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                    hintText: 'Potražite tag ili namirnicu...',
+                    hintText: 'Unesite naziv ili namirnicu...',
                     hintStyle: Theme.of(context).textTheme.headline4?.copyWith(
                           color: Colors.grey,
                         ),
@@ -963,6 +964,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> with TickerProviderStat
                           return;
                         }
                         FocusManager.instance.primaryFocus!.unfocus();
+                        searchController.clear();
                         Navigator.push(
                           context,
                           PageRouteBuilder(

@@ -153,57 +153,60 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
     final medijakveri = MediaQuery.of(context);
     initDyanmicLinks();
 
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Container(
-        margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.07),
-        child: SlideIndexedStack(
-          axis: Axis.horizontal,
-          slideOffset: 0.7,
-          duration: const Duration(milliseconds: 200),
-          index: _selectedIndex,
-          children: _screens,
-        ),
-      ),
-      bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          border: Border(
-            top: BorderSide(
-              width: 0.3,
-              color: Color.fromRGBO(176, 176, 176, 1),
-            ),
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus!.unfocus(),
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: Container(
+          margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.07),
+          child: SlideIndexedStack(
+            axis: Axis.horizontal,
+            slideOffset: 0.7,
+            duration: const Duration(milliseconds: 200),
+            index: _selectedIndex,
+            children: _screens,
           ),
         ),
-        height: (medijakveri.size.height - medijakveri.padding.top) * 0.1,
-        child: BottomNavigationBar(
-          onTap: _selectPage,
-          type: BottomNavigationBarType.fixed,
-          currentIndex: _selectedIndex,
-          iconSize: 30,
-          selectedLabelStyle: Theme.of(context).textTheme.headline5,
-          unselectedLabelStyle: Theme.of(context).textTheme.headline5,
-          selectedItemColor: Theme.of(context).colorScheme.tertiary,
-          unselectedItemColor: Theme.of(context).primaryColor,
-          showUnselectedLabels: true,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Iconsax.home_2),
-              label: 'Početna',
+        bottomNavigationBar: Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            border: Border(
+              top: BorderSide(
+                width: 0.3,
+                color: Color.fromRGBO(176, 176, 176, 1),
+              ),
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Iconsax.add_square),
-              label: 'Dodaj',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Iconsax.heart),
-              label: 'Omiljeni',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Iconsax.profile_circle),
-              label: 'Nalog',
-            ),
-          ],
+          ),
+          height: (medijakveri.size.height - medijakveri.padding.top) * 0.1,
+          child: BottomNavigationBar(
+            onTap: _selectPage,
+            type: BottomNavigationBarType.fixed,
+            currentIndex: _selectedIndex,
+            iconSize: 30,
+            selectedLabelStyle: Theme.of(context).textTheme.headline5,
+            unselectedLabelStyle: Theme.of(context).textTheme.headline5,
+            selectedItemColor: Theme.of(context).colorScheme.tertiary,
+            unselectedItemColor: Theme.of(context).primaryColor,
+            showUnselectedLabels: true,
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Iconsax.home_2),
+                label: 'Početna',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Iconsax.add_square),
+                label: 'Dodaj',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Iconsax.heart),
+                label: 'Omiljeni',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Iconsax.profile_circle),
+                label: 'Nalog',
+              ),
+            ],
+          ),
         ),
       ),
     );
